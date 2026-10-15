@@ -1,0 +1,3 @@
+[submodule "springboot-user-api"]
+	path = springboot-user-api
+	url = https://github.com/phat-dat-ag/springboot-user-api.git

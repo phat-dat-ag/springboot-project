@@ -1,0 +1,137 @@
+# Shared runtime restrictions; writable state is declared explicitly per service.
+x-container-security: &container-security
+  init: true
+  read_only: true
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  ulimits:
+    core: 0
+
+services:
+  mysql:
+    <<: *container-security
+    # The pinned vendor initializer interpolates SQL literals and a quoted option
+    # file. Reject unsupported values before it can echo a credential in an error.
+    entrypoint:
+      - /bin/bash
+      - -ec
+      - |
+        for name in MYSQL_DATABASE MYSQL_USER; do
+          value="$${!name-}"
+          if [[ ! "$$value" =~ ^[A-Za-z0-9_-]{1,64}$$ ]]; then
+            echo "Invalid $$name: use 1-64 ASCII letters, digits, underscores or hyphens." >&2
+            exit 64
+          fi
+        done
+        for name in MYSQL_ROOT_PASSWORD MYSQL_PASSWORD; do
+          value="$${!name-}"
+          if [[ -z "$${value//[[:space:]]/}" || "$$value" == *"'"* || "$$value" == *'"'* || "$$value" == *'\'* || "$$value" =~ [[:cntrl:]] ]]; then
+            echo "Invalid $$name: a nonblank password without quotes, backslashes or control characters is required by this MySQL image." >&2
+            exit 64
+          fi
+        done
+        exec /usr/local/bin/docker-entrypoint.sh mysqld
+    user: "999:999"
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 2
+    pids_limit: 256
+    stop_grace_period: 60s
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777
+      - /var/run/mysqld:rw,noexec,nosuid,nodev,size=16m,uid=999,gid=999,mode=0750
+    image: mysql:8.4@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-mydb}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      MYSQL_USER: ${MYSQL_USER:-datnguyen}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+    ports:
+      - "127.0.0.1:${MYSQL_HOST_PORT:-3336}:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "MYSQL_PWD=\"$${MYSQL_PASSWORD}\" mysql --protocol=TCP -h 127.0.0.1 -u \"$${MYSQL_USER}\" \"$${MYSQL_DATABASE}\" -e 'SELECT 1' >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  flyway-mysql:
+    <<: *container-security
+    user: "10001:10001"
+    working_dir: /tmp
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    stop_grace_period: 30s
+    tmpfs:
+      # Java native libraries may require executable mappings from temporary storage.
+      - /tmp:rw,nosuid,nodev,size=128m,mode=1777
+    image: flyway/flyway:latest@sha256:c748a1e82c40d4ee63b2f02a78295cf2460e8b4f1abae8abcd7ad5d6e879f959
+    restart: "no"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      FLYWAY_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-japanese_learning}
+      FLYWAY_USER: ${MYSQL_USER:-japanese_learning}
+      FLYWAY_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      FLYWAY_CONNECT_RETRIES: "60"
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      JAVA_ARGS: -Duser.home=/tmp
+    command: ["migrate"]
+    volumes:
+      - ${MIGRATION_PATH:-./db/migration}:/flyway/sql:ro
+
+  
+  user-api:
+    <<: *container-security
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 2
+    pids_limit: 256
+    stop_grace_period: 45s
+
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=256m,mode=1777
+
+    build:
+      context: ./user
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+      flyway-mysql:
+        condition: service_completed_successfully
+
+    volumes:
+      - user_api_logs:/app/data/logs
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-japanese_learning}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-japanese_learning}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: 8080
+      APP_LOG_DIR: /app/data/logs
+      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+
+    ports:
+      - "127.0.0.1:${USER_API_HOST_PORT:-8080}:8080"
+
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "--max-time", "5", "http://127.0.0.1:8080/actuator/health/readiness"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 30s
+
+volumes:
+  mysql_data:
+  user_api_logs:
