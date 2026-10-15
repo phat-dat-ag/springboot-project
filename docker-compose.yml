@@ -82,6 +82,9 @@ services:
       FLYWAY_CONNECT_RETRIES: "60"
       FLYWAY_LOCATIONS: filesystem:/flyway/sql
       JAVA_ARGS: -Duser.home=/tmp
+      APP_LOG_DIR: ${APP_LOG_DIR:-/app/data/logs}
+      APP_NAME: ${APP_NAME:-user-api}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     command: ["migrate"]
     volumes:
       - ${MIGRATION_PATH:-./db/migration}:/flyway/sql:ro
@@ -99,7 +102,7 @@ services:
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777
 
     build:
-      context: ./user
+      context: ./springboot-user-api
       dockerfile: Dockerfile
 
     restart: unless-stopped
