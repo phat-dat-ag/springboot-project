@@ -98,6 +98,9 @@ services:
     pids_limit: 256
     stop_grace_period: 45s
 
+    env_file:
+      - .env
+
     tmpfs:
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777
 
@@ -115,6 +118,7 @@ services:
 
     volumes:
       - user_api_logs:/app/data/logs
+      - ./key:/run/keys/jwt:ro
 
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-japanese_learning}
