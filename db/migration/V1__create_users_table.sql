@@ -12,4 +12,4 @@ CREATE TABLE users (
     UNIQUE KEY uk_users_username (username),
     UNIQUE KEY uk_users_email (email),
     CONSTRAINT chk_users_role CHECK (role >= 1)
-);
+) ENGINE=InnoDB;
