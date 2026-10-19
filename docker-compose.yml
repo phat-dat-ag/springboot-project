@@ -129,6 +129,10 @@ services:
       APP_LOG_DIR: /app/data/logs
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
+      JWT_ISSUER: ${JWT_ISSUER:-japaneselearning-user-service}
+      JWT_ACCESS_TOKEN_TTL_SECONDS: ${JWT_ACCESS_TOKEN_TTL_SECONDS:-900}
+      JWT_REFRESH_TOKEN_TTL_DAYS: ${JWT_REFRESH_TOKEN_TTL_DAYS:-30}
+
     ports:
       - "127.0.0.1:${USER_API_HOST_PORT:-8080}:8080"
 
