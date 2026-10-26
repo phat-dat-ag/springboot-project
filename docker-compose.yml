@@ -143,6 +143,83 @@ services:
       retries: 12
       start_period: 30s
 
+  loki:
+    <<: *container-security
+    image: grafana/loki:3.5.8
+    user: "10001:10001"
+
+    restart: unless-stopped
+
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1
+    pids_limit: 128
+
+    command:
+      - -config.file=/etc/loki/loki-config.yml
+
+    ports:
+      - "127.0.0.1:3100:3100"
+
+    volumes:
+      - ./observability/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
+      - loki_data:/loki
+
+  
+  fluent-bit:
+    <<: *container-security
+    image: cr.fluentbit.io/fluent/fluent-bit:3.2
+    user: "10001:10001"
+
+    restart: unless-stopped
+
+    mem_limit: 256m
+    memswap_limit: 256m
+    cpus: 0.5
+    pids_limit: 128
+
+    depends_on:
+      - loki
+
+    command:
+      - --config=/fluent-bit/etc/fluent-bit.conf
+
+    volumes:
+      - ./observability/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - user_api_logs:/logs:ro
+      - fluent_bit_state:/fluent-bit/state
+
+  grafana:
+    <<: *container-security
+    image: grafana/grafana:12.2.0
+    user: "472:0"
+
+    restart: unless-stopped
+
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1
+    pids_limit: 256
+
+    depends_on:
+      - loki
+
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?Set GRAFANA_ADMIN_USER in .env}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_LOG_MODE: console
+
+    ports:
+      - "127.0.0.1:${GRAFANA_HOST_PORT:-3000}:3000"
+
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./observability/grafana/provisioning/datasources/loki.yml:/etc/grafana/provisioning/datasources/loki.yml:ro
+
 volumes:
   mysql_data:
   user_api_logs:
+  loki_data:
+  fluent_bit_state:
+  grafana_data:
