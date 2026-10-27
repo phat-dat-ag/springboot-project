@@ -1,3 +1,7 @@
 [submodule "springboot-user-api"]
 	path = springboot-user-api
 	url = https://github.com/phat-dat-ag/springboot-user-api.git
+[submodule "springboot-learning-api"]
+	path = springboot-learning-api
+	url = https://github.com/phat-dat-ag/springboot-learning-api.git
+	branch = develop
