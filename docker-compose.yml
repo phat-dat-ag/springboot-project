@@ -58,6 +58,44 @@ services:
       retries: 12
       start_period: 30s
 
+  postgres:
+    <<: *container-security
+    image: postgres:17.6
+    user: "999:999"
+
+    restart: unless-stopped
+
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 2
+    pids_limit: 256
+    stop_grace_period: 60s
+
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,nodev,size=64m,mode=1777
+      - /var/run/postgresql:rw,noexec,nosuid,nodev,size=16m,uid=999,gid=999,mode=0750
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-mydb}
+      POSTGRES_USER: ${POSTGRES_USER:-datnguyen}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      PGDATA: /var/lib/postgresql/data/pgdata
+
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5432}:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
   flyway-mysql:
     <<: *container-security
     user: "10001:10001"
@@ -89,6 +127,41 @@ services:
     volumes:
       - ${MIGRATION_PATH:-./db/migration}:/flyway/sql:ro
 
+  flyway-postgres:
+    <<: *container-security
+
+    image: flyway/flyway:latest@sha256:c748a1e82c40d4ee63b2f02a78295cf2460e8b4f1abae8abcd7ad5d6e879f959
+
+    user: "10001:10001"
+    working_dir: /tmp
+
+    restart: "no"
+
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    stop_grace_period: 30s
+
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=128m,mode=1777
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    environment:
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-appdb}
+      FLYWAY_USER: ${POSTGRES_USER:-appuser}
+      FLYWAY_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      FLYWAY_CONNECT_RETRIES: "60"
+      FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      JAVA_ARGS: -Duser.home=/tmp
+
+    command: ["migrate"]
+
+    volumes:
+      - ${POSTGRES_MIGRATION_PATH:-./db/postgres/migration}:/flyway/sql:ro
   
   user-api:
     <<: *container-security
@@ -289,3 +362,4 @@ volumes:
   grafana_data:
   opensearch_data:
   opensearch_logs:
+  postgres_data:
