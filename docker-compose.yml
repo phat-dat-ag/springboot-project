@@ -274,6 +274,9 @@ services:
     pids_limit: 256
     stop_grace_period: 45s
 
+    env_file:
+      - ./jwks-keys.env
+
     tmpfs:
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777
 
@@ -285,6 +288,7 @@ services:
 
     volumes:
       - jwks_api_logs:/app/data/logs
+      - ./key:/run/keys/jwt:ro
 
     environment:
       SERVER_ADDRESS: 0.0.0.0
