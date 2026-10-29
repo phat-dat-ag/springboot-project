@@ -253,7 +253,10 @@ services:
       LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
-      JWKS_SERVICE_BASE_URL: http://user-api:8080
+      JWT_JWK_SET_URI: ${LEARNING_JWT_JWK_SET_URI:-http://jwks-api:8080/.well-known/jwks.json}
+      JWT_ISSUER: ${JWT_ISSUER:-japaneselearning-user-service}
+      JWT_CLOCK_SKEW: ${JWT_CLOCK_SKEW:-60s}
+      JWKS_SERVICE_BASE_URL: http://jwks-api:8080
       JWKS_SERVICE_GET_PUBLIC_KEYS: /.well-known/jwks.json
 
     ports:
