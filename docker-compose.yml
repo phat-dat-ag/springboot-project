@@ -289,13 +289,9 @@ services:
     environment:
       SERVER_ADDRESS: 0.0.0.0
       SERVER_PORT: 8080
-      # This starter uses Spring Boot logging, not the other APIs' custom Logback configuration.
-      LOGGING_FILE_NAME: /app/data/logs/jwks-api.log
-      LOGGING_LEVEL_ROOT: ${JWKS_API_LOG_LEVEL:-INFO}
-      LOGGING_LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN: /app/data/logs/archive/jwks-api.%d{yyyy-MM-dd}.%i.log.gz
-      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE: 100MB
-      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_HISTORY: 30
-      LOGGING_LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP: 2GB
+      APP_LOG_DIR: /app/data/logs
+      APP_NAME: jwks-api
+      LOG_LEVEL: ${JWKS_API_LOG_LEVEL:-INFO}
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
