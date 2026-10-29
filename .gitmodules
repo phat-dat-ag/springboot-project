@@ -5,3 +5,6 @@
 	path = springboot-learning-api
 	url = https://github.com/phat-dat-ag/springboot-learning-api.git
 	branch = develop
+[submodule "springboot-jwks-api"]
+	path = springboot-jwks-api
+	url = https://github.com/phat-dat-ag/springboot-jwks-api.git
