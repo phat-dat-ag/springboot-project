@@ -253,6 +253,9 @@ services:
       LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
+      JWKS_SERVICE_BASE_URL: http://user-api:8080
+      JWKS_SERVICE_GET_PUBLIC_KEYS: /.well-known/jwks.json
+
     ports:
       - "127.0.0.1:${LEARNING_API_HOST_PORT:-8081}:8080"
 
@@ -284,7 +287,6 @@ services:
     volumes:
       - ./observability/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
       - loki_data:/loki
-
   
   fluent-bit:
     <<: *container-security
