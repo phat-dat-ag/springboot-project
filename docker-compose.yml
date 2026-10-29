@@ -266,6 +266,49 @@ services:
       retries: 12
       start_period: 30s
 
+  jwks-api:
+    <<: *container-security
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 2
+    pids_limit: 256
+    stop_grace_period: 45s
+
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=256m,mode=1777
+
+    build:
+      context: ./springboot-jwks-api
+      dockerfile: Dockerfile
+
+    restart: unless-stopped
+
+    volumes:
+      - jwks_api_logs:/app/data/logs
+
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      SERVER_PORT: 8080
+      # This starter uses Spring Boot logging, not the other APIs' custom Logback configuration.
+      LOGGING_FILE_NAME: /app/data/logs/jwks-api.log
+      LOGGING_LEVEL_ROOT: ${JWKS_API_LOG_LEVEL:-INFO}
+      LOGGING_LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN: /app/data/logs/archive/jwks-api.%d{yyyy-MM-dd}.%i.log.gz
+      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE: 100MB
+      LOGGING_LOGBACK_ROLLINGPOLICY_MAX_HISTORY: 30
+      LOGGING_LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP: 2GB
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
+      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
+
+    ports:
+      - "127.0.0.1:${JWKS_API_HOST_PORT:-8783}:8080"
+
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "--max-time", "5", "http://127.0.0.1:8080/actuator/health/readiness"]
+      interval: 10s
+      timeout: 6s
+      retries: 12
+      start_period: 30s
+
   loki:
     <<: *container-security
     image: grafana/loki:3.5.8
@@ -407,6 +450,7 @@ volumes:
   mysql_data:
   user_api_logs:
   learning_api_logs:
+  jwks_api_logs:
   loki_data:
   fluent_bit_state:
   grafana_data:
