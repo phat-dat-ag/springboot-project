@@ -334,6 +334,22 @@ services:
       - ./observability/loki/loki-config.yml:/etc/loki/loki-config.yml:ro
       - loki_data:/loki
   
+  fluent-bit-state-init:
+    <<: *container-security
+    # Reuse the database image already required by this stack for its shell tools.
+    image: postgres:17.6
+    user: "0:0"
+    network_mode: none
+    cap_add: [CHOWN, FOWNER, DAC_OVERRIDE]
+    mem_limit: 64m
+    pids_limit: 32
+    restart: "no"
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - chown -R 10001:10001 /fluent-bit/state && chmod 0750 /fluent-bit/state
+    volumes:
+      - fluent_bit_state:/fluent-bit/state
+
   fluent-bit:
     <<: *container-security
     image: cr.fluentbit.io/fluent/fluent-bit:3.2
@@ -347,7 +363,12 @@ services:
     pids_limit: 128
 
     depends_on:
-      - loki
+      fluent-bit-state-init:
+        condition: service_completed_successfully
+      loki:
+        condition: service_started
+      opensearch:
+        condition: service_healthy
 
     command:
       - --config=/fluent-bit/etc/fluent-bit.conf
@@ -355,6 +376,8 @@ services:
     volumes:
       - ./observability/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - user_api_logs:/logs:ro
+      - learning_api_logs:/learning-logs:ro
+      - jwks_api_logs:/jwks-logs:ro
       - fluent_bit_state:/fluent-bit/state
 
   grafana:
