@@ -1,0 +1,178 @@
+{
+  "uid": "springboot-application-logs",
+  "title": "Application logs",
+  "description": "Live structured logs from the User, Learning, and JWKS APIs. Select services and levels, or expand a log line to inspect its fields.",
+  "tags": [
+    "springboot",
+    "logs",
+    "loki"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": true,
+  "refresh": "10s",
+  "time": {
+    "to": "now",
+    "from": "now-15m"
+  },
+  "templating": {
+    "list": [
+      {
+        "query": "label_values({job=\"springboot\"}, service)",
+        "options": [],
+        "datasource": {
+          "type": "loki",
+          "uid": "loki"
+        },
+        "allValue": ".*",
+        "includeAll": true,
+        "name": "service",
+        "type": "query",
+        "definition": "label_values({job=\"springboot\"}, service)",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "label": "Service",
+        "multi": true,
+        "refresh": 1,
+        "sort": 1
+      },
+      {
+        "options": [
+          {
+            "selected": true,
+            "value": "$__all",
+            "text": "All"
+          },
+          {
+            "selected": false,
+            "value": "TRACE",
+            "text": "TRACE"
+          },
+          {
+            "selected": false,
+            "value": "DEBUG",
+            "text": "DEBUG"
+          },
+          {
+            "selected": false,
+            "value": "INFO",
+            "text": "INFO"
+          },
+          {
+            "selected": false,
+            "value": "WARN",
+            "text": "WARN"
+          },
+          {
+            "selected": false,
+            "value": "ERROR",
+            "text": "ERROR"
+          }
+        ],
+        "allValue": ".*",
+        "type": "custom",
+        "includeAll": true,
+        "label": "Level",
+        "query": "TRACE,DEBUG,INFO,WARN,ERROR",
+        "name": "level",
+        "multi": true,
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        }
+      }
+    ]
+  },
+  "panels": [
+    {
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "line",
+            "fillOpacity": 15
+          },
+          "min": 0,
+          "unit": "ops"
+        },
+        "overrides": []
+      },
+      "id": 1,
+      "gridPos": {
+        "y": 0,
+        "w": 24,
+        "h": 7,
+        "x": 0
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "title": "Log entries per second",
+      "targets": [
+        {
+          "expr": "sum by (service) (rate({job=\"springboot\", service=~\"${service:regex}\"} | json | level=~\"${level:regex}\" | __error__=\"\" [$__interval]))",
+          "editorMode": "code",
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "queryType": "range",
+          "legendFormat": "{{service}}"
+        }
+      ],
+      "type": "timeseries",
+      "options": {
+        "legend": {
+          "placement": "bottom",
+          "displayMode": "list"
+        },
+        "tooltip": {
+          "sort": "none",
+          "mode": "multi"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "gridPos": {
+        "y": 7,
+        "w": 24,
+        "h": 18,
+        "x": 0
+      },
+      "targets": [
+        {
+          "maxLines": 1000,
+          "expr": "{job=\"springboot\", service=~\"${service:regex}\"} | json | level=~\"${level:regex}\"",
+          "editorMode": "code",
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "queryType": "range"
+        }
+      ],
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "type": "logs",
+      "options": {
+        "showLabels": false,
+        "enableLogDetails": true,
+        "showCommonLabels": true,
+        "sortOrder": "Descending",
+        "prettifyLogMessage": true,
+        "wrapLogMessage": true,
+        "dedupStrategy": "none",
+        "showTime": true
+      },
+      "title": "Application logs"
+    }
+  ]
+}

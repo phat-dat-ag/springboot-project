@@ -58,8 +58,8 @@ JSON application log files are mounted read-only into Fluent Bit:
 - JWKS: /jwks-logs/jwks-api.log -> springboot-jwks-logs
 
 Fluent Bit adds environment=development and flushes every five seconds.
-The existing User API output to Loki is preserved; Learning and JWKS outputs
-are currently OpenSearch only. Each input has its own persistent SQLite tail
+All three applications also send logs to Loki; see the [Grafana guide](../grafana/README.md).
+Each input has its own persistent SQLite tail
 checkpoint. Generate_ID prevents duplicate documents on output retries.
 
 The fluent-bit-state-init service fixes ownership of the state volume to
