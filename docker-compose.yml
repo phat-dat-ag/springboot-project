@@ -407,6 +407,8 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./observability/grafana/provisioning/datasources/loki.yml:/etc/grafana/provisioning/datasources/loki.yml:ro
+      - ./observability/grafana/provisioning/dashboards/application-logs.yml:/etc/grafana/provisioning/dashboards/application-logs.yml:ro
+      - ./observability/grafana/dashboards:/etc/grafana/dashboards:ro
 
   opensearch:
     <<: *container-security
