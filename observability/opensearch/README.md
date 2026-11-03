@@ -38,7 +38,7 @@ docker compose -p springboot_project up -d opensearch opensearch-dashboards flue
 powershell -NoProfile -ExecutionPolicy Bypass -File .\observability\opensearch\setup-dashboards.ps1 -DashboardsUrl http://localhost:5677
 ~~~
 
-For a fresh installation, configure the existing .env and jwks-keys.env requirements
+For a fresh installation, configure .env, .env.user-api and .env.jwks-api from their matching .example files
 and run docker compose -p springboot_project up -d --build first.
 Use your actual Dashboards port when running setup. Run setup after ingestion starts.
 
