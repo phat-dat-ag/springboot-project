@@ -191,7 +191,12 @@ services:
 
     volumes:
       - user_api_logs:/app/data/logs
-      - ./key:/run/keys/jwt:ro
+      - type: bind
+        source: ${USER_SIGNING_KEYS_DIR:-./key}
+        target: /run/keys/jwt
+        read_only: true
+        bind:
+          create_host_path: false
 
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-japanese_learning}
