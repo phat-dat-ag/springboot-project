@@ -130,7 +130,7 @@ services:
 
     command: ["migrate"]
     volumes:
-      - ${MIGRATION_PATH:-./db/migration}:/flyway/sql:ro
+      - ${USER_API_MIGRATION_PATH:-./db/migration/user}:/flyway/sql:ro
 
   flyway-postgres:
     <<: *container-security
@@ -167,7 +167,7 @@ services:
     command: ["migrate"]
 
     volumes:
-      - ${POSTGRES_MIGRATION_PATH:-./db/postgres/migration}:/flyway/sql:ro
+      - ${LEARNING_API_MIGRATION_PATH:-./db/migration/learning}:/flyway/sql:ro
   
   user-api:
     <<: *container-security
