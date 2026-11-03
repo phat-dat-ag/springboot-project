@@ -49,8 +49,10 @@ No issuer discovery is performed. Production JWT URL and issuer configuration is
 required; local addresses below are examples only. Compose supplies internal DNS
 addresses; do not use host loopback addresses between containers.
 
-The root `.env` configures User's indexed `APP_SECURITY_JWKS_KEYS_*` settings;
-`jwks-keys.env` configures JWKS Service's corresponding key IDs and paths. Both
+The `.env.user-api` file configures User's indexed `APP_SECURITY_SIGNING_KEYS_*` settings;
+`.env.jwks-api` configures JWKS Service's corresponding key IDs and paths.
+Copy the root `.env.example`, `.env.user-api.example` and `.env.jwks-api.example`
+to their respective names without `.example`, then fill the required values. Both
 currently mount `./key` read-only and validate matching private/public pairs at
 startup. **JWKS currently requires private keys even though it exposes only public
 components.** A public-key-only loader is a separate hardening opportunity; this

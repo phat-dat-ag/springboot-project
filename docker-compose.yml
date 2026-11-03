@@ -43,10 +43,11 @@ services:
     image: mysql:8.4@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-mydb}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
-      MYSQL_USER: ${MYSQL_USER:-datnguyen}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:?Set MYSQL_DATABASE in .env}
+      MYSQL_USER: ${MYSQL_USER:?Set MYSQL_USER in .env}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+
     ports:
       - "127.0.0.1:${MYSQL_HOST_PORT:-3336}:3306"
     volumes:
@@ -76,9 +77,10 @@ services:
       - /var/run/postgresql:rw,noexec,nosuid,nodev,size=16m,uid=999,gid=999,mode=0750
 
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-mydb}
-      POSTGRES_USER: ${POSTGRES_USER:-datnguyen}
+      POSTGRES_DB: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
+      POSTGRES_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+
       PGDATA: /var/lib/postgresql/data/pgdata
 
     ports:
@@ -114,15 +116,18 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      FLYWAY_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-japanese_learning}
-      FLYWAY_USER: ${MYSQL_USER:-japanese_learning}
+      FLYWAY_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:?Set MYSQL_DATABASE in .env}
+      FLYWAY_USER: ${MYSQL_USER:?Set MYSQL_USER in .env}
       FLYWAY_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
-      FLYWAY_CONNECT_RETRIES: "60"
+
+      FLYWAY_CONNECT_RETRIES: ${FLYWAY_CONNECT_RETRIES:-60}
       FLYWAY_LOCATIONS: filesystem:/flyway/sql
       JAVA_ARGS: -Duser.home=/tmp
+
       APP_LOG_DIR: ${APP_LOG_DIR:-/app/data/logs}
-      APP_NAME: ${APP_NAME:-user-api}
+      APP_NAME: ${FLYWAY_MYSQL_APP_NAME:-flyway-mysql}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
     command: ["migrate"]
     volumes:
       - ${MIGRATION_PATH:-./db/migration}:/flyway/sql:ro
@@ -151,10 +156,11 @@ services:
         condition: service_healthy
 
     environment:
-      FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-mydb}
-      FLYWAY_USER: ${POSTGRES_USER:-datnguyen}
+      FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?Set POSTGRES_DB in .env}
+      FLYWAY_USER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
       FLYWAY_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
-      FLYWAY_CONNECT_RETRIES: "60"
+
+      FLYWAY_CONNECT_RETRIES: ${FLYWAY_CONNECT_RETRIES:-60}
       FLYWAY_LOCATIONS: filesystem:/flyway/sql
       JAVA_ARGS: -Duser.home=/tmp
 
@@ -172,7 +178,7 @@ services:
     stop_grace_period: 45s
 
     env_file:
-      - .env
+      - ./.env.user-api
 
     tmpfs:
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777
@@ -199,19 +205,28 @@ services:
           create_host_path: false
 
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-japanese_learning}
-      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:-japanese_learning}
-      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+      # HTTP listener (container port matches health checks)
       SERVER_ADDRESS: 0.0.0.0
       SERVER_PORT: 8080
-      APP_LOG_DIR: /app/data/logs
-      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:?Set MYSQL_DATABASE in .env}
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER:?Set MYSQL_USER in .env}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD:?Set MYSQL_PASSWORD in .env}
+
+      # Authentication
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER in .env}
       JWT_JWK_SET_URI: ${USER_JWT_JWK_SET_URI:-http://jwks-api:8080/.well-known/jwks.json}
-
-      JWT_ISSUER: ${JWT_ISSUER:-japaneselearning-user-service}
       JWT_ACCESS_TOKEN_TTL_SECONDS: ${JWT_ACCESS_TOKEN_TTL_SECONDS:-900}
       JWT_REFRESH_TOKEN_TTL_DAYS: ${JWT_REFRESH_TOKEN_TTL_DAYS:-30}
+
+      # Logging
+      APP_LOG_DIR: /app/data/logs
+      APP_NAME: ${USER_API_APP_NAME:-user-api}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+
+      # Health probes
+      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
     ports:
       - "127.0.0.1:${USER_API_HOST_PORT:-8080}:8080"
@@ -250,21 +265,31 @@ services:
       - learning_api_logs:/app/data/logs
 
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-mydb}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-datnguyen}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      # HTTP listener (container port matches health checks)
       SERVER_ADDRESS: 0.0.0.0
       SERVER_PORT: 8080
-      APP_LOG_DIR: /app/data/logs
-      APP_NAME: learning-api
-      LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
-      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
+      # Database
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?Set POSTGRES_DB in .env}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+
+      # Authentication
+      JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER in .env}
       JWT_JWK_SET_URI: ${LEARNING_JWT_JWK_SET_URI:-http://jwks-api:8080/.well-known/jwks.json}
-      JWT_ISSUER: ${JWT_ISSUER:-japaneselearning-user-service}
       JWT_CLOCK_SKEW: ${JWT_CLOCK_SKEW:-60s}
-      JWKS_SERVICE_BASE_URL: http://jwks-api:8080
-      JWKS_SERVICE_GET_PUBLIC_KEYS: /.well-known/jwks.json
+
+      # JWKS diagnostic client
+      JWKS_SERVICE_BASE_URL: ${JWKS_SERVICE_BASE_URL:-http://jwks-api:8080}
+      JWKS_SERVICE_GET_PUBLIC_KEYS: ${JWKS_SERVICE_GET_PUBLIC_KEYS:-/.well-known/jwks.json}
+
+      # Logging
+      APP_LOG_DIR: /app/data/logs
+      APP_NAME: ${LEARNING_API_APP_NAME:-learning-api}
+      LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
+
+      # Health probes
+      MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
     ports:
       - "127.0.0.1:${LEARNING_API_HOST_PORT:-8081}:8080"
@@ -285,7 +310,7 @@ services:
     stop_grace_period: 45s
 
     env_file:
-      - ./jwks-keys.env
+      - ./.env.jwks-api
 
     tmpfs:
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777
@@ -298,14 +323,19 @@ services:
 
     volumes:
       - jwks_api_logs:/app/data/logs
-      - ./key:/run/keys/jwt:ro
+      - ${JWKS_KEYS_DIR:-./key}:/run/keys/jwt:ro
 
     environment:
+      # HTTP listener (container port matches health checks)
       SERVER_ADDRESS: 0.0.0.0
       SERVER_PORT: 8080
+
+      # Logging
       APP_LOG_DIR: /app/data/logs
-      APP_NAME: jwks-api
+      APP_NAME: ${JWKS_API_APP_NAME:-jwks-api}
       LOG_LEVEL: ${JWKS_API_LOG_LEVEL:-INFO}
+
+      # Health endpoints
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
@@ -406,6 +436,7 @@ services:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?Set GRAFANA_ADMIN_USER in .env}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?Set GRAFANA_ADMIN_PASSWORD in .env}
       GF_USERS_ALLOW_SIGN_UP: "false"
+
       GF_LOG_MODE: console
 
     ports:
@@ -430,11 +461,14 @@ services:
     pids_limit: 512
     environment:
       discovery.type: single-node
-      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      bootstrap.memory_lock: "false"
+
+      OPENSEARCH_JAVA_OPTS: ${OPENSEARCH_JAVA_OPTS:--Xms512m -Xmx512m}
+
       DISABLE_INSTALL_DEMO_CONFIG: "true"
       DISABLE_SECURITY_PLUGIN: "true"
       DISABLE_PERFORMANCE_ANALYZER_AGENT_CLI: "true"
-      bootstrap.memory_lock: "false"
+
     ulimits:
       nofile:
         soft: 65536
@@ -470,6 +504,7 @@ services:
     environment:
       OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
       DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+
     tmpfs:
       - /tmp:rw,nosuid,nodev,size=128m
     ports:
