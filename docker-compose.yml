@@ -240,6 +240,10 @@ services:
 
   learning-api:
     <<: *container-security
+
+    env_file:
+      - ./.env.learning-api
+
     mem_limit: 1g
     memswap_limit: 1g
     cpus: 2
@@ -263,6 +267,12 @@ services:
 
     volumes:
       - learning_api_logs:/app/data/logs
+      - type: bind
+        source: ${LEARNING_SIGNING_KEYS_DIR:-./data/keys/learning}
+        target: /run/keys/learning
+        read_only: true
+        bind:
+          create_host_path: false
 
     environment:
       # HTTP listener (container port matches health checks)
@@ -279,15 +289,22 @@ services:
       JWT_JWK_SET_URI: ${LEARNING_JWT_JWK_SET_URI:-http://jwks-api:8080/.well-known/jwks.json}
       JWT_CLOCK_SKEW: ${JWT_CLOCK_SKEW:-60s}
 
+      # Signing only.
+      LEARNING_INTERNAL_JWT_ENABLED: ${LEARNING_INTERNAL_JWT_ENABLED:-true}
+      LEARNING_INTERNAL_JWT_ISSUER: ${LEARNING_INTERNAL_JWT_ISSUER:-learning-service}
+      LEARNING_INTERNAL_JWT_AUDIENCE: ${LEARNING_INTERNAL_JWT_AUDIENCE:-user-service}
+      LEARNING_INTERNAL_JWT_TTL: ${LEARNING_INTERNAL_JWT_TTL:-60s}
+
       # JWKS diagnostic client
       JWKS_SERVICE_BASE_URL: ${JWKS_SERVICE_BASE_URL:-http://jwks-api:8080}
       JWKS_SERVICE_GET_PUBLIC_KEYS: ${JWKS_SERVICE_GET_PUBLIC_KEYS:-/.well-known/jwks.json}
 
-      # Phase 1/2 User Service HTTP client (no internal authentication yet)
+      # User Service HTTP client
       USER_SERVICE_BASE_URL: ${USER_SERVICE_BASE_URL:-http://user-api:8080}
       USER_SERVICE_GET_USER: ${USER_SERVICE_GET_USER:-/internal/users}
       USER_SERVICE_CONNECT_TIMEOUT: ${USER_SERVICE_CONNECT_TIMEOUT:-3s}
       USER_SERVICE_READ_TIMEOUT: ${USER_SERVICE_READ_TIMEOUT:-5s}
+      USER_SERVICE_INTERNAL_JWT_ENABLED: ${USER_SERVICE_INTERNAL_JWT_ENABLED:-false}
 
       # Logging
       APP_LOG_DIR: /app/data/logs
