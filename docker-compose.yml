@@ -283,6 +283,12 @@ services:
       JWKS_SERVICE_BASE_URL: ${JWKS_SERVICE_BASE_URL:-http://jwks-api:8080}
       JWKS_SERVICE_GET_PUBLIC_KEYS: ${JWKS_SERVICE_GET_PUBLIC_KEYS:-/.well-known/jwks.json}
 
+      # Phase 1/2 User Service HTTP client (no internal authentication yet)
+      USER_SERVICE_BASE_URL: ${USER_SERVICE_BASE_URL:-http://user-api:8080}
+      USER_SERVICE_GET_USER: ${USER_SERVICE_GET_USER:-/internal/users}
+      USER_SERVICE_CONNECT_TIMEOUT: ${USER_SERVICE_CONNECT_TIMEOUT:-3s}
+      USER_SERVICE_READ_TIMEOUT: ${USER_SERVICE_READ_TIMEOUT:-5s}
+
       # Logging
       APP_LOG_DIR: /app/data/logs
       APP_NAME: ${LEARNING_API_APP_NAME:-learning-api}
