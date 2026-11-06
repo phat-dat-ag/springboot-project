@@ -1,152 +1,128 @@
-# JWT authentication across services
+# JWT authentication and unified JWKS
 
-User Service signs access tokens with its single active RSA private key (RS256).
-JWKS Service independently publishes **all** configured public keys at
-`/.well-known/jwks.json`, including inactive signing keys. Learning Service uses
-Spring Security Resource Server and Nimbus to verify bearer tokens against that
-independent endpoint. It does not call User Service during authentication and has
-no key-file mounts. User Service's existing JWKS endpoint remains unchanged.
+## Trust and routes
 
-## Verification and authorization
+JWKS exposes one public GET mapping, `/api/v1/jwks/{owner}`. Supported lowercase owners are
+`user` and `learning`; unknown or missing owners return 404 without any keys. Each response is
+standard unwrapped `{"keys":[...]}`, with five-minute public caching and no private or owner fields.
+Retired `/.well-known/jwks.json` and `/.well-known/learning/jwks.json` have no compatibility routes.
 
-`GET /api/v1/learning/me` accepts roles 1 (USER) and 2 (ADMIN). Spring Security
-extracts the bearer token, verifies its signature using the trusted JWKS key
-matching header `kid`, validates claims, and creates a `JwtAuthenticationToken`.
-The controller only reads that authenticated principal and uses the existing
-APIResponse envelope. No database lookup is needed.
+| Consumer | Trusted key source inside Docker | Claims/policy |
+| --- | --- | --- |
+| User external decoder | `http://jwks-api:8080/api/v1/jwks/user` | Existing User issuer and User/Admin roles |
+| Learning inbound decoder | `http://jwks-api:8080/api/v1/jwks/user` | Existing User issuer, time/required-claim checks and User/Admin roles |
+| User internal decoder | `http://jwks-api:8080/api/v1/jwks/learning` | Learning issuer/subject, User audience, RS256, internal+jwt, required kid/jti/iat/exp |
+| Learning diagnostic client | `http://jwks-api:8080/api/v1/jwks/user` | Public-key retrieval only |
 
-Only RS256 is accepted. The configured issuer must match exactly; `exp`, `iat`,
-`sub` and a nonblank `kid` are required. Expiration and optional `nbf` use the
-configured clock skew; future `iat` beyond skew and `exp <= iat` are rejected.
-User Service currently issues no audience or username, so neither is required or
-returned. Audience validation should be added together with an issuing-contract
-change if service-specific audiences are introduced.
+Trusted URLs are explicit configuration, never selected from unverified token claims. Internal
+and external key sets remain separate even if a malicious token copies another issuer's claims.
+Ownership is a required operator-configured enum, not inferred from key-ID prefixes.
 
-Nimbus handles key selection, in-memory JWKS caching (framework default: five
-minutes), and refresh on an unfamiliar `kid`. Authentication does not fetch keys
-on every request. A cached matching key can validate during an outage while usable;
-retrieval failures without a usable key return 401. Unknown keys never bypass
-verification. See the [Spring Security reference](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html).
+User has ordered, stateless security chains. `/internal/**` uses only the internal decoder;
+GET `/internal/users/*` requires `SERVICE_LEARNING`, and other internal requests are denied.
+Missing or invalid tokens, including user JWTs, return 401. A valid service identity denied by
+route policy receives 403. External endpoints retain their existing User/Admin authorization;
+Learning tokens cannot authenticate there. No internal token is mapped to User/Admin roles.
 
-Missing, malformed, expired, tampered, wrong-issuer and unverifiable tokens return
-401 with the standard bearer challenge. Valid tokens without either supported
-role return 403. These are Spring Security responses, outside controller advice.
-Public health, Swagger, `/test`, and existing integration routes remain public.
-The API uses stateless bearer authentication, with CSRF disabled and no session login.
+Learning generates a fresh RS256 Internal JWT on each User-client request: `typ=internal+jwt`,
+active Learning `kid`, `iss=sub=learning-service`, `aud=user-service`, current `iat`, `exp=iat+60s`
+and random `jti`. The incoming user JWT is never forwarded. Unrelated clients receive no token.
+Signature, issuer, subject, audience, type and time checks are separate from authorization.
+A random jti does not itself provide replay protection. Production deployments should protect
+bearer-token transport with TLS and restrict service network access.
 
-## Configuration
+## Environment ownership
 
-| Variable | Purpose |
+The root `.env` supplies Compose interpolation, not arbitrary container variables. Compose maps
+selected values explicitly. `.env.user-api`, `.env.learning-api` and `.env.jwks-api` are loaded
+only into their respective service. Copy their `.example` files for a new checkout. Real files
+are Git-ignored; preserve credentials and do not paste PEM contents or JWTs into any environment.
+
+| Root variable | Consumer / purpose | Development value |
+| --- | --- | --- |
+| `JWT_ISSUER` | Existing User token issuer shared by both external decoders | Preserve existing deployment value |
+| `USER_JWT_JWK_SET_URI` | User external key source | `http://jwks-api:8080/api/v1/jwks/user` |
+| `LEARNING_JWT_JWK_SET_URI` | Learning inbound key source | `http://jwks-api:8080/api/v1/jwks/user` |
+| `INTERNAL_JWT_JWK_SET_URI` | User internal key source | `http://jwks-api:8080/api/v1/jwks/learning` |
+| `INTERNAL_JWT_ISSUER` | Trusted internal issuer | `learning-service` |
+| `INTERNAL_JWT_SUBJECT` | Required service identity | `learning-service` |
+| `INTERNAL_JWT_AUDIENCE` | Required recipient | `user-service` |
+| `INTERNAL_JWT_CLOCK_SKEW` | Internal time tolerance, 0..30s | `5s` |
+| `INTERNAL_JWT_MAX_LIFETIME` | Maximum issued lifetime, 1..300s | `300s` |
+| `LEARNING_INTERNAL_JWT_ENABLED` | Enable Learning signer | `true` |
+| `LEARNING_INTERNAL_JWT_ISSUER` | Learning issuer and subject | `learning-service` |
+| `LEARNING_INTERNAL_JWT_AUDIENCE` | Learning token recipient | `user-service` |
+| `LEARNING_INTERNAL_JWT_TTL` | Issued lifetime, whole seconds, 1..300s | `60s` |
+| `USER_SERVICE_INTERNAL_JWT_ENABLED` | Attach generated token to User requests | `true` |
+| `USER_SERVICE_BASE_URL` | Intended User destination | `http://user-api:8080` |
+| `USER_SERVICE_GET_USER` | Internal lookup path | `/internal/users` |
+| `USER_SERVICE_CONNECT_TIMEOUT` / `USER_SERVICE_READ_TIMEOUT` | Existing finite HTTP timeouts | `3s` / `5s` |
+| `JWKS_SERVICE_BASE_URL` / `JWKS_SERVICE_GET_PUBLIC_KEYS` | Learning diagnostic client | `http://jwks-api:8080` / `/api/v1/jwks/user` |
+| `USER_SIGNING_KEYS_DIR` / `JWKS_KEYS_DIR` | Host source directory for existing User files | `./key` |
+| `LEARNING_SIGNING_KEYS_DIR` | Host source directory for Learning files | `./data/keys/learning` |
+
+Type `internal+jwt` and algorithm RS256 are fixed security-profile constants, not permissive
+runtime settings. User's internal properties bind under `app.security.internal-jwt`; Learning's
+outbound signing properties use the same prefix independently in its own process.
+
+Indexed private-key variables in each signer's env file are
+`APP_SECURITY_SIGNING_KEYS_<n>_KID`, `..._PRIVATEKEYPATH`, and `..._ACTIVE`.
+Each signer requires exactly one active key. User's first-key legacy PRIVATE_KEY_PATH spelling
+is accepted as a fallback only; use canonical PRIVATEKEYPATH for all indices.
+JWKS variables are `APP_SECURITY_JWKS_KEYS_<n>_KID`, `..._PUBLICKEYPATH`, and `..._OWNER`.
+Use consecutive indices and unique IDs across owners. JWKS has no active-key-count restriction.
+All configured public keys for an owner are published, including retained rotation keys.
+
+## Key files and mounts
+
+No files need moving, copying or regeneration:
+
+```text
+key/
+  userservice-private-v1.pem
+  userservice-private-v2.pem
+  userservice-public-v1.pem
+  userservice-public-v2.pem
+data/keys/learning/
+  learningservice-private-v1.pem
+  learningservice-public-v1.pem
+```
+
+Compose uses read-only, individual-file bind mounts with host-path creation disabled:
+
+| Container | Mounted key files |
 | --- | --- |
-| `JWT_ISSUER` | Exact issuer used by User and trusted by Learning |
-| `JWT_JWK_SET_URI` | Full independent JWKS endpoint for a locally launched Learning process |
-| `LEARNING_JWT_JWK_SET_URI` | Optional Compose override; defaults to `http://jwks-api:8080/.well-known/jwks.json` |
-| `JWT_CLOCK_SKEW` | Learning time tolerance, default `60s`; nonnegative duration |
-| `JWKS_SERVICE_BASE_URL` | Existing public-key diagnostic client's base URL |
-| `JWKS_SERVICE_GET_PUBLIC_KEYS` | Existing client's endpoint path |
+| User | Its two private PEMs at `/run/keys/jwt/` |
+| Learning | Its private PEM at `/run/keys/learning/` |
+| JWKS | User's two public PEMs at `/run/keys/jwt/` and Learning's public PEM at `/run/keys/learning/` |
 
-No issuer discovery is performed. Production JWT URL and issuer configuration is
-required; local addresses below are examples only. Compose supplies internal DNS
-addresses; do not use host loopback addresses between containers.
+No private key is mounted into JWKS. Windows paths identify host files; `/run/keys/...` paths
+are inside Linux containers. Files must be readable by runtime UID 10001. Adding rotation keys
+requires another explicit file mount and indexed entry. Publish the new public key before
+selecting its private key, retain old public keys until tokens and caches expire, then retire.
+`kid` values must match the corresponding signer's header and must not be reused for new material.
 
-The `.env.user-api` file configures User's indexed `APP_SECURITY_SIGNING_KEYS_*` settings;
-`.env.jwks-api` configures JWKS Service's corresponding key IDs and paths.
-Copy the root `.env.example`, `.env.user-api.example` and `.env.jwks-api.example`
-to their respective names without `.example`, then fill the required values. Both
-currently mount `./key` read-only and validate matching private/public pairs at
-startup. **JWKS currently requires private keys even though it exposes only public
-components.** A public-key-only loader is a separate hardening opportunity; this
-implementation preserves the existing key distribution. Never copy keys into Learning.
+## Build and deployment
 
-## Local development (PowerShell)
+Run `mvnw.cmd -B -ntp verify` in each submodule. Tests use generated keys and local HTTP servers.
+Internal authentication tests use real decoders and both filter chains, including cross-issuer
+spoofing and malformed/expired tokens. HTTP-client tests verify signature and per-request token
+attachment without forwarding caller credentials. No production token or private key is logged.
 
-Run JWKS and User with their existing key configuration and databases first.
-For Learning, point its datasource variables at the local PostgreSQL instance,
-then set (using the ports currently configured in the root `.env`):
+From the root (Windows CMD):
 
-```powershell
-$env:JWT_ISSUER='japaneselearning-user-service'
-$env:JWT_JWK_SET_URI='http://127.0.0.1:8781/.well-known/jwks.json'
-$env:JWKS_SERVICE_BASE_URL='http://127.0.0.1:8781'
-$env:JWKS_SERVICE_GET_PUBLIC_KEYS='/.well-known/jwks.json'
-$env:SERVER_PORT='8783'
-cd springboot-learning-api
-./mvnw.cmd spring-boot:run
-```
-
-## Docker and example requests
-
-From the root:
-
-```sh
+```cmd
 docker compose config --quiet
-docker compose up -d --build user-api jwks-api learning-api
+docker compose -p springboot_project up -d --build --no-deps jwks-api user-api learning-api
+curl.exe http://localhost:8783/api/v1/jwks/user
+curl.exe http://localhost:8783/api/v1/jwks/learning
+curl.exe -i http://localhost:8781/internal/users/f05bf709-5cb8-4a4c-9ac4-e537b5579aef
 ```
 
-Compose retains existing databases, migrations, ports and key mounts. Learning can
-start without contacting JWKS; its first authenticated request needs JWKS or a
-usable cached key. Existing `.env` host ports are User 8782, JWKS 8781, Learning 8783;
-check your own overrides before using these examples. Container traffic uses 8080.
+Host ports are examples from the current deployment; inspect your root overrides. Container
+traffic always uses Docker service names and port 8080. Do not run `down -v` or recreate databases.
+For a local IDE process, explicitly supply host-accessible JWKS URLs and Windows private-file
+paths; Compose env files are not automatically loaded by Java. Enable both Learning signing and
+outbound attachment for a local authenticated integration run.
 
-```sh
-curl -X POST http://127.0.0.1:8782/auth/login \
-  -H 'Content-Type: application/json' \
-  -d '{"usernameOrEmail":"your-user","password":"your-password"}'
-# Copy data.accessToken into TOKEN without sharing or logging it.
-curl http://127.0.0.1:8783/api/v1/learning/me -H "Authorization: Bearer $TOKEN"
-curl -i http://127.0.0.1:8783/api/v1/learning/me
-curl -i http://127.0.0.1:8783/api/v1/learning/me -H 'Authorization: Bearer invalid'
-```
-
-Successful response (metadata values vary):
-
-```json
-{"success":true,"data":{"userId":"42","authorities":["ROLE_USER","FACTOR_BEARER"],"issuer":"japaneselearning-user-service"},"meta":{"timestamp":"...","correlationId":"..."}}
-```
-
-The last two requests return 401. A correctly signed token with a missing or
-unsupported role returns 403. Changing a role in an existing token invalidates its
-signature and returns 401, not 403.
-
-## Rotation
-
-1. Generate a new RSA pair and assign a new unique `kid`; do not reuse a key ID.
-2. Add the new pair to existing key configuration. Publish it in JWKS before User
-   starts signing with it. Providers load files at startup, so recreate/restart
-   the affected service after changing configuration.
-3. Keep exactly one User signing key active; switch it to the new key. The JWKS
-   provider also currently requires exactly one active flag but publishes every key.
-4. Retain old verification keys until every token they signed has expired, including
-   clock skew. Learning refreshes for the new `kid` and continues accepting old tokens.
-5. Remove retired keys later. Cached keys can remain trusted until cache refresh;
-   removal is not instantaneous revocation. Logout/refresh-token revocation does
-   not revoke already issued access tokens in Learning.
-
-## Automated verification
-
-Run `./mvnw.cmd -B -ntp test` inside each submodule. Learning's tests generate RSA
-keys in memory and use a local HTTP JWKS server with the actual Nimbus decoder and
-Spring Security filter chain. They cover both signing keys, rotation refresh,
-cache reuse/outages, roles, 401/403, signature/payload tampering, issuer, algorithm,
-required claims, expiration, nbf, future iat and clock skew. No production keys are
-used by tests. Existing User/JWKS tests remain unchanged.
-
-## Verification performed for this change
-
-- Learning: 24 tests passed (22 JWT integration/cache tests and 2 existing tests).
-- User: 26 existing tests passed.
-- JWKS: 31 tests passed; the existing `LoggingConfigurationTest` failed because
-  its full application context supplies no RSA configuration (`At least one RSA
-  key must be configured`). No JWKS source files were changed.
-- `docker compose config --quiet` and the Learning Docker image build passed.
-- Live Docker registration/login through User followed by `/api/v1/learning/me`
-  succeeded with ROLE_USER and the framework's FACTOR_BEARER authority. Missing
-  and malformed bearer tokens returned 401. The independent JWKS exposed both
-  `user-rsa-v1` and `user-rsa-v2`; Learning's runtime URL was the `jwks-api` DNS
-  endpoint and its only volume mount was the log directory.
-- Live smoke testing created account `jwt-smoke-9a3832331f58` in the local User
-  database. Its randomly generated password was not retained. No existing users
-  or databases were modified or migrated.
-- Both-key verification and rotation were exercised with generated test keys;
-  the live smoke test used User's currently active signing key without changing
-  deployment key configuration.
+See `SECURITY-INTEGRATION-REPORT.md` for checks actually performed and manual Git delivery.
