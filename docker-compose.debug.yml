@@ -1,0 +1,24 @@
+# Optional local debugging: include explicitly alongside docker-compose.yml.
+# Values come from the shell or root .env, not service env_file files.
+# No DEBUG_ENABLED flags: including this override enables JDWP for all three APIs.
+services:
+  user-api:
+    environment:
+      JAVA_TOOL_OPTIONS: >-
+        ${USER_API_JAVA_TOOL_OPTIONS:--agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${USER_API_DEBUG_PORT:-5005}}
+    ports:
+      - "127.0.0.1:${USER_API_DEBUG_PORT:-5005}:${USER_API_DEBUG_PORT:-5005}"
+
+  learning-api:
+    environment:
+      JAVA_TOOL_OPTIONS: >-
+        ${LEARNING_API_JAVA_TOOL_OPTIONS:--agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${LEARNING_API_DEBUG_PORT:-5006}}
+    ports:
+      - "127.0.0.1:${LEARNING_API_DEBUG_PORT:-5006}:${LEARNING_API_DEBUG_PORT:-5006}"
+
+  jwks-api:
+    environment:
+      JAVA_TOOL_OPTIONS: >-
+        ${JWKS_API_JAVA_TOOL_OPTIONS:--agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:${JWKS_API_DEBUG_PORT:-5007}}
+    ports:
+      - "127.0.0.1:${JWKS_API_DEBUG_PORT:-5007}:${JWKS_API_DEBUG_PORT:-5007}"
