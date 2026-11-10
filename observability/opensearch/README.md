@@ -22,7 +22,7 @@ The Application logs saved search includes service, level, message, HTTP fields,
 and correlationId. Set an automatic refresh interval in the time picker if desired.
 
 Example DQL filters:
-- service: "user"
+- service: "user-learning"
 - service: "learning-api"
 - service: "jwks-service"
 - level: ERROR

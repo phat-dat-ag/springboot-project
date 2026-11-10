@@ -1,0 +1,221 @@
+# Observability baseline and standards
+
+Phase 0 establishes configuration and identity, not production readiness. Start
+with [the verification record](phase0-baseline.md) for what was actually checked
+and [the phase plan](phase-plan.md) for acceptance gates. Backend-specific usage
+remains in [Grafana](grafana/README.md) and [OpenSearch](opensearch/README.md).
+
+The subsequent deployment and live authentication/ingestion checks are recorded
+in [Phase 0 runtime verification](phase0-runtime-verification.md).
+
+## Current and target architecture
+
+Current: SLF4J -> Logback JSON console + rolling file -> shared application log
+volumes -> Fluent Bit -> Loki/Grafana and OpenSearch/Dashboards. Micrometer local
+instrumentation exists in all APIs; only User includes a tracing bridge/OTel SDK.
+No Prometheus, Tempo, or OTel Collector is deployed. File logging is not OTLP.
+
+Target, implemented in later phases: consistent structured application logs with
+safe correlation -> durable collection -> log storage; Micrometer -> Prometheus
+-> Grafana; Micrometer Tracing/OTel -> OTel Collector -> Tempo -> Grafana. Keep
+the current log path until a tested migration is approved. Decide whether both
+log stores remain necessary; no backend is removed in Phase 0.
+
+## Canonical identity
+
+| API | Canonical `service.name` / Spring application name | Compose DNS | Log filename |
+| --- | --- | --- | --- |
+| User | `user-learning` | `user-api` | `user-api.log` |
+| Learning | `learning-api` | `learning-api` | `learning-api.log` |
+| JWKS | `jwks-service` | `jwks-api` | `jwks-api.log` |
+
+These deliberately preserve existing Loki labels and indexed records. Historical
+documentation sometimes called User `user`; query `user-learning` for this stack.
+JWT issuer/subject names identify authentication contracts, not observability
+resources; do not rename them to match this table.
+
+| Concept | Configuration source | JSON field | OTel resource attribute |
+| --- | --- | --- | --- |
+| Service identity | `spring.application.name` / `SPRING_APPLICATION_NAME` | `service` | `service.name` |
+| Release version | `app.version` / `APP_VERSION`, otherwise Maven `project.version` | `serviceVersion` | `service.version` |
+| Deployment environment | `app.deployment-environment` / `DEPLOYMENT_ENVIRONMENT`, default `development` | `environment` | `deployment.environment.name` |
+
+`deployment.environment` is the conceptual/legacy name; current OTel semantic
+conventions use [`deployment.environment.name`](https://opentelemetry.io/docs/specs/semconv/resource/deployment-environment/).
+Do not emit both OTel attributes. JSON fields are application fields, not a claim
+that an SDK exported them. The `management.opentelemetry.resource-attributes[...]`
+map is ready for services with the OTel integration; it has no export effect by
+itself. No second service-name variable or `OTEL_SERVICE_NAME` is introduced.
+
+Use bounded, nonsecret values: names `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`; release
+versions use the same characters up to 128 characters. Environments are
+`development`, `test`, `staging`, `production`. Do not put URLs, tokens, usernames,
+customer IDs, quotes or arbitrary JSON into metadata. Phase 0 documents these
+constraints; application-level rejection of unsafe metadata is not implemented.
+
+`APP_NAME` controls the file basename, not `service.name`. Keep current basenames
+until Fluent Bit paths are migrated together. Do not put request/trace IDs into
+Loki labels or meter tags. `serviceVersion` remains in the log body, not a label.
+
+## JSON request-event contract
+
+Phase 0 adds only stable version/environment fields to existing Logback custom
+fields and suppresses duplicate Logback context-property output. Existing MDC
+keys and request filters remain unchanged. The following migration is Phase 1:
+
+| Concept | Current JSON | Phase 1 canonical JSON | Type / rule |
+| --- | --- | --- | --- |
+| Correlation | `correlationId` | `correlationId` | Validated opaque string |
+| Trace | `traceId` | `traceId` | Instrumentation-owned 32 lowercase hex characters |
+| Span | `spanId` | `spanId` | Instrumentation-owned 16 lowercase hex characters |
+| HTTP method | `httpMethod` | `http.request.method` | Bounded method or `OTHER` |
+| Route | `uri` | `http.route` | Matched route template or `UNMATCHED`, never raw sensitive paths |
+| HTTP status | `status` | `http.response.status_code` | Integer |
+| Elapsed time | `elapsed_ms` | `durationMs` | Nonnegative number measured with a monotonic clock |
+| Outcome | Absent | `outcome` | `success` (1xx-3xx), `client_error` (4xx), `server_error` (5xx), otherwise `unknown` |
+
+`durationMs` and `outcome` are application-log conventions, not OTel resource
+attributes or replacements for native metric/span units/status. Route/method/status
+names follow HTTP semantic concepts. In particular, a 4xx server response does
+not automatically imply an OTel error span: follow the instrumentation convention.
+Do not fill absent trace IDs with UUIDs, `unknown`, or the correlation ID.
+Phase 1 must coordinate collector, index mappings, dashboard queries and tests
+before changing legacy fields. Do not create contradictory aliases.
+
+## Correlation and trace-context standard
+
+Documented for Phase 1/3; not fully applied by Phase 0:
+
+1. Accept exactly one `X-Correlation-ID` matching
+   `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`. Reject ambiguous duplicate, blank,
+   oversized/control-character values by replacing them with a new UUID. Do not
+   reject the business request solely because a diagnostic ID is malformed.
+2. Put the chosen ID in MDC before security and return it on the response,
+   including rejected requests where a response can be written. Propagate the
+   same ID through managed outgoing clients; generate one for a background call
+   only when there is no valid current ID.
+3. Scope and restore MDC on normal, error and async execution. No pooled-thread
+   leakage; asynchronous tasks require explicit context propagation. Do not clear
+   another scope's tracing fields indiscriminately.
+4. Correlation IDs are caller-controlled diagnostics, never authenticated identity,
+   authorization evidence or proof that requests belong to the same trusted user.
+5. Let tracing instrumentation validate, extract and inject W3C `traceparent` and
+   `tracestate`. Do not hand-build trace headers, blindly copy untrusted raw values,
+   or treat JWKS's `callerTraceId`/`callerSpanId` diagnostics as SDK spans.
+6. Maintain distinct correlation and trace identities. One trace has multiple
+   spans; the receiver creates its own server span rather than reusing the sender's
+   span ID. Never put secrets or PII in diagnostic headers or baggage.
+
+Current difference: User/Learning always generate a new correlation ID on ingress;
+JWKS already accepts a validated incoming ID. Existing caller interceptors preserve
+trace headers but do not themselves generate traces. Phase 1 fixes correlation;
+Phase 3 establishes and verifies tracing across the actual HTTP boundary.
+
+## Configuration conventions
+
+Root `.env` supplies Compose interpolation; `.env.<service>` supplies service
+container variables. Module `.env.example` documents standalone JVM settings.
+Spring Boot does not load `.env` files automatically. Compose `environment` wins
+over service `env_file`; shell values win over root `.env` interpolation.
+
+| Variable | Effective property / policy |
+| --- | --- |
+| `SPRING_APPLICATION_NAME` | Existing canonical Spring identity; configure per-service only if deliberately migrating |
+| `APP_VERSION` | Optional release override; default is build version, not a copied fixed Compose version |
+| `DEPLOYMENT_ENVIRONMENT` | Shared root Compose value, default `development`, supplied to APIs and Fluent Bit |
+| `APP_NAME`, `APP_LOG_DIR` | Existing filename/path conventions; volumes and collector paths must agree |
+| `LOG_LEVEL` | Standalone root logger; Compose retains existing `LOG_LEVEL`, `LEARNING_API_LOG_LEVEL`, `JWKS_API_LOG_LEVEL` mapping |
+| `MANAGEMENT_METRICS_ENABLE_ALL` | `management.metrics.enable.all`, default true; local instrumentation only |
+| `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE` | Health only by default; never `*` in baseline |
+| `MANAGEMENT_TRACING_ENABLED` | `management.tracing.enabled`, default true; requires tracing dependencies |
+| `MANAGEMENT_TRACING_SAMPLING_PROBABILITY` | User default 1.0 preserved; others retain framework baseline 0.1 for future integration |
+| `MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED` | `management.otlp.metrics.export.enabled`, default false |
+| `MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED` | `management.tracing.export.otlp.enabled`, default false |
+| `MANAGEMENT_LOGGING_EXPORT_OTLP_ENABLED` | `management.logging.export.otlp.enabled`, default false |
+
+Keep user sampling at 1.0 for compatibility in Phase 0, not as a production
+recommendation. Sampling/load budgets will be chosen in Phase 3. Do not add a
+configurable correlation-header name now: all existing consumers use the fixed
+`X-Correlation-ID`, and an unused flag would imply support that does not exist.
+
+Future destinations are deliberately absent from active configuration:
+
+| Later-phase setting | Supported Boot 4.1 property / direct environment spelling |
+| --- | --- |
+| Trace OTLP destination | `management.opentelemetry.tracing.export.otlp.endpoint` / `MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT` |
+| Trace transport | `management.opentelemetry.tracing.export.otlp.transport` / `MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_TRANSPORT` (`http` or `grpc`) |
+| Log OTLP destination | `management.opentelemetry.logging.export.otlp.endpoint` / `MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_ENDPOINT` |
+| Log transport | `management.opentelemetry.logging.export.otlp.transport` / `MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_TRANSPORT` |
+| Micrometer OTLP metrics destination | `management.otlp.metrics.export.url` / `MANAGEMENT_OTLP_METRICS_EXPORT_URL` (HTTP/protobuf) |
+
+When the Collector exists, use its service DNS rather than `localhost` inside
+containers. HTTP signal endpoints use `/v1/traces`, `/v1/metrics`, `/v1/logs`;
+gRPC uses the configured gRPC endpoint without those HTTP paths. Typical ports
+4318/4317 are future receiver conventions, not active ports in this stack.
+Prometheus scrape/registry and Tempo datasource settings are deferred. Do not
+enable native `OTEL_*` SDK autoconfiguration alongside Boot properties without
+documenting precedence; it can contradict this baseline. Do not enable SDK metrics
+and a Micrometer exporter for the same instruments unintentionally.
+
+## Dependency compatibility
+
+There is no root Maven aggregator or parent POM. Each submodule has an independent
+Spring Boot parent, Java 17 target and Maven Wrapper. Do not run a root Maven build.
+
+| Component | User | Learning | JWKS |
+| --- | --- | --- | --- |
+| Spring Boot parent | 4.1.1 | 4.1.2 | 4.1.2 |
+| Java target | 17 | 17 | 17 |
+| Docker build/runtime JDK | 21 / 21 | 21 / 21 | 17 / 17 |
+| Logstash encoder | 8.1 | 8.1 | 8.1 |
+| Logback from resolved test classpaths | 1.5.38 | 1.5.38 | 1.5.38 |
+| Micrometer Core | 1.17.1 | 1.17.2 | 1.17.2 |
+| Actuator | Present | Present | Present |
+| Micrometer Tracing / OTel bridge | 1.7.1 / present | Absent | Absent |
+| OTel API/SDK/exporter | 1.62.0, transitive starter | Absent | Absent |
+| OTLP metrics registry | 1.17.1, disabled | Absent | Absent |
+| Prometheus registry | Absent | Absent | Absent |
+
+Source: each module's `pom.xml`, existing resolved test-report classpaths, and
+cached Boot-published configuration metadata. These are build evidence, not an
+inventory of deployed jars. No dependency/Java/Boot upgrades are made in Phase 0.
+Boot manages framework versions; avoid hand-pinning a bridge/SDK independently.
+Logstash encoder 8.1 uses Jackson 2; User also explicitly includes Jackson 2
+compatibility dependencies. Do not remove these without focused compatibility tests.
+Optional DevTools in Learning/JWKS is not telemetry. The two log stores duplicate
+storage by design today; evaluate the operational need later, not through removal now.
+
+## Docker, security and operations
+
+Use the Compose project whose config path belongs to this checkout. The observed
+project is `springboot_project`; `jp_dev` points at a separate repository. Never
+reuse its name or network here. Run `python observability/verify-baseline.py --runtime`
+for read-only detection and checks, or pass `--project` explicitly when not running.
+
+The only Compose behavior change is a shared deployment environment on the APIs
+and Fluent Bit. Native Fluent Bit `${DEPLOYMENT_ENVIRONMENT}` interpolation fills
+missing record environments; the Loki label reads `$environment`. Existing log
+fields remain authoritative. If launching Fluent Bit outside Compose, supply that
+variable explicitly. Existing collector containers require deliberate reload/
+recreation later; changing a mounted file does not prove its new config is loaded.
+
+No ports, DNS names, networks, persistent volumes, mounts, restart policies,
+health checks, resource limits, or debug-override settings are changed. No container
+recreation is required for review. Existing containers do not run the new source.
+
+Keep health as the only public Actuator capability. Future metrics exposure must
+have network and authentication design; never expose `env`, `configprops`, heap
+dumps or unrestricted management endpoints. Diagnostic metadata is untrusted.
+Never log credentials, Authorization values, JWTs, key contents, rejected secrets
+or whole environment/configuration dumps. JSON escaping is not redaction.
+
+Known gaps remain: User login/email/token-hash logging, raw paths and unrestricted
+throwable messages in User/Learning, no full cross-service trace, no durable
+collector outage queue, no repository-defined OpenSearch retention, Docker
+`json-file` without per-container rotation options, no alerting, and single-node
+unauthenticated development storage. Existing Loki 720h retention and Logback
+100MB/30-day/2GB archive rules are unchanged; deletion enforcement is not verified.
+
+Do not use destructive Docker commands, reset submodules, regenerate deployment
+keys, or export expanded Compose models to a report. The verifier captures models
+in memory and prints only allowlisted summaries; it does not write credentials.

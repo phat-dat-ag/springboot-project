@@ -235,6 +235,7 @@ services:
       # Logging
       APP_LOG_DIR: /app/data/logs
       APP_NAME: ${USER_API_APP_NAME:-user-api}
+      DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
       # Health probes
@@ -321,6 +322,7 @@ services:
       # Logging
       APP_LOG_DIR: /app/data/logs
       APP_NAME: ${LEARNING_API_APP_NAME:-learning-api}
+      DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
 
       # Health probes
@@ -385,6 +387,7 @@ services:
       # Logging
       APP_LOG_DIR: /app/data/logs
       APP_NAME: ${JWKS_API_APP_NAME:-jwks-api}
+      DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${JWKS_API_LOG_LEVEL:-INFO}
 
       # Health endpoints
@@ -442,6 +445,8 @@ services:
   fluent-bit:
     <<: *container-security
     image: cr.fluentbit.io/fluent/fluent-bit:3.2
+    environment:
+      DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
     user: "10001:10001"
 
     restart: unless-stopped
