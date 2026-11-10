@@ -92,7 +92,7 @@ Generate a request, copy its correlation ID, allow about ten seconds for collect
 and search in Explore:
 
 ```powershell
-$response = Invoke-WebRequest -UseBasicParsing http://localhost:8781/actuator/health/readiness
+$response = Invoke-WebRequest -UseBasicParsing http://localhost:8783/api/v1/jwks/user
 $response.Headers['X-Correlation-ID']
 ```
 
@@ -120,3 +120,7 @@ docker compose down -v: that removes project data.
 References:
 - https://grafana.com/docs/grafana/latest/administration/provisioning/
 - https://docs.fluentbit.io/manual/4.1/data-pipeline/outputs/loki
+
+Phase 1 uses numeric `http.response.status_code` / `durationMs` and safe `http.route`.
+Legacy fields remain on historical records. Successful health requests are DEBUG-only.
+See [the structured logging contract](../structured-logging.md) for migration and query guidance.

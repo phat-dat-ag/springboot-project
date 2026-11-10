@@ -68,8 +68,16 @@ if (-not $settings.settings.defaultIndex.userValue) {
 # Create a useful saved Discover view without overwriting later user customizations.
 $searchId = "$IndexPatternId-view"
 $searchUri = "$base/api/saved_objects/search/$([Uri]::EscapeDataString($searchId))"
+$legacyColumns = @('service', 'level', 'message', 'httpMethod', 'uri', 'status', 'correlationId')
+$structuredColumns = @('service', 'level', 'message', 'http.request.method', 'http.route', 'http.response.status_code', 'durationMs', 'outcome', 'correlationId')
 try {
-    $null = Invoke-RestMethod -Uri $searchUri -Headers $headers -TimeoutSec 15
+    $savedSearch = Invoke-RestMethod -Uri $searchUri -Headers $headers -TimeoutSec 15
+    # Upgrade only the exact default columns created by this script. Preserve personal customizations.
+    if ((@($savedSearch.attributes.columns) -join '|') -ceq ($legacyColumns -join '|')) {
+        $update = @{ version = $savedSearch.version; attributes = @{ columns = $structuredColumns } } | ConvertTo-Json -Depth 10
+        $null = Invoke-RestMethod -Method Put -Uri $searchUri -Headers $headers -ContentType 'application/json' -Body $update -TimeoutSec 15
+        Write-Output 'Updated default Discover columns to structured HTTP fields; historical fields remain in the index.'
+    }
 }
 catch {
     if (-not $_.Exception.Response -or [int]$_.Exception.Response.StatusCode -ne 404) { throw }
@@ -82,7 +90,7 @@ catch {
         attributes = @{
             title = 'Application logs'
             description = 'User, Learning, and JWKS application logs'
-            columns = @('service', 'level', 'message', 'httpMethod', 'uri', 'status', 'correlationId')
+            columns = $structuredColumns
             sort = ,@('@timestamp', 'desc')
             kibanaSavedObjectMeta = @{ searchSourceJSON = $searchSource }
         }

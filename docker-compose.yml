@@ -469,6 +469,7 @@ services:
 
     volumes:
       - ./observability/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+      - ./observability/fluent-bit/parsers.conf:/fluent-bit/etc/application-parsers.conf:ro
       - user_api_logs:/logs:ro
       - learning_api_logs:/learning-logs:ro
       - jwks_api_logs:/jwks-logs:ro

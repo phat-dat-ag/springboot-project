@@ -82,7 +82,7 @@ docker compose -p springboot_project logs --tail 100 fluent-bit opensearch opens
 Call an application's readiness endpoint, record the response X-Correlation-ID,
 allow about ten seconds, then search for that ID in Discover. Example:
 ~~~powershell
-$response = Invoke-WebRequest -UseBasicParsing http://localhost:8781/actuator/health/readiness
+$response = Invoke-WebRequest -UseBasicParsing http://localhost:8783/api/v1/jwks/user
 $response.Headers['X-Correlation-ID']
 ~~~
 
@@ -104,8 +104,8 @@ compressed archived log files are not imported.
 This is a local development setup: security plugins are disabled, host ports
 bind to 127.0.0.1, and the cluster has one node. No automatic OpenSearch retention,
 rollover, or durable Fluent Bit outage queue is configured. Application log-file
-rotation does not remove indexed documents. HTTP status and elapsed_ms are
-currently strings; numeric latency aggregations need explicit mapping/conversion.
+rotation does not remove indexed documents. Historical `status` and `elapsed_ms` are strings. Phase 1 uses distinct numeric
+`http.response.status_code` and `durationMs`; no historical mapping is changed.
 
 OpenSearch and Dashboards use matching 3.9.0 images. Their vendor startup needs
 writable root filesystems, while other runtime restrictions remain enabled.
@@ -115,3 +115,7 @@ References:
 - https://docs.opensearch.org/latest/dashboards/management/index-patterns/
 - https://docs.opensearch.org/latest/dashboards/discover/index-discover/
 - https://docs.fluentbit.io/manual/data-pipeline/outputs/opensearch
+
+Phase 1 uses numeric `http.response.status_code` / `durationMs` and safe `http.route`.
+Legacy fields remain on historical records. Successful health requests are DEBUG-only.
+See [the structured logging contract](../structured-logging.md) for migration and query guidance.

@@ -71,11 +71,21 @@ def main():
     for name, service in base['services'].items():
         old = previous['services'][name]
         assert service.get('ports') == old.get('ports'), 'A non-debug published port changed'
-        assert service.get('volumes') == old.get('volumes'), 'A mount changed'
+        if name == 'fluent-bit':
+            # Phase 1 adds one read-only parser file; existing log/state mounts remain unchanged.
+            parsers = [v for v in service.get('volumes', []) if v['target'] == '/fluent-bit/etc/application-parsers.conf']
+            assert len(parsers) == 1 and parsers[0]['type'] == 'bind' and parsers[0]['read_only']
+            assert Path(parsers[0]['source']).resolve() == ROOT / 'observability/fluent-bit/parsers.conf'
+            previous_mounts = [v for v in old.get('volumes', []) if v['target'] != '/fluent-bit/etc/application-parsers.conf']
+            assert [v for v in service['volumes'] if v not in parsers] == previous_mounts, 'An existing collector mount changed'
+        else:
+            assert service.get('volumes') == old.get('volumes'), 'A mount changed'
         expected = dict(old)
         if name in APIS or name == 'fluent-bit':
             expected['environment'] = dict(old.get('environment', {}))
             expected['environment']['DEPLOYMENT_ENVIRONMENT'] = service['environment']['DEPLOYMENT_ENVIRONMENT']
+        if name == 'fluent-bit':
+            expected['volumes'] = service['volumes']
         assert service == expected, 'An unrelated Compose setting changed'
     environment = base['services']['fluent-bit']['environment']['DEPLOYMENT_ENVIRONMENT']
     assert environment in {'development', 'test', 'staging', 'production'}, 'Use a documented deployment environment'
@@ -94,7 +104,7 @@ def main():
         assert f"address=*:{bindings[0]['target']}" in options
         assert str(bindings[0]['target']) == str(bindings[0]['published'])
     print('PASS: base/debug Compose validation; exporter defaults, health-only exposure, loopback JDWP.')
-    print('PASS: only shared environment added; existing ports, mounts, volumes, networks, limits and dependencies preserved.')
+    print('PASS: only shared environment/parser mount allowed; existing ports, log/state mounts, volumes, networks, limits and dependencies preserved.')
     if not args.runtime:
         return
 

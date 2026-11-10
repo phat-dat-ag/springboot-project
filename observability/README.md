@@ -8,6 +8,9 @@ remains in [Grafana](grafana/README.md) and [OpenSearch](opensearch/README.md).
 The subsequent deployment and live authentication/ingestion checks are recorded
 in [Phase 0 runtime verification](phase0-runtime-verification.md).
 
+Phase 1's current contract is [structured logging](structured-logging.md), with
+test and deployment evidence in [Phase 1 verification](phase1-verification.md).
+
 ## Current and target architecture
 
 Current: SLF4J -> Logback JSON console + rolling file -> shared application log
@@ -51,7 +54,8 @@ Use bounded, nonsecret values: names `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`; release
 versions use the same characters up to 128 characters. Environments are
 `development`, `test`, `staging`, `production`. Do not put URLs, tokens, usernames,
 customer IDs, quotes or arbitrary JSON into metadata. Phase 0 documents these
-constraints; application-level rejection of unsafe metadata is not implemented.
+constraints. Phase 1 encoder setters replace unsafe metadata with `unknown` rather
+than interpolating it into raw JSON.
 
 `APP_NAME` controls the file basename, not `service.name`. Keep current basenames
 until Fluent Bit paths are migrated together. Do not put request/trace IDs into
@@ -59,11 +63,13 @@ Loki labels or meter tags. `serviceVersion` remains in the log body, not a label
 
 ## JSON request-event contract
 
-Phase 0 adds only stable version/environment fields to existing Logback custom
-fields and suppresses duplicate Logback context-property output. Existing MDC
-keys and request filters remain unchanged. The following migration is Phase 1:
+Phase 1 is implemented; see [structured logging](structured-logging.md) for lifecycle,
+privacy, compatibility, and [verification evidence](phase1-verification.md).
 
-| Concept | Current JSON | Phase 1 canonical JSON | Type / rule |
+Phase 0 introduced stable metadata. Phase 1 centralizes safe encoding and request
+lifecycle logging. Legacy records are retained; new events use the current schema:
+
+| Concept | Historical Phase 0 JSON | Current JSON | Type / rule |
 | --- | --- | --- | --- |
 | Correlation | `correlationId` | `correlationId` | Validated opaque string |
 | Trace | `traceId` | `traceId` | Instrumentation-owned 32 lowercase hex characters |
@@ -79,12 +85,13 @@ attributes or replacements for native metric/span units/status. Route/method/sta
 names follow HTTP semantic concepts. In particular, a 4xx server response does
 not automatically imply an OTel error span: follow the instrumentation convention.
 Do not fill absent trace IDs with UUIDs, `unknown`, or the correlation ID.
-Phase 1 must coordinate collector, index mappings, dashboard queries and tests
-before changing legacy fields. Do not create contradictory aliases.
+Phase 1 preserves historical fields and indexes and uses new numeric field names.
+The default Discover columns are migrated without overwriting personal customizations.
+There are no contradictory aliases or in-place changes to old field types.
 
 ## Correlation and trace-context standard
 
-Documented for Phase 1/3; not fully applied by Phase 0:
+Correlation/MDC rules are implemented in Phase 1; SDK tracing remains Phase 3:
 
 1. Accept exactly one `X-Correlation-ID` matching
    `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`. Reject ambiguous duplicate, blank,
@@ -106,10 +113,10 @@ Documented for Phase 1/3; not fully applied by Phase 0:
    spans; the receiver creates its own server span rather than reusing the sender's
    span ID. Never put secrets or PII in diagnostic headers or baggage.
 
-Current difference: User/Learning always generate a new correlation ID on ingress;
-JWKS already accepts a validated incoming ID. Existing caller interceptors preserve
-trace headers but do not themselves generate traces. Phase 1 fixes correlation;
-Phase 3 establishes and verifies tracing across the actual HTTP boundary.
+All three services now accept validated incoming correlation IDs. Caller interceptors
+propagate them and preserve trace headers without generating traces. User internal
+and external JWKS retrieval both use the metadata interceptor. Phase 3 will establish
+and verify SDK tracing across the actual HTTP boundary.
 
 ## Configuration conventions
 
@@ -192,16 +199,17 @@ project is `springboot_project`; `jp_dev` points at a separate repository. Never
 reuse its name or network here. Run `python observability/verify-baseline.py --runtime`
 for read-only detection and checks, or pass `--project` explicitly when not running.
 
-The only Compose behavior change is a shared deployment environment on the APIs
-and Fluent Bit. Native Fluent Bit `${DEPLOYMENT_ENVIRONMENT}` interpolation fills
+Phase 0 adds a shared deployment environment; Phase 1 also mounts the custom JSON
+parser read-only into Fluent Bit. Native Fluent Bit `${DEPLOYMENT_ENVIRONMENT}` interpolation fills
 missing record environments; the Loki label reads `$environment`. Existing log
 fields remain authoritative. If launching Fluent Bit outside Compose, supply that
-variable explicitly. Existing collector containers require deliberate reload/
-recreation later; changing a mounted file does not prove its new config is loaded.
+variable explicitly. Collector configuration requires deliberate reload/recreation;
+changing a mounted file alone does not prove its new config is loaded. The Phase 1
+deployment and parser dry-run are recorded in the verification report.
 
-No ports, DNS names, networks, persistent volumes, mounts, restart policies,
-health checks, resource limits, or debug-override settings are changed. No container
-recreation is required for review. Existing containers do not run the new source.
+No ports, DNS names, networks, persistent volumes, existing log/state mounts, restart policies,
+health checks, resource limits, or debug-override settings are changed. Phase 1
+rebuilt/recreated only the three APIs and recreated Fluent Bit to load the parser.
 
 Keep health as the only public Actuator capability. Future metrics exposure must
 have network and authentication design; never expose `env`, `configprops`, heap
@@ -209,8 +217,8 @@ dumps or unrestricted management endpoints. Diagnostic metadata is untrusted.
 Never log credentials, Authorization values, JWTs, key contents, rejected secrets
 or whole environment/configuration dumps. JSON escaping is not redaction.
 
-Known gaps remain: User login/email/token-hash logging, raw paths and unrestricted
-throwable messages in User/Learning, no full cross-service trace, no durable
+Phase 1 removes the known sensitive business logging and unsafe request paths/
+throwable messages. Remaining gaps include no full cross-service trace, no durable
 collector outage queue, no repository-defined OpenSearch retention, Docker
 `json-file` without per-container rotation options, no alerting, and single-node
 unauthenticated development storage. Existing Loki 720h retention and Logback
