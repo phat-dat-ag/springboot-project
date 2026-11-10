@@ -25,3 +25,6 @@ desktop.ini
 
 # Asymmetric
 key/**
+
+# Existing local runtime test account; never commit credentials.
+observability/local-test-credentials.json

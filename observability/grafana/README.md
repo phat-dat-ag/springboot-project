@@ -124,3 +124,9 @@ References:
 Phase 1 uses numeric `http.response.status_code` / `durationMs` and safe `http.route`.
 Legacy fields remain on historical records. Successful health requests are DEBUG-only.
 See [the structured logging contract](../structured-logging.md) for migration and query guidance.
+
+## Phase 2 metrics
+
+A non-default Prometheus datasource (`uid=prometheus`, `http://prometheus:9090`)
+is provisioned alongside Loki. No existing datasource/dashboard is replaced.
+See [metrics operations and PromQL](../metrics.md) and [verification](../phase2-verification.md).

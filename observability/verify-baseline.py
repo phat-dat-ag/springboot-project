@@ -66,9 +66,16 @@ def main():
     print('UTC:', datetime.now(timezone.utc).isoformat(), 'project:', project)
     base, debug, previous = model(project), model(project, True), model(project, previous=True)
     assert base['name'] == debug['name'] == previous['name'] == project
-    assert base['volumes'] == previous['volumes']
+    expected_volumes = dict(previous['volumes'])
+    expected_volumes['prometheus_data'] = base['volumes']['prometheus_data']
+    assert base['volumes'] == expected_volumes
     assert base.get('networks') == previous.get('networks')
     for name, service in base['services'].items():
+        if name == 'prometheus':
+            assert service['image'] == 'prom/prometheus:v3.13.5'
+            assert all(port['host_ip'] == '127.0.0.1' for port in service['ports'])
+            assert len(service['volumes']) == 2
+            continue
         old = previous['services'][name]
         assert service.get('ports') == old.get('ports'), 'A non-debug published port changed'
         if name == 'fluent-bit':
@@ -78,13 +85,20 @@ def main():
             assert Path(parsers[0]['source']).resolve() == ROOT / 'observability/fluent-bit/parsers.conf'
             previous_mounts = [v for v in old.get('volumes', []) if v['target'] != '/fluent-bit/etc/application-parsers.conf']
             assert [v for v in service['volumes'] if v not in parsers] == previous_mounts, 'An existing collector mount changed'
+        elif name == 'grafana':
+            added = [v for v in service['volumes'] if v['target'] == '/etc/grafana/provisioning/datasources/prometheus.yml']
+            assert len(added) == 1 and added[0]['read_only']
+            assert Path(added[0]['source']).resolve() == ROOT / 'observability/grafana/provisioning/datasources/prometheus.yml'
+            assert [v for v in service['volumes'] if v not in added] == [v for v in old['volumes'] if v['target'] != '/etc/grafana/provisioning/datasources/prometheus.yml']
         else:
             assert service.get('volumes') == old.get('volumes'), 'A mount changed'
         expected = dict(old)
         if name in APIS or name == 'fluent-bit':
             expected['environment'] = dict(old.get('environment', {}))
             expected['environment']['DEPLOYMENT_ENVIRONMENT'] = service['environment']['DEPLOYMENT_ENVIRONMENT']
-        if name == 'fluent-bit':
+        if name in APIS:
+            expected['environment'].update(METRICS_LISTENER_ENABLED='true', METRICS_LISTENER_PORT='9091', MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE='health,prometheus')
+        if name in {'fluent-bit', 'grafana'}:
             expected['volumes'] = service['volumes']
         assert service == expected, 'An unrelated Compose setting changed'
     environment = base['services']['fluent-bit']['environment']['DEPLOYMENT_ENVIRONMENT']
@@ -96,15 +110,16 @@ def main():
         for key in ['MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED', 'MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED',
                     'MANAGEMENT_LOGGING_EXPORT_OTLP_ENABLED']:
             assert str(service['environment'].get(key, 'false')).lower() == 'false', 'Existing export override requires review'
-        assert service['environment'].get('MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE', 'health') == 'health'
+        assert service['environment'].get('MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE') == 'health,prometheus'
+        assert all(port['target'] != 9091 for port in service['ports']), 'Private scrape port must not be published'
         options = debug['services'][name]['environment']['JAVA_TOOL_OPTIONS']
         assert '-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:' in options
         bindings = [b for b in debug['services'][name]['ports'] if b not in service['ports']]
         assert len(bindings) == 1 and bindings[0]['host_ip'] == '127.0.0.1'
         assert f"address=*:{bindings[0]['target']}" in options
         assert str(bindings[0]['target']) == str(bindings[0]['published'])
-    print('PASS: base/debug Compose validation; exporter defaults, health-only exposure, loopback JDWP.')
-    print('PASS: only shared environment/parser mount allowed; existing ports, log/state mounts, volumes, networks, limits and dependencies preserved.')
+    print('PASS: base/debug Compose validation; exporter defaults, health and port-protected Prometheus exposure, loopback JDWP.')
+    print('PASS: only reviewed Phase 0-2 additions allowed; existing ports, log/state mounts, volumes, networks, limits and dependencies preserved.')
     if not args.runtime:
         return
 
@@ -198,7 +213,7 @@ def main():
         print('GRAFANA health:', get_json(origin('grafana') + '/api/health').get('database'))
     except Exception as error:
         print('NOT VERIFIED: Grafana', type(error).__name__)
-    print('NOT VERIFIED: live meter inventory, authenticated Grafana datasource API, retention deletion and complete distributed traces.')
+    print('NOT VERIFIED by this baseline script: live meter inventory, authenticated Grafana datasource API, retention deletion and complete distributed traces. See phase2-verification.md for separate metrics/datasource checks.')
 
 
 if __name__ == '__main__':
