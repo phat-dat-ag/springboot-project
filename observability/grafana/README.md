@@ -51,7 +51,7 @@ sends the same records to OpenSearch and Loki. Loki streams have these labels:
 | Label | Values |
 | --- | --- |
 | job | springboot |
-| service | user, learning-api, jwks-service |
+| service | user-learning, learning-api, jwks-service |
 | environment | development |
 
 The service label is read from each JSON record. Request IDs and other fields stay
