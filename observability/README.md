@@ -10,15 +10,18 @@ in [Phase 0 runtime verification](phase0-runtime-verification.md).
 
 Phase 1's current contract is [structured logging](structured-logging.md), with
 test and deployment evidence in [Phase 1 verification](phase1-verification.md).
+Phase 2 metrics and security are documented in [metrics.md](metrics.md), with
+[Phase 2 verification](phase2-verification.md).
 
 ## Current and target architecture
 
 Current: SLF4J -> Logback JSON console + rolling file -> shared application log
 volumes -> Fluent Bit -> Loki/Grafana and OpenSearch/Dashboards. Micrometer local
 instrumentation exists in all APIs; only User includes a tracing bridge/OTel SDK.
-No Prometheus, Tempo, or OTel Collector is deployed. File logging is not OTLP.
+Phase 2 adds Prometheus scraping and a Grafana metrics datasource; Tempo and an
+OTel Collector remain deferred. File logging is not OTLP.
 
-Target, implemented in later phases: consistent structured application logs with
+Target, completed across the implementation phases: consistent structured application logs with
 safe correlation -> durable collection -> log storage; Micrometer -> Prometheus
 -> Grafana; Micrometer Tracing/OTel -> OTel Collector -> Tempo -> Grafana. Keep
 the current log path until a tested migration is approved. Decide whether both
@@ -132,8 +135,8 @@ over service `env_file`; shell values win over root `.env` interpolation.
 | `DEPLOYMENT_ENVIRONMENT` | Shared root Compose value, default `development`, supplied to APIs and Fluent Bit |
 | `APP_NAME`, `APP_LOG_DIR` | Existing filename/path conventions; volumes and collector paths must agree |
 | `LOG_LEVEL` | Standalone root logger; Compose retains existing `LOG_LEVEL`, `LEARNING_API_LOG_LEVEL`, `JWKS_API_LOG_LEVEL` mapping |
-| `MANAGEMENT_METRICS_ENABLE_ALL` | `management.metrics.enable.all`, default true; local instrumentation only |
-| `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE` | Health only by default; never `*` in baseline |
+| `MANAGEMENT_METRICS_ENABLE_ALL` | `management.metrics.enable.all`, default true; Prometheus collects enabled meters in Phase 2 |
+| `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE` | Health standalone; Compose health,prometheus with private port protection; never `*` |
 | `MANAGEMENT_TRACING_ENABLED` | `management.tracing.enabled`, default true; requires tracing dependencies |
 | `MANAGEMENT_TRACING_SAMPLING_PROBABILITY` | User default 1.0 preserved; others retain framework baseline 0.1 for future integration |
 | `MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED` | `management.otlp.metrics.export.enabled`, default false |
@@ -159,7 +162,7 @@ When the Collector exists, use its service DNS rather than `localhost` inside
 containers. HTTP signal endpoints use `/v1/traces`, `/v1/metrics`, `/v1/logs`;
 gRPC uses the configured gRPC endpoint without those HTTP paths. Typical ports
 4318/4317 are future receiver conventions, not active ports in this stack.
-Prometheus scrape/registry and Tempo datasource settings are deferred. Do not
+Prometheus scrape/registry is implemented in Phase 2; Tempo datasource settings are deferred. Do not
 enable native `OTEL_*` SDK autoconfiguration alongside Boot properties without
 documenting precedence; it can contradict this baseline. Do not enable SDK metrics
 and a Micrometer exporter for the same instruments unintentionally.
@@ -181,7 +184,7 @@ Spring Boot parent, Java 17 target and Maven Wrapper. Do not run a root Maven bu
 | Micrometer Tracing / OTel bridge | 1.7.1 / present | Absent | Absent |
 | OTel API/SDK/exporter | 1.62.0, transitive starter | Absent | Absent |
 | OTLP metrics registry | 1.17.1, disabled | Absent | Absent |
-| Prometheus registry | Absent | Absent | Absent |
+| Prometheus registry | 1.17.1 (Phase 2) | 1.17.2 (Phase 2) | 1.17.2 (Phase 2) |
 
 Source: each module's `pom.xml`, existing resolved test-report classpaths, and
 cached Boot-published configuration metadata. These are build evidence, not an
@@ -211,8 +214,8 @@ No ports, DNS names, networks, persistent volumes, existing log/state mounts, re
 health checks, resource limits, or debug-override settings are changed. Phase 1
 rebuilt/recreated only the three APIs and recreated Fluent Bit to load the parser.
 
-Keep health as the only public Actuator capability. Future metrics exposure must
-have network and authentication design; never expose `env`, `configprops`, heap
+Keep health as the only public Actuator capability. Phase 2 metrics use a private
+unpublished listener and deny the scrape path on the application port; never expose `env`, `configprops`, heap
 dumps or unrestricted management endpoints. Diagnostic metadata is untrusted.
 Never log credentials, Authorization values, JWTs, key contents, rejected secrets
 or whole environment/configuration dumps. JSON escaping is not redaction.

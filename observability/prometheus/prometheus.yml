@@ -1,0 +1,15 @@
+global:
+  scrape_interval: 15s
+  scrape_timeout: 5s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: springboot
+    metrics_path: /actuator/prometheus
+    scheme: http
+    sample_limit: 20000
+    label_limit: 20
+    label_name_length_limit: 100
+    label_value_length_limit: 256
+    static_configs:
+      - targets: [user-api:9091, learning-api:9091, jwks-api:9091]

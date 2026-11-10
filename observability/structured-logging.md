@@ -164,3 +164,8 @@ Successful readiness requests intentionally do not generate INFO log records now
 For a public ingestion probe, request JWKS `/api/v1/jwks/user` with a chosen valid
 correlation ID, then search that ID. Use authenticated API calls to verify all three
 services and Learning -> User propagation. Full tracing/exporters remain deferred.
+
+Phase 2 keeps this contract and also treats successful Prometheus scrapes as DEBUG
+completion events, like health probes, to avoid periodic INFO ingestion noise.
+Its bounded security counter shares the once-only completion guard; it does not
+add another HTTP log or HTTP timer. See [metrics.md](metrics.md).

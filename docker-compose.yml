@@ -238,6 +238,11 @@ services:
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
+      # Private scrape listener; no published host port. Public metrics remain forbidden.
+      METRICS_LISTENER_ENABLED: "true"
+      METRICS_LISTENER_PORT: 9091
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
+
       # Health probes
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
@@ -325,6 +330,11 @@ services:
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
 
+      # Private scrape listener; no published host port. Public metrics remain forbidden.
+      METRICS_LISTENER_ENABLED: "true"
+      METRICS_LISTENER_PORT: 9091
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
+
       # Health probes
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
@@ -390,8 +400,12 @@ services:
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${JWKS_API_LOG_LEVEL:-INFO}
 
+      # Private scrape listener; existing health endpoint paths remain unchanged.
+      METRICS_LISTENER_ENABLED: "true"
+      METRICS_LISTENER_PORT: 9091
+      
       # Health endpoints
-      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health
+      MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
     ports:
@@ -503,8 +517,37 @@ services:
     volumes:
       - grafana_data:/var/lib/grafana
       - ./observability/grafana/provisioning/datasources/loki.yml:/etc/grafana/provisioning/datasources/loki.yml:ro
+      - ./observability/grafana/provisioning/datasources/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
       - ./observability/grafana/provisioning/dashboards/application-logs.yml:/etc/grafana/provisioning/dashboards/application-logs.yml:ro
       - ./observability/grafana/dashboards:/etc/grafana/dashboards:ro
+
+  prometheus:
+    <<: *container-security
+    image: prom/prometheus:v3.13.5
+    user: "65534:65534"
+    restart: unless-stopped
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    stop_grace_period: 30s
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=15d
+      - --storage.tsdb.retention.size=2GB
+      - --web.listen-address=0.0.0.0:9090
+    ports:
+      - "127.0.0.1:${PROMETHEUS_HOST_PORT:-9090}:9090"
+    volumes:
+      - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:9090/-/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 15s
 
   opensearch:
     <<: *container-security
@@ -575,6 +618,7 @@ services:
       start_period: 60s
 
 volumes:
+  prometheus_data:
   mysql_data:
   user_api_logs:
   learning_api_logs:
