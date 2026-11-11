@@ -113,12 +113,22 @@ query strings against actual HTTP instrumentation and exported span data.
 
 Collector Contrib **0.143.0**, pinned image, HTTP receiver only, memory limiter first
 (192 MiB limit / 48 MiB spike / 1s check), batch (256 desired / 512 maximum / 1s),
-two export workers, 256-batch in-memory queue, exponential retry 1–10s with 60s
-maximum elapsed time. Container: non-root 10001, read-only root, 256 MiB, 0.5 CPU,
+two export workers and a persistent byte-sized queue (64 MiB by default), with
+exponential retry 1–10s and no elapsed-time expiry. Phase 4 uses the supported
+`file_storage/queue` extension, fsync, startup/rebound compaction (32/8 MiB), and
+the `otel_queue` volume mounted at `/var/lib/otelcol`, owned by UID 10001.
+`OTEL_QUEUE_CAPACITY_BYTES` controls admission capacity; overflow rejects new
+exports rather than blocking indefinitely. Physical database size can exceed
+payload capacity and compaction needs spare disk space.
+Container: non-root 10001, read-only root, 256 MiB, 0.5 CPU,
 64 PIDs, GOMEMLIMIT 180 MiB, unless-stopped, 30s stop grace. Health extension
 listens internally on 13133. No diagnostics/debug/metrics endpoint is published;
-no metrics/logs pipeline is configured. Queue data can be lost on restart, overflow,
-outage or retry exhaustion. Persistent queues/outage capacity are later-phase work.
+no metrics/logs pipeline is configured. The queue survived a controlled Collector
+restart while Tempo was unavailable; all three test traces arrived after recovery.
+This is not exactly-once delivery or a crash-durability guarantee. App exporter
+buffers, the Collector batch processor and pre-admission data remain volatile;
+overflow, disk exhaustion or process crashes can still lose traces. See
+[Phase 4 verification](phase4-verification.md) for the tested scope.
 
 Tempo **2.9.0**, single binary, OTLP gRPC on internal 4317 and HTTP query/readiness
 on internal 3200. Non-root 10001, read-only root, 512 MiB / one CPU / 128 PIDs,
@@ -144,7 +154,8 @@ the verifier queries real stored spans separately. The trust boundary is the
 existing `springboot_project_default` bridge and privileged Docker administrators.
 Ingestion/query endpoints are unauthenticated plaintext within that boundary.
 Do not attach untrusted workloads. TLS/authentication, HA, remote object storage,
-backups, crash recovery, disk quotas and persistent queues need Phase 4/6 review.
+backups, crash recovery and hard disk quotas still need Phase 6 review. Phase 4
+adds a persistent queue without changing the internal transport trust boundary.
 
 ## Grafana navigation
 

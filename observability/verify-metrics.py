@@ -150,7 +150,7 @@ def main():
         params = urllib.parse.urlencode({'query':selector, 'start':str(int(start*1e9)), 'limit':100})
         check(bool(request(3177, '/loki/api/v1/query_range?' + params)[2]['data']['result']), service + ' fresh Loki ingestion')
         body = {'query':{'term':{'correlationId.keyword':marker+'-'+service}}}
-        check(request(9277, '/springboot-'+index+'-logs/_search', 'POST', body)[2]['hits']['total']['value'] >= 6,
+        check(request(9277, '/springboot-'+index+'*-logs/_search', 'POST', body)[2]['hits']['total']['value'] >= 6,
               service + ' fresh OpenSearch ingestion')
         raw = subprocess.run(['docker','compose','-p','springboot_project','logs','--no-color','--no-log-prefix',service],
                              capture_output=True,text=True,check=True).stdout
