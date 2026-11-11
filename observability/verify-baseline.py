@@ -69,10 +69,11 @@ def main():
     expected_volumes = dict(previous['volumes'])
     expected_volumes['prometheus_data'] = base['volumes']['prometheus_data']
     expected_volumes['tempo_data'] = base['volumes']['tempo_data']
+    expected_volumes['otel_queue'] = base['volumes']['otel_queue']
     assert base['volumes'] == expected_volumes
     assert base.get('networks') == previous.get('networks')
     for name, service in base['services'].items():
-        if name in {'tempo', 'tempo-storage-init', 'otel-collector'}:
+        if name in {'tempo', 'tempo-storage-init', 'otel-collector', 'otel-queue-init'}:
             assert not service.get('ports'), 'Tracing infrastructure must remain unpublished'
             assert service.get('read_only') is True
             if name == 'tempo':
@@ -109,9 +110,21 @@ def main():
         else:
             assert service.get('volumes') == old.get('volumes'), 'A mount changed'
         expected = dict(old)
+        if name in {'user-api', 'learning-api', 'jwks-api', 'fluent-bit', 'loki',
+                    'opensearch', 'opensearch-dashboards', 'grafana'}:
+            expected['logging'] = service['logging']
+            assert service['logging']['driver'] == 'json-file'
+            assert service['logging']['options']['max-file'] == '3'
+            assert service['logging']['options']['max-size'] == '10m'
         if name in APIS or name == 'fluent-bit':
             expected['environment'] = dict(old.get('environment', {}))
             expected['environment']['DEPLOYMENT_ENVIRONMENT'] = service['environment']['DEPLOYMENT_ENVIRONMENT']
+        if name == 'fluent-bit':
+            expected['image'] = 'cr.fluentbit.io/fluent/fluent-bit:3.2.10'
+            expected['stop_grace_period'] = '40s'
+            expected['environment'].update(
+                FLUENT_BIT_LOKI_BUFFER_LIMIT=service['environment']['FLUENT_BIT_LOKI_BUFFER_LIMIT'],
+                FLUENT_BIT_OPENSEARCH_BUFFER_LIMIT=service['environment']['FLUENT_BIT_OPENSEARCH_BUFFER_LIMIT'])
         if name in APIS:
             expected['environment'].update(METRICS_LISTENER_ENABLED='true', METRICS_LISTENER_PORT='9091', MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE='health,prometheus')
             expected['environment'].update(
@@ -141,7 +154,7 @@ def main():
         assert f"address=*:{bindings[0]['target']}" in options
         assert str(bindings[0]['target']) == str(bindings[0]['published'])
     print('PASS: base/debug Compose validation; exporter defaults, health and port-protected Prometheus exposure, loopback JDWP.')
-    print('PASS: only reviewed Phase 0-3 additions allowed; existing ports, log/state mounts, volumes, networks, limits and dependencies preserved.')
+    print('PASS: only reviewed Phase 0-4 additions allowed; original ports, mounts, networks, limits and dependencies preserved; new persistent queue and bounded logging reviewed.')
     if not args.runtime:
         return
 

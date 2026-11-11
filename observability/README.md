@@ -14,6 +14,10 @@ Phase 2 metrics and security are documented in [metrics.md](metrics.md), with
 [Phase 2 verification](phase2-verification.md).
 Phase 3 tracing configuration is in [tracing.md](tracing.md), with actual test,
 deployment evidence and remaining acceptance gaps in [Phase 3 verification](phase3-verification.md).
+Phase 4 adds bounded persistent collection and trace queues, safe new-index
+retention and Docker log rotation. See [logging pipeline operations](logging-pipeline.md)
+and [Phase 4 deployment/recovery evidence](phase4-verification.md). These describe
+development hardening and its remaining production acceptance limits.
 
 ## Current and target architecture
 

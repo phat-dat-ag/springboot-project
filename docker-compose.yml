@@ -1,4 +1,11 @@
 # Shared runtime restrictions; writable state is declared explicitly per service.
+x-observability-logging: &observability-logging
+  driver: json-file
+  options:
+    max-size: ${OBS_DOCKER_LOG_MAX_SIZE:-10m}
+    max-file: ${OBS_DOCKER_LOG_MAX_FILES:-3}
+    compress: "true"
+
 x-container-security: &container-security
   init: true
   read_only: true
@@ -171,6 +178,7 @@ services:
   
   user-api:
     <<: *container-security
+    logging: *observability-logging
     mem_limit: 1g
     memswap_limit: 1g
     cpus: 2
@@ -262,6 +270,7 @@ services:
 
   learning-api:
     <<: *container-security
+    logging: *observability-logging
 
     env_file:
       - ./.env.learning-api
@@ -358,6 +367,7 @@ services:
 
   jwks-api:
     <<: *container-security
+    logging: *observability-logging
     mem_limit: 1g
     memswap_limit: 1g
     cpus: 2
@@ -432,6 +442,7 @@ services:
 
   loki:
     <<: *container-security
+    logging: *observability-logging
     image: grafana/loki:3.5.8
     user: "10001:10001"
 
@@ -470,9 +481,12 @@ services:
 
   fluent-bit:
     <<: *container-security
-    image: cr.fluentbit.io/fluent/fluent-bit:3.2
+    logging: *observability-logging
+    image: cr.fluentbit.io/fluent/fluent-bit:3.2.10
     environment:
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
+      FLUENT_BIT_LOKI_BUFFER_LIMIT: ${FLUENT_BIT_LOKI_BUFFER_LIMIT:-64M}
+      FLUENT_BIT_OPENSEARCH_BUFFER_LIMIT: ${FLUENT_BIT_OPENSEARCH_BUFFER_LIMIT:-32M}
     user: "10001:10001"
 
     restart: unless-stopped
@@ -481,6 +495,7 @@ services:
     memswap_limit: 256m
     cpus: 0.5
     pids_limit: 128
+    stop_grace_period: 40s
 
     depends_on:
       fluent-bit-state-init:
@@ -503,6 +518,7 @@ services:
 
   grafana:
     <<: *container-security
+    logging: *observability-logging
     image: grafana/grafana:12.2.0
     user: "472:0"
 
@@ -536,6 +552,7 @@ services:
 
   otel-collector:
     <<: *container-security
+    logging: *observability-logging
     image: otel/opentelemetry-collector-contrib:0.143.0
     user: "10001:10001"
     restart: unless-stopped
@@ -546,9 +563,28 @@ services:
     stop_grace_period: 30s
     environment:
       GOMEMLIMIT: 180MiB
+      OTEL_QUEUE_CAPACITY_BYTES: ${OTEL_QUEUE_CAPACITY_BYTES:-67108864}
+    depends_on:
+      otel-queue-init:
+        condition: service_completed_successfully
     command: ["--config=/etc/otelcol/config.yml"]
     volumes:
       - ./observability/otel-collector/config.yml:/etc/otelcol/config.yml:ro
+      - otel_queue:/var/lib/otelcol
+
+  otel-queue-init:
+    <<: *container-security
+    image: postgres:17.6
+    user: "0:0"
+    network_mode: none
+    cap_add: [CHOWN, FOWNER, DAC_OVERRIDE]
+    mem_limit: 64m
+    pids_limit: 32
+    restart: "no"
+    entrypoint: ["/bin/sh", "-ec"]
+    command: ["chown 10001:10001 /var/lib/otelcol && chmod 0750 /var/lib/otelcol"]
+    volumes:
+      - otel_queue:/var/lib/otelcol
 
   tempo-storage-init:
     <<: *container-security
@@ -566,6 +602,7 @@ services:
 
   tempo:
     <<: *container-security
+    logging: *observability-logging
     image: grafana/tempo:2.9.0
     user: "10001:10001"
     restart: unless-stopped
@@ -584,6 +621,7 @@ services:
 
   prometheus:
     <<: *container-security
+    logging: *observability-logging
     image: prom/prometheus:v3.13.5
     user: "65534:65534"
     restart: unless-stopped
@@ -612,6 +650,7 @@ services:
 
   opensearch:
     <<: *container-security
+    logging: *observability-logging
     # Vendor startup creates the keystore and runtime configuration.
     read_only: false
     image: opensearchproject/opensearch:3.9.0
@@ -651,6 +690,7 @@ services:
 
   opensearch-dashboards:
     <<: *container-security
+    logging: *observability-logging
     # Vendor startup removes the disabled security plugin and writes runtime state.
     read_only: false
     image: opensearchproject/opensearch-dashboards:3.9.0
@@ -679,6 +719,7 @@ services:
       start_period: 60s
 
 volumes:
+  otel_queue:
   tempo_data:
   prometheus_data:
   mysql_data:
