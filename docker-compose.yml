@@ -243,6 +243,10 @@ services:
       METRICS_LISTENER_PORT: 9091
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
 
+      MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED: "true"
+      MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: ${TRACING_SAMPLING_PROBABILITY:-0.1}
+
       # Health probes
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
@@ -335,6 +339,10 @@ services:
       METRICS_LISTENER_PORT: 9091
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
 
+      MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED: "true"
+      MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: ${TRACING_SAMPLING_PROBABILITY:-0.1}
+
       # Health probes
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
@@ -406,6 +414,10 @@ services:
       
       # Health endpoints
       MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE: health,prometheus
+
+      MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED: "true"
+      MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT: http://otel-collector:4318/v1/traces
+      MANAGEMENT_TRACING_SAMPLING_PROBABILITY: ${TRACING_SAMPLING_PROBABILITY:-0.1}
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
     ports:
@@ -518,8 +530,57 @@ services:
       - grafana_data:/var/lib/grafana
       - ./observability/grafana/provisioning/datasources/loki.yml:/etc/grafana/provisioning/datasources/loki.yml:ro
       - ./observability/grafana/provisioning/datasources/prometheus.yml:/etc/grafana/provisioning/datasources/prometheus.yml:ro
+      - ./observability/grafana/provisioning/datasources/tempo.yml:/etc/grafana/provisioning/datasources/tempo.yml:ro
       - ./observability/grafana/provisioning/dashboards/application-logs.yml:/etc/grafana/provisioning/dashboards/application-logs.yml:ro
       - ./observability/grafana/dashboards:/etc/grafana/dashboards:ro
+
+  otel-collector:
+    <<: *container-security
+    image: otel/opentelemetry-collector-contrib:0.143.0
+    user: "10001:10001"
+    restart: unless-stopped
+    mem_limit: 256m
+    memswap_limit: 256m
+    cpus: 0.5
+    pids_limit: 64
+    stop_grace_period: 30s
+    environment:
+      GOMEMLIMIT: 180MiB
+    command: ["--config=/etc/otelcol/config.yml"]
+    volumes:
+      - ./observability/otel-collector/config.yml:/etc/otelcol/config.yml:ro
+
+  tempo-storage-init:
+    <<: *container-security
+    image: postgres:17.6
+    user: "0:0"
+    network_mode: none
+    cap_add: [CHOWN, FOWNER, DAC_OVERRIDE]
+    mem_limit: 64m
+    pids_limit: 32
+    restart: "no"
+    entrypoint: ["/bin/sh", "-ec"]
+    command: ["chown 10001:10001 /var/tempo && chmod 0750 /var/tempo"]
+    volumes:
+      - tempo_data:/var/tempo
+
+  tempo:
+    <<: *container-security
+    image: grafana/tempo:2.9.0
+    user: "10001:10001"
+    restart: unless-stopped
+    mem_limit: 512m
+    memswap_limit: 512m
+    cpus: 1
+    pids_limit: 128
+    stop_grace_period: 45s
+    depends_on:
+      tempo-storage-init:
+        condition: service_completed_successfully
+    command: ["-config.file=/etc/tempo/tempo.yml"]
+    volumes:
+      - ./observability/tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+      - tempo_data:/var/tempo
 
   prometheus:
     <<: *container-security
@@ -618,6 +679,7 @@ services:
       start_period: 60s
 
 volumes:
+  tempo_data:
   prometheus_data:
   mysql_data:
   user_api_logs:

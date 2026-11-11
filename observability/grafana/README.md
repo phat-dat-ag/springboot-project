@@ -130,3 +130,11 @@ See [the structured logging contract](../structured-logging.md) for migration an
 A non-default Prometheus datasource (`uid=prometheus`, `http://prometheus:9090`)
 is provisioned alongside Loki. No existing datasource/dashboard is replaced.
 See [metrics operations and PromQL](../metrics.md) and [verification](../phase2-verification.md).
+
+## Phase 3 traces
+
+A non-default Tempo datasource (`uid=tempo`, `http://tempo:3200`) is provisioned
+alongside Loki/Prometheus. Loki's JSON traceId derived field opens the matching
+trace; Tempo trace-to-logs maps service.name to the existing service label, with
+trace filtering and a one-minute time margin. No dashboards or alerts are added.
+See [tracing operations and TraceQL](../tracing.md) and [verification](../phase3-verification.md).

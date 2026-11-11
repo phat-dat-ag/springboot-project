@@ -68,9 +68,22 @@ def main():
     assert base['name'] == debug['name'] == previous['name'] == project
     expected_volumes = dict(previous['volumes'])
     expected_volumes['prometheus_data'] = base['volumes']['prometheus_data']
+    expected_volumes['tempo_data'] = base['volumes']['tempo_data']
     assert base['volumes'] == expected_volumes
     assert base.get('networks') == previous.get('networks')
     for name, service in base['services'].items():
+        if name in {'tempo', 'tempo-storage-init', 'otel-collector'}:
+            assert not service.get('ports'), 'Tracing infrastructure must remain unpublished'
+            assert service.get('read_only') is True
+            if name == 'tempo':
+                assert service['image'] == 'grafana/tempo:2.9.0'
+                assert service['user'] == '10001:10001'
+            elif name == 'otel-collector':
+                assert service['image'] == 'otel/opentelemetry-collector-contrib:0.143.0'
+                assert service['user'] == '10001:10001'
+            else:
+                assert service['network_mode'] == 'none'
+            continue
         if name == 'prometheus':
             assert service['image'] == 'prom/prometheus:v3.13.5'
             assert all(port['host_ip'] == '127.0.0.1' for port in service['ports'])
@@ -86,10 +99,13 @@ def main():
             previous_mounts = [v for v in old.get('volumes', []) if v['target'] != '/fluent-bit/etc/application-parsers.conf']
             assert [v for v in service['volumes'] if v not in parsers] == previous_mounts, 'An existing collector mount changed'
         elif name == 'grafana':
-            added = [v for v in service['volumes'] if v['target'] == '/etc/grafana/provisioning/datasources/prometheus.yml']
-            assert len(added) == 1 and added[0]['read_only']
-            assert Path(added[0]['source']).resolve() == ROOT / 'observability/grafana/provisioning/datasources/prometheus.yml'
-            assert [v for v in service['volumes'] if v not in added] == [v for v in old['volumes'] if v['target'] != '/etc/grafana/provisioning/datasources/prometheus.yml']
+            targets = {'/etc/grafana/provisioning/datasources/' + name + '.yml'
+                       for name in ('prometheus', 'tempo')}
+            added = [v for v in service['volumes'] if v['target'] in targets]
+            assert len(added) == 2 and all(v['read_only'] for v in added)
+            for mount in added:
+                assert Path(mount['source']).resolve() == ROOT / 'observability/grafana/provisioning/datasources' / Path(mount['target']).name
+            assert [v for v in service['volumes'] if v not in added] == [v for v in old['volumes'] if v['target'] not in targets]
         else:
             assert service.get('volumes') == old.get('volumes'), 'A mount changed'
         expected = dict(old)
@@ -98,6 +114,10 @@ def main():
             expected['environment']['DEPLOYMENT_ENVIRONMENT'] = service['environment']['DEPLOYMENT_ENVIRONMENT']
         if name in APIS:
             expected['environment'].update(METRICS_LISTENER_ENABLED='true', METRICS_LISTENER_PORT='9091', MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE='health,prometheus')
+            expected['environment'].update(
+                MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED='true',
+                MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT='http://otel-collector:4318/v1/traces',
+                MANAGEMENT_TRACING_SAMPLING_PROBABILITY=service['environment']['MANAGEMENT_TRACING_SAMPLING_PROBABILITY'])
         if name in {'fluent-bit', 'grafana'}:
             expected['volumes'] = service['volumes']
         assert service == expected, 'An unrelated Compose setting changed'
@@ -107,9 +127,11 @@ def main():
         service = base['services'][name]
         assert service['environment']['DEPLOYMENT_ENVIRONMENT'] == environment
         assert 'jdwp' not in (service['environment'].get('JAVA_TOOL_OPTIONS') or '')
-        for key in ['MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED', 'MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED',
+        for key in ['MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED',
                     'MANAGEMENT_LOGGING_EXPORT_OTLP_ENABLED']:
             assert str(service['environment'].get(key, 'false')).lower() == 'false', 'Existing export override requires review'
+        assert service['environment']['MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED'] == 'true'
+        assert 0 <= float(service['environment']['MANAGEMENT_TRACING_SAMPLING_PROBABILITY']) <= 1
         assert service['environment'].get('MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE') == 'health,prometheus'
         assert all(port['target'] != 9091 for port in service['ports']), 'Private scrape port must not be published'
         options = debug['services'][name]['environment']['JAVA_TOOL_OPTIONS']
@@ -119,7 +141,7 @@ def main():
         assert f"address=*:{bindings[0]['target']}" in options
         assert str(bindings[0]['target']) == str(bindings[0]['published'])
     print('PASS: base/debug Compose validation; exporter defaults, health and port-protected Prometheus exposure, loopback JDWP.')
-    print('PASS: only reviewed Phase 0-2 additions allowed; existing ports, log/state mounts, volumes, networks, limits and dependencies preserved.')
+    print('PASS: only reviewed Phase 0-3 additions allowed; existing ports, log/state mounts, volumes, networks, limits and dependencies preserved.')
     if not args.runtime:
         return
 
