@@ -8,11 +8,12 @@ The [logging contract](structured-logging.md) and existing JWT/API contracts rem
 
 Boot/Micrometer -> Prometheus registry -> private HTTP scrape -> Prometheus TSDB
 -> Grafana Prometheus datasource. Logs still use files -> Fluent Bit -> Loki and
-OpenSearch. OTLP metrics/log/trace exports remain disabled; no Collector or Tempo.
+OpenSearch. OTLP metrics/log exports remain disabled. Phase 3 adds only trace
+export through Collector/Tempo; see [tracing.md](tracing.md).
 
 Each service adds the Boot-managed `io.micrometer:micrometer-registry-prometheus`.
 Boot/Java/encoder versions are unchanged. User retains its existing disabled OTLP
-registry and tracing bridge; neither is a second active metrics pipeline.
+registry; the Phase 3 tracing bridge is not a second metrics pipeline.
 
 `MetricsEndpointConfiguration` adds an opt-in Tomcat connector at container port
 9091. A dedicated security chain at order -100 permits only GET
@@ -218,5 +219,6 @@ fields (`http.route` in logs corresponds to `uri` in HTTP metrics).
 Reference: [Spring HTTP observations](https://docs.spring.io/spring-framework/reference/integration/observability.html),
 [Boot Actuator endpoints](https://docs.spring.io/spring-boot/reference/actuator/endpoints.html),
 [Boot Tomcat factory](https://docs.spring.io/spring-boot/api/java/org/springframework/boot/tomcat/servlet/TomcatServletWebServerFactory.html).
-Phase 3 will add SDK-owned tracing and its backend; Phase 2 adds no exporters
-pointing at nonexistent destinations, exemplars or trace-label substitutes.
+Phase 3 adds SDK-owned tracing and its Collector/Tempo backend; see tracing.md.
+Phase 2 itself adds no exporters pointing at nonexistent destinations, explicit
+exemplar configuration or trace-label substitutes.

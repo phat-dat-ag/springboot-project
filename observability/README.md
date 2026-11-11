@@ -12,14 +12,17 @@ Phase 1's current contract is [structured logging](structured-logging.md), with
 test and deployment evidence in [Phase 1 verification](phase1-verification.md).
 Phase 2 metrics and security are documented in [metrics.md](metrics.md), with
 [Phase 2 verification](phase2-verification.md).
+Phase 3 tracing configuration is in [tracing.md](tracing.md), with actual test,
+deployment evidence and remaining acceptance gaps in [Phase 3 verification](phase3-verification.md).
 
 ## Current and target architecture
 
 Current: SLF4J -> Logback JSON console + rolling file -> shared application log
 volumes -> Fluent Bit -> Loki/Grafana and OpenSearch/Dashboards. Micrometer local
-instrumentation exists in all APIs; only User includes a tracing bridge/OTel SDK.
-Phase 2 adds Prometheus scraping and a Grafana metrics datasource; Tempo and an
-OTel Collector remain deferred. File logging is not OTLP.
+instrumentation exists in all APIs. Phase 2 adds Prometheus scraping and a Grafana
+metrics datasource. Phase 3 adds the Boot-managed OTel tracing starter to all APIs,
+OTLP traces through Collector to persistent Tempo, and a Grafana Tempo datasource.
+File logging is not OTLP; no OTLP metrics/logs pipeline is enabled.
 
 Target, completed across the implementation phases: consistent structured application logs with
 safe correlation -> durable collection -> log storage; Micrometer -> Prometheus
@@ -94,7 +97,7 @@ There are no contradictory aliases or in-place changes to old field types.
 
 ## Correlation and trace-context standard
 
-Correlation/MDC rules are implemented in Phase 1; SDK tracing remains Phase 3:
+Correlation/MDC rules are implemented in Phase 1; SDK tracing is configured in Phase 3:
 
 1. Accept exactly one `X-Correlation-ID` matching
    `[A-Za-z0-9][A-Za-z0-9._-]{0,63}`. Reject ambiguous duplicate, blank,
@@ -117,9 +120,9 @@ Correlation/MDC rules are implemented in Phase 1; SDK tracing remains Phase 3:
    span ID. Never put secrets or PII in diagnostic headers or baggage.
 
 All three services now accept validated incoming correlation IDs. Caller interceptors
-propagate them and preserve trace headers without generating traces. User internal
-and external JWKS retrieval both use the metadata interceptor. Phase 3 will establish
-and verify SDK tracing across the actual HTTP boundary.
+propagate them and leave SDK-owned trace headers alone. User internal
+and external JWKS retrieval both use the metadata interceptor. Phase 3 configures
+SDK tracing across the HTTP boundary; see Phase 3 evidence for live verification limits.
 
 ## Configuration conventions
 
@@ -138,19 +141,19 @@ over service `env_file`; shell values win over root `.env` interpolation.
 | `MANAGEMENT_METRICS_ENABLE_ALL` | `management.metrics.enable.all`, default true; Prometheus collects enabled meters in Phase 2 |
 | `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE` | Health standalone; Compose health,prometheus with private port protection; never `*` |
 | `MANAGEMENT_TRACING_ENABLED` | `management.tracing.enabled`, default true; requires tracing dependencies |
-| `MANAGEMENT_TRACING_SAMPLING_PROBABILITY` | User default 1.0 preserved; others retain framework baseline 0.1 for future integration |
+| `MANAGEMENT_TRACING_SAMPLING_PROBABILITY` | All APIs default 0.1; Compose maps `TRACING_SAMPLING_PROBABILITY`, also default 0.1 |
 | `MANAGEMENT_OTLP_METRICS_EXPORT_ENABLED` | `management.otlp.metrics.export.enabled`, default false |
-| `MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED` | `management.tracing.export.otlp.enabled`, default false |
+| `MANAGEMENT_TRACING_EXPORT_OTLP_ENABLED` | `management.tracing.export.otlp.enabled`, false standalone; true in Compose |
 | `MANAGEMENT_LOGGING_EXPORT_OTLP_ENABLED` | `management.logging.export.otlp.enabled`, default false |
 
-Keep user sampling at 1.0 for compatibility in Phase 0, not as a production
-recommendation. Sampling/load budgets will be chosen in Phase 3. Do not add a
+Phase 3 replaces User's old 1.0 default with a uniform parent-based 0.1 budget.
+Use 1.0 only for controlled development verification. Do not add a
 configurable correlation-header name now: all existing consumers use the fixed
 `X-Correlation-ID`, and an unused flag would imply support that does not exist.
 
-Future destinations are deliberately absent from active configuration:
+Trace destination is supplied internally by Compose; metrics/log destinations remain absent:
 
-| Later-phase setting | Supported Boot 4.1 property / direct environment spelling |
+| Signal setting | Supported Boot 4.1 property / direct environment spelling |
 | --- | --- |
 | Trace OTLP destination | `management.opentelemetry.tracing.export.otlp.endpoint` / `MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT` |
 | Trace transport | `management.opentelemetry.tracing.export.otlp.transport` / `MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_TRANSPORT` (`http` or `grpc`) |
@@ -158,11 +161,11 @@ Future destinations are deliberately absent from active configuration:
 | Log transport | `management.opentelemetry.logging.export.otlp.transport` / `MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_TRANSPORT` |
 | Micrometer OTLP metrics destination | `management.otlp.metrics.export.url` / `MANAGEMENT_OTLP_METRICS_EXPORT_URL` (HTTP/protobuf) |
 
-When the Collector exists, use its service DNS rather than `localhost` inside
+Use Collector service DNS rather than `localhost` inside
 containers. HTTP signal endpoints use `/v1/traces`, `/v1/metrics`, `/v1/logs`;
 gRPC uses the configured gRPC endpoint without those HTTP paths. Typical ports
-4318/4317 are future receiver conventions, not active ports in this stack.
-Prometheus scrape/registry is implemented in Phase 2; Tempo datasource settings are deferred. Do not
+4318/4317 are now private tracing receiver ports; see tracing.md for exact transports.
+Prometheus scrape/registry is implemented in Phase 2; Tempo datasource is Phase 3. Do not
 enable native `OTEL_*` SDK autoconfiguration alongside Boot properties without
 documenting precedence; it can contradict this baseline. Do not enable SDK metrics
 and a Micrometer exporter for the same instruments unintentionally.
@@ -181,8 +184,8 @@ Spring Boot parent, Java 17 target and Maven Wrapper. Do not run a root Maven bu
 | Logback from resolved test classpaths | 1.5.38 | 1.5.38 | 1.5.38 |
 | Micrometer Core | 1.17.1 | 1.17.2 | 1.17.2 |
 | Actuator | Present | Present | Present |
-| Micrometer Tracing / OTel bridge | 1.7.1 / present | Absent | Absent |
-| OTel API/SDK/exporter | 1.62.0, transitive starter | Absent | Absent |
+| Micrometer Tracing / OTel bridge | 1.7.1 / present | 1.7.2 / present | 1.7.2 / present |
+| OTel API/SDK/exporter | 1.62.0, managed starter | 1.62.0, managed starter | 1.62.0, managed starter |
 | OTLP metrics registry | 1.17.1, disabled | Absent | Absent |
 | Prometheus registry | 1.17.1 (Phase 2) | 1.17.2 (Phase 2) | 1.17.2 (Phase 2) |
 
@@ -210,8 +213,9 @@ variable explicitly. Collector configuration requires deliberate reload/recreati
 changing a mounted file alone does not prove its new config is loaded. The Phase 1
 deployment and parser dry-run are recorded in the verification report.
 
-No ports, DNS names, networks, persistent volumes, existing log/state mounts, restart policies,
-health checks, resource limits, or debug-override settings are changed. Phase 1
+Existing ports, DNS names, networks, persistent volumes, log/state mounts, restart policies,
+health checks, resource limits and debug-override settings are preserved. Phase 3
+adds internal tracing services and a new Tempo volume; see tracing.md. Phase 1
 rebuilt/recreated only the three APIs and recreated Fluent Bit to load the parser.
 
 Keep health as the only public Actuator capability. Phase 2 metrics use a private
@@ -221,7 +225,8 @@ Never log credentials, Authorization values, JWTs, key contents, rejected secret
 or whole environment/configuration dumps. JSON escaping is not redaction.
 
 Phase 1 removes the known sensitive business logging and unsafe request paths/
-throwable messages. Remaining gaps include no full cross-service trace, no durable
+throwable messages. Remaining gaps include the credential-dependent deployed
+Learning -> User tracing acceptance gate (see Phase 3 evidence), no durable
 collector outage queue, no repository-defined OpenSearch retention, Docker
 `json-file` without per-container rotation options, no alerting, and single-node
 unauthenticated development storage. Existing Loki 720h retention and Logback
