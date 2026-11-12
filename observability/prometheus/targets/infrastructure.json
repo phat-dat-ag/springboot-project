@@ -1,0 +1,56 @@
+[
+  {
+    "targets": [
+      "prometheus:9090"
+    ],
+    "labels": {
+      "service": "prometheus",
+      "environment": "development"
+    }
+  },
+  {
+    "targets": [
+      "loki:3100"
+    ],
+    "labels": {
+      "service": "loki",
+      "environment": "development"
+    }
+  },
+  {
+    "targets": [
+      "tempo:3200"
+    ],
+    "labels": {
+      "service": "tempo",
+      "environment": "development"
+    }
+  },
+  {
+    "targets": [
+      "fluent-bit:2020"
+    ],
+    "labels": {
+      "service": "fluent-bit",
+      "environment": "development"
+    }
+  },
+  {
+    "targets": [
+      "otel-collector:8888"
+    ],
+    "labels": {
+      "service": "otel-collector",
+      "environment": "development"
+    }
+  },
+  {
+    "targets": [
+      "grafana:3000"
+    ],
+    "labels": {
+      "service": "grafana",
+      "environment": "development"
+    }
+  }
+]

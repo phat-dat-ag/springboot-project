@@ -1,5 +1,12 @@
 # Observability baseline and standards
 
+Phase 5 dashboards and Grafana Unified Alerting are now deployed. Start with
+[dashboard operations](dashboards.md), [alerting operations](alerting.md) and
+[Phase 5 verification](phase5-verification.md). Evaluation is active; external
+notification delivery remains muted and NOT VERIFIED. Complete panel and rule
+inventories are in [dashboard-inventory.md](dashboard-inventory.md) and
+[alert-rules.md](alert-rules.md). Phase 6 is not implemented.
+
 Phase 0 establishes configuration and identity, not production readiness. Start
 with [the verification record](phase0-baseline.md) for what was actually checked
 and [the phase plan](phase-plan.md) for acceptance gates. Backend-specific usage

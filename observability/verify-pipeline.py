@@ -384,6 +384,7 @@ def health():
         check(v.request(number, '/actuator/health/readiness')[0] == 200, service + ' readiness')
     check(request('prometheus', '/-/ready')[0] == 200, 'Prometheus readiness')
     targets = request('prometheus', '/api/v1/targets')[2]['data']['activeTargets']
+    targets = [t for t in targets if t['labels'].get('job') == 'springboot']
     check(len(targets) == 3 and all(t['health'] == 'up' for t in targets), 'all three scrape targets UP')
     check(request('loki', '/ready')[0] == 200, 'Loki readiness')
     cluster = request('opensearch', '/_cluster/health')[2]

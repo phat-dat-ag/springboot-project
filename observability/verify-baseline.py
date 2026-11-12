@@ -88,7 +88,10 @@ def main():
         if name == 'prometheus':
             assert service['image'] == 'prom/prometheus:v3.13.5'
             assert all(port['host_ip'] == '127.0.0.1' for port in service['ports'])
-            assert len(service['volumes']) == 2
+            assert {v['target'] for v in service['volumes']} == {
+                '/etc/prometheus/prometheus.yml', '/prometheus',
+                '/etc/prometheus/rules', '/etc/prometheus/targets'}
+            assert all(v['read_only'] for v in service['volumes'] if v['type'] == 'bind')
             continue
         old = previous['services'][name]
         assert service.get('ports') == old.get('ports'), 'A non-debug published port changed'
@@ -102,11 +105,14 @@ def main():
         elif name == 'grafana':
             targets = {'/etc/grafana/provisioning/datasources/' + name + '.yml'
                        for name in ('prometheus', 'tempo')}
+            phase5 = [v for v in service['volumes'] if v['target'] == '/etc/grafana/provisioning/alerting/phase5.json']
+            assert len(phase5) == 1 and phase5[0]['read_only']
+            assert Path(phase5[0]['source']).resolve() == ROOT / 'observability/grafana/provisioning/alerting/phase5.json'
             added = [v for v in service['volumes'] if v['target'] in targets]
             assert len(added) == 2 and all(v['read_only'] for v in added)
             for mount in added:
                 assert Path(mount['source']).resolve() == ROOT / 'observability/grafana/provisioning/datasources' / Path(mount['target']).name
-            assert [v for v in service['volumes'] if v not in added] == [v for v in old['volumes'] if v['target'] not in targets]
+            assert [v for v in service['volumes'] if v not in added and v not in phase5] == [v for v in old['volumes'] if v['target'] not in targets]
         else:
             assert service.get('volumes') == old.get('volumes'), 'A mount changed'
         expected = dict(old)
@@ -119,6 +125,9 @@ def main():
         if name in APIS or name == 'fluent-bit':
             expected['environment'] = dict(old.get('environment', {}))
             expected['environment']['DEPLOYMENT_ENVIRONMENT'] = service['environment']['DEPLOYMENT_ENVIRONMENT']
+        if name == 'grafana':
+            expected['environment'] = dict(old['environment'])
+            expected['environment']['PHASE5_ALERT_RECEIVER'] = service['environment']['PHASE5_ALERT_RECEIVER']
         if name == 'fluent-bit':
             expected['image'] = 'cr.fluentbit.io/fluent/fluent-bit:3.2.10'
             expected['stop_grace_period'] = '40s'
@@ -154,7 +163,7 @@ def main():
         assert f"address=*:{bindings[0]['target']}" in options
         assert str(bindings[0]['target']) == str(bindings[0]['published'])
     print('PASS: base/debug Compose validation; exporter defaults, health and port-protected Prometheus exposure, loopback JDWP.')
-    print('PASS: only reviewed Phase 0-4 additions allowed; original ports, mounts, networks, limits and dependencies preserved; new persistent queue and bounded logging reviewed.')
+    print('PASS: only reviewed Phase 0-5 additions allowed; original ports, mounts, networks, limits and dependencies preserved; dashboard/alert/rule mounts reviewed.')
     if not args.runtime:
         return
 
