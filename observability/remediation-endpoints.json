@@ -1,0 +1,261 @@
+[
+  {
+    "service": "jwks-api",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 42549
+      },
+      {
+        "address": "::",
+        "port": 9091
+      },
+      {
+        "address": "::",
+        "port": 8080
+      }
+    ],
+    "published": {
+      "8080/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8783"
+        }
+      ]
+    },
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "learning-api",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 41309
+      },
+      {
+        "address": "::",
+        "port": 8080
+      },
+      {
+        "address": "::",
+        "port": 9091
+      }
+    ],
+    "published": {
+      "8080/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8782"
+        }
+      ]
+    },
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "user-api",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 34449
+      },
+      {
+        "address": "::",
+        "port": 9091
+      },
+      {
+        "address": "::",
+        "port": 8080
+      }
+    ],
+    "published": {
+      "8080/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "8781"
+        }
+      ]
+    },
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "grafana",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 44555
+      },
+      {
+        "address": "::",
+        "port": 3000
+      }
+    ],
+    "published": {
+      "3000/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "3077"
+        }
+      ]
+    },
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "prometheus",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 35535
+      },
+      {
+        "address": "::",
+        "port": 9090
+      }
+    ],
+    "published": {
+      "9090/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "9090"
+        }
+      ]
+    },
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "fluent-bit",
+    "listening": [
+      {
+        "address": "0.0.0.0",
+        "port": 2020
+      },
+      {
+        "address": "127.0.0.11",
+        "port": 42609
+      }
+    ],
+    "published": {},
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "loki",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 40781
+      },
+      {
+        "address": "::",
+        "port": 3100
+      },
+      {
+        "address": "::",
+        "port": 9095
+      }
+    ],
+    "published": {
+      "3100/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "3177"
+        }
+      ]
+    },
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "tempo",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 45811
+      },
+      {
+        "address": "::",
+        "port": 7946
+      },
+      {
+        "address": "::",
+        "port": 4317
+      },
+      {
+        "address": "::",
+        "port": 3200
+      },
+      {
+        "address": "::",
+        "port": 9095
+      }
+    ],
+    "published": {},
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "opensearch",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 40569
+      },
+      {
+        "address": "::",
+        "port": 9200
+      },
+      {
+        "address": "::",
+        "port": 9300
+      }
+    ],
+    "published": {
+      "9200/tcp": [
+        {
+          "HostIp": "127.0.0.1",
+          "HostPort": "9277"
+        }
+      ]
+    },
+    "networks": [
+      "springboot_project_default"
+    ]
+  },
+  {
+    "service": "otel-collector",
+    "listening": [
+      {
+        "address": "127.0.0.11",
+        "port": 34879
+      },
+      {
+        "address": "::",
+        "port": 8888
+      },
+      {
+        "address": "::",
+        "port": 4318
+      },
+      {
+        "address": "::",
+        "port": 13133
+      }
+    ],
+    "published": {},
+    "networks": [
+      "springboot_project_default"
+    ]
+  }
+]

@@ -1,0 +1,61 @@
+{
+  "assessment_date": "2026-11-12",
+  "historical_phase6a_measurements_preserved": "phase6-measurements.json",
+  "baseline": "phase6-evidence/remediation/phase6-20261112T032932Z-de75a086/baseline.json",
+  "regression": {
+    "evidence": "phase6-evidence/remediation-regression/phase6-20261112T040753Z-36ca4221/results.json",
+    "counts": {"PASS": 795, "FAIL": 1, "NOT VERIFIED": 11, "NOT APPLICABLE": 2},
+    "exit_code": 1,
+    "remaining_failure": "production telemetry access-control readiness",
+    "application_services_ready": 3,
+    "prometheus_targets_up": 9,
+    "recording_rules": 5,
+    "phase5_dashboards": 8,
+    "panel_queries": 174,
+    "alert_rules_healthy_and_muted": 21,
+    "matched_live_dual_store_events": 15,
+    "distributed_trace_verified": true,
+    "browser_verification": "NOT VERIFIED"
+  },
+  "maven": {
+    "user": {"tests": 105, "failures": 0, "errors": 0, "skipped": 0},
+    "learning": {"tests": 121, "failures": 0, "errors": 0, "skipped": 0},
+    "jwks": {"tests": 83, "failures": 0, "errors": 0, "skipped": 0}
+  },
+  "python_unit_tests": {"tests": 15, "failures": 0, "errors": 0},
+  "rotation_fixture": {
+    "run": "330e0d2be9",
+    "checks_passed": 12,
+    "events_per_protocol_sink": 52,
+    "duplicates_observed": 0,
+    "source_bytes": 72688,
+    "volume": "remediation_rotation_330e0d2be9",
+    "network": "remediation-rotation-330e0d2be9",
+    "scope": "native Logback and Fluent Bit with protocol sinks; actual backend storage verified separately",
+    "exactly_once_guaranteed": false
+  },
+  "preservation": {
+    "original_volumes_retained": 93,
+    "target_containers_at_baseline": 18,
+    "unrelated_containers_unchanged": 16,
+    "allowed_affected_services": ["user-api", "learning-api", "jwks-api", "fluent-bit"],
+    "historical_prometheus_samples_preserved": true,
+    "historical_loki_records_preserved": true,
+    "historical_tempo_traces_preserved": true,
+    "opensearch_index_uuids_preserved": true,
+    "grafana_resource_fingerprints_preserved": true,
+    "protected_key_environment_fingerprints_preserved": true,
+    "fixture_resources_retained": true
+  },
+  "security": {
+    "candidate_structure": "PASS",
+    "candidate_deployed": false,
+    "runtime_native_tls_auth": "NOT VERIFIED",
+    "live_original_security_failure": "OPEN",
+    "optional_metrics_bind_support": "SOURCE TESTED; NOT IN REUSED LIVE IMAGES",
+    "production_credentials_generated": false
+  },
+  "phase6b_executed": false,
+  "committed_or_pushed": false,
+  "overall_production_readiness": "NOT DEMONSTRATED"
+}

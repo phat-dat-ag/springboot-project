@@ -1,0 +1,12 @@
+server.host: 0.0.0.0
+server.ssl.enabled: true
+server.ssl.certificate: /run/tls/server.crt
+server.ssl.key: /run/tls/server.key
+opensearch.hosts: ["https://opensearch:9200"]
+opensearch.ssl.verificationMode: full
+opensearch.ssl.certificateAuthorities: ["/run/tls/ca.pem"]
+opensearch.ssl.certificate: /run/tls/client.crt
+opensearch.ssl.key: /run/tls/client.key
+opensearch.username: dashboards_svc
+opensearch.password: ${OS_DASHBOARDS_PASSWORD}
+opensearch_security.cookie.secure: true

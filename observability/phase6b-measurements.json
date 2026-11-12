@@ -1,0 +1,287 @@
+{
+  "utc": "2026-11-12T07:28:50.200982+00:00",
+  "run": "20261112T044156Z-a029b2",
+  "scope": "isolated Phase6B; not development/production activation",
+  "matrix_counts": {
+    "PASS": 19,
+    "NOT VERIFIED": 10,
+    "BLOCKED": 1
+  },
+  "attempt_history_counts": {
+    "PASS": 275,
+    "FAIL": 21,
+    "NOT VERIFIED": 12,
+    "BLOCKED": 2
+  },
+  "matrix": [
+    {
+      "criterion": "Isolation/rendered and actual mounts",
+      "status": "PASS",
+      "evidence": "Internal network; no ports, existing stores, shared namespaces or live keys"
+    },
+    {
+      "criterion": "Existing projects and volumes",
+      "status": "PASS",
+      "evidence": "IDs/start times/mounts preserved; all97 baseline volumes retained"
+    },
+    {
+      "criterion": "Native TLS/mTLS and Grafana queries",
+      "status": "PASS",
+      "evidence": "Verified TLS1.3; rejection matrix; real OTLP/log ingestion and Grafana proxy queries"
+    },
+    {
+      "criterion": "Real application SSL bundle / metrics proxies",
+      "status": "NOT VERIFIED",
+      "evidence": "Synthetic producer used; no three-API rebuild or five-proxy activation"
+    },
+    {
+      "criterion": "OpenSearch certificate authentication/authorization",
+      "status": "PASS",
+      "evidence": "Separate admin, writer, reader; no demo users; restart and native restore"
+    },
+    {
+      "criterion": "Positive password authentication / Dashboards",
+      "status": "NOT VERIFIED",
+      "evidence": "Incorrect credentials rejected; positive password/SSO/browser integration not exercised"
+    },
+    {
+      "criterion": "Fluent Bit container SIGKILL recovery",
+      "status": "PASS",
+      "evidence": "20/20 unique events in each real backend;0 missing/duplicates observed"
+    },
+    {
+      "criterion": "Collector container SIGKILL recovery",
+      "status": "PASS",
+      "evidence": "8/8 unique trace IDs; HTTP receiver success distinguished from durable admission"
+    },
+    {
+      "criterion": "Host crash / storage failure durability",
+      "status": "NOT VERIFIED",
+      "evidence": "Memory-backed fixture and process-kill scope only"
+    },
+    {
+      "criterion": "Bounded filesystem ENOSPC/recovery",
+      "status": "PASS",
+      "evidence": "2MiB tmpfs only; explicit generated filler removed; fresh write succeeds"
+    },
+    {
+      "criterion": "Output/trace queue overflow",
+      "status": "PASS",
+      "evidence": "Constrained Loki180/240 vs healthy OpenSearch240/240; Collector0/100 oversized-batch traces;2 fresh recovery traces"
+    },
+    {
+      "criterion": "Backend disk-full corruption/recovery and pressure alerts",
+      "status": "BLOCKED",
+      "evidence": "No dedicated block device or filesystem-pressure exporter; incidental Prometheus snapshot ENOSPC observed separately"
+    },
+    {
+      "criterion": "Grafana cold backup/restore",
+      "status": "PASS",
+      "evidence": "Same test login, API-created dashboard marker and lifecycle rule recovered"
+    },
+    {
+      "criterion": "Loki cold backup/restore",
+      "status": "PASS",
+      "evidence": "12 original control log IDs recovered in separate store"
+    },
+    {
+      "criterion": "Tempo cold backup/restore",
+      "status": "PASS",
+      "evidence": "3 control traces queried from separate restored store"
+    },
+    {
+      "criterion": "Prometheus native snapshot/restore",
+      "status": "PASS",
+      "evidence": "Head included; historical instant-query samples match; checksummed file manifest"
+    },
+    {
+      "criterion": "OpenSearch native snapshot/restore",
+      "status": "PASS",
+      "evidence": "SUCCESS snapshot restored into new secured cluster;12 control log IDs match"
+    },
+    {
+      "criterion": "Off-host encrypted backup and operational RPO/RTO",
+      "status": "NOT VERIFIED",
+      "evidence": "Local disposable rehearsal only; no agreed production objectives"
+    },
+    {
+      "criterion": "OpenSearch natural retention and physical deletion",
+      "status": "PASS",
+      "evidence": "New synthetic index; observed transition/delete,404 and UUID directory disappearance; no timestamp modification"
+    },
+    {
+      "criterion": "Loki physical retention",
+      "status": "NOT VERIFIED",
+      "evidence": "24h minimum fixture retention exceeds bounded window"
+    },
+    {
+      "criterion": "Prometheus physical retention",
+      "status": "NOT VERIFIED",
+      "evidence": "15m setting accepted; normal TSDB block lifecycle exceeds bounded window"
+    },
+    {
+      "criterion": "Tempo end-to-end retention expiry",
+      "status": "NOT VERIFIED",
+      "evidence": "Old block directory removed but two cohort traces remained queryable in ingester/WAL; no full-expiry PASS"
+    },
+    {
+      "criterion": "Actual alert lifecycle and no-data/error behavior",
+      "status": "PASS",
+      "evidence": "10s evaluation/20s pending; observed inactive\u2192pending\u2192firing\u2192inactive; exact NoData/Error states"
+    },
+    {
+      "criterion": "Local notification grouping/retry/repeat/recovery",
+      "status": "PASS",
+      "evidence": "Two instances grouped; initial503 retried; firing/repeat/resolved received internally"
+    },
+    {
+      "criterion": "Real external notification delivery",
+      "status": "NOT VERIFIED",
+      "evidence": "No external receiver, email or public webhook contacted"
+    },
+    {
+      "criterion": "Bounded capacity/query measurements",
+      "status": "PASS",
+      "evidence": "100 logs/20 traces; resource samples and native query latencies; no production extrapolation"
+    },
+    {
+      "criterion": "Production load / browser rendering",
+      "status": "NOT VERIFIED",
+      "evidence": "No real API stress test or browser automation"
+    },
+    {
+      "criterion": "Test credential leakage scan",
+      "status": "PASS",
+      "evidence": "Last1000 lines per fixture scanned; no global/historical guarantee"
+    },
+    {
+      "criterion": "Safe stop and evidence retention",
+      "status": "PASS",
+      "evidence": "Exact labels/IDs; no volume-deleting cleanup; tmpfs volatility documented"
+    },
+    {
+      "criterion": "Live production-security activation",
+      "status": "NOT VERIFIED",
+      "evidence": "Not authorized; existing deployment security FAIL remains OPEN"
+    }
+  ],
+  "performance": {
+    "submitted_logs": 100,
+    "stored_unique_loki": 100,
+    "submitted_spans": 20,
+    "queryable_trace_ids": 20,
+    "elapsed_including_drain_seconds": 38.264,
+    "observed_log_events_per_second_including_drain": 2.61,
+    "opensearch_query_ms_including_docker_probe_overhead": [
+      1365.33,
+      933.47,
+      909.31,
+      909.44,
+      1188.88,
+      1074.81,
+      923.48,
+      876.75,
+      954.71,
+      988.54
+    ],
+    "envelope": "10logs/s10s;20spans;serialqueries;max4MiBsource"
+  },
+  "native_http_samples": {
+    "loki-query": [
+      {
+        "status": 200,
+        "ms": 16.99
+      },
+      {
+        "status": 200,
+        "ms": 22.32
+      },
+      {
+        "status": 200,
+        "ms": 66.63
+      }
+    ],
+    "prometheus-query": [
+      {
+        "status": 200,
+        "ms": 60.26
+      },
+      {
+        "status": 200,
+        "ms": 96.41
+      },
+      {
+        "status": 200,
+        "ms": 17.55
+      }
+    ],
+    "grafana-proxy": [
+      {
+        "status": 200,
+        "ms": 94.28
+      },
+      {
+        "status": 200,
+        "ms": 15.29
+      },
+      {
+        "status": 200,
+        "ms": 61.69
+      }
+    ]
+  },
+  "alert_transitions": [
+    {
+      "utc": "2026-11-12T07:04:21.931945+00:00",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "utc": "2026-11-12T07:04:32.439773+00:00",
+      "state": "pending",
+      "health": "ok"
+    },
+    {
+      "utc": "2026-11-12T07:04:50.866470+00:00",
+      "state": "firing",
+      "health": "ok"
+    },
+    {
+      "utc": "2026-11-12T07:05:52.739744+00:00",
+      "state": "inactive",
+      "health": "ok"
+    }
+  ],
+  "tls": {
+    "loki": {
+      "version": "TLSv1.3",
+      "cipher": "TLS_AES_128_GCM_SHA256"
+    },
+    "tempo": {
+      "version": "TLSv1.3",
+      "cipher": "TLS_AES_128_GCM_SHA256"
+    },
+    "collector": {
+      "version": "TLSv1.3",
+      "cipher": "TLS_AES_128_GCM_SHA256"
+    },
+    "prometheus": {
+      "version": "TLSv1.3",
+      "cipher": "TLS_AES_128_GCM_SHA256"
+    },
+    "grafana": {
+      "version": "TLSv1.3",
+      "cipher": "TLS_AES_128_GCM_SHA256"
+    }
+  },
+  "fixture_resources_stopped": true,
+  "original_containers": 41,
+  "original_volumes": 97,
+  "safety_tests": {
+    "tests": 14,
+    "failures": 0,
+    "errors": 0
+  },
+  "live_security_failure": "OPEN",
+  "production_ready": false
+}

@@ -1,0 +1,31 @@
+{
+  "_meta": {
+    "type": "rolesmapping",
+    "config_version": 2
+  },
+  "telemetry_writer": {
+    "users": [
+      "fluent-bit"
+    ]
+  },
+  "telemetry_health": {
+    "users": [
+      "opensearch-health"
+    ]
+  },
+  "kibana_server": {
+    "users": [
+      "dashboards_svc"
+    ]
+  },
+  "all_access": {
+    "users": [
+      "observability_operator"
+    ]
+  },
+  "security_rest_api_access": {
+    "users": [
+      "observability_operator"
+    ]
+  }
+}

@@ -1,0 +1,2048 @@
+{
+  "apiVersion": 1,
+  "muteTimes": [
+    {
+      "orgId": 1,
+      "name": "phase5-delivery-disabled",
+      "time_intervals": [
+        {
+          "times": [
+            {
+              "start_time": "00:00",
+              "end_time": "24:00"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "groups": [
+    {
+      "orgId": 1,
+      "name": "springboot-phase5",
+      "folder": "Observability",
+      "interval": "1m",
+      "rules": [
+        {
+          "uid": "sb5-service-down",
+          "title": "ServiceDown",
+          "condition": "B",
+          "for": "2m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "critical",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "ServiceDown",
+            "description": "Private scrape endpoint failed continuously for 2m; not proof the public API is down.",
+            "runbook": "Check target lastError, API readiness, private port 9091 and container health."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "up{job=\"springboot\"}",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "lt",
+                      "params": [
+                        1
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-missing-metrics-user",
+          "title": "MissingMetricsUser",
+          "condition": "B",
+          "for": "2m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5",
+            "service": "user-learning"
+          },
+          "annotations": {
+            "summary": "MissingMetricsUser",
+            "description": "Expected scrape target disappeared for 5m plus pending period.",
+            "runbook": "Check Prometheus target discovery and targets/applications.json."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "absent_over_time(up{job=\"springboot\",instance=\"user-api:9091\"}[5m])",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-missing-metrics-learning",
+          "title": "MissingMetricsLearning",
+          "condition": "B",
+          "for": "2m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5",
+            "service": "learning-api"
+          },
+          "annotations": {
+            "summary": "MissingMetricsLearning",
+            "description": "Expected scrape target disappeared for 5m plus pending period.",
+            "runbook": "Check Prometheus target discovery and targets/applications.json."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "absent_over_time(up{job=\"springboot\",instance=\"learning-api:9091\"}[5m])",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-missing-metrics-j-w-k-s",
+          "title": "MissingMetricsJWKS",
+          "condition": "B",
+          "for": "2m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5",
+            "service": "jwks-service"
+          },
+          "annotations": {
+            "summary": "MissingMetricsJWKS",
+            "description": "Expected scrape target disappeared for 5m plus pending period.",
+            "runbook": "Check Prometheus target discovery and targets/applications.json."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "absent_over_time(up{job=\"springboot\",instance=\"jwks-api:9091\"}[5m])",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-high5xx-error-rate",
+          "title": "High5xxErrorRate",
+          "condition": "B",
+          "for": "5m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "critical",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "High5xxErrorRate",
+            "description": ">5% server errors with at least 100 requests/5m; excludes Actuator.",
+            "runbook": "Open HTTP Performance, compare routes/status, then errors and sampled traces."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "(sb:http_5xx:rate5m / (sb:http_requests:rate5m > 0)) and on (service,environment) (sum by (service,environment) (increase(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) >= 100)",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0.05
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-high-h-t-t-p-error-ratio",
+          "title": "HighHTTPErrorRatio",
+          "condition": "B",
+          "for": "10m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "HighHTTPErrorRatio",
+            "description": ">20% 4xx+5xx for sustained traffic; client rejections may be expected.",
+            "runbook": "Compare 4xx vs 5xx, routes, release changes and expected rejected requests."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sb:http_errors:ratio5m and on (service,environment) (sum by (service,environment) (increase(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) >= 100)",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0.2
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-high-p95-latency",
+          "title": "HighP95Latency",
+          "condition": "B",
+          "for": "10m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "HighP95Latency",
+            "description": "p95 >1 second with >=100 requests/5m; initial development threshold, not a contractual SLO.",
+            "runbook": "Inspect slow bounded routes, pool waits, GC and Tempo slow search."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sb:http_p95:seconds5m and on (service,environment) (sum by (service,environment) (increase(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) >= 100)",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        1
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-high-p99-latency",
+          "title": "HighP99Latency",
+          "condition": "B",
+          "for": "15m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "HighP99Latency",
+            "description": "p99 >2.5 seconds with >=1000 requests/5m to limit tail noise.",
+            "runbook": "Inspect HTTP histogram and sampled slow traces; tune from a real SLO."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sb:http_p99:seconds5m and on (service,environment) (sum by (service,environment) (increase(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) >= 1000)",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        2.5
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-high-heap-usage",
+          "title": "HighHeapUsage",
+          "condition": "B",
+          "for": "15m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "HighHeapUsage",
+            "description": "Heap >85% of positive configured maximum for 15m.",
+            "runbook": "Check JVM heap, allocation and GC; compare trends before changing limits."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sum by (service,environment) (jvm_memory_used_bytes{area=\"heap\"}) / (sum by (service,environment) (jvm_memory_max_bytes{area=\"heap\"} > 0) > 0)",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0.85
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-high-c-p-u-usage",
+          "title": "HighCPUUsage",
+          "condition": "B",
+          "for": "15m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "HighCPUUsage",
+            "description": "Process CPU fraction >85% for 15m; JVM/container CPU interpretation varies.",
+            "runbook": "Inspect traffic, GC, thread/executor load and configured CPU limits."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "max by (service,environment) (process_cpu_usage)",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0.85
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-excessive-g-c-pause",
+          "title": "ExcessiveGCPause",
+          "condition": "B",
+          "for": "10m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "ExcessiveGCPause",
+            "description": "GC pause time exceeds 0.10 seconds per wall-clock second for 10m; no GC percentile fabricated.",
+            "runbook": "Inspect heap occupancy/allocation and GC causes in JVM dashboard."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sum by (service,environment) (rate(jvm_gc_pause_seconds_sum[5m]))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0.1
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-hikari-pool-saturation",
+          "title": "HikariPoolSaturation",
+          "condition": "B",
+          "for": "10m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "HikariPoolSaturation",
+            "description": "Active / known positive maximum >90% for 10m.",
+            "runbook": "Check pending connections, acquisition latency, slow queries and DB availability."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "max by (service,environment,pool) (hikaricp_connections_active / (hikaricp_connections_max > 0))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0.9
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-hikari-pending-connections",
+          "title": "HikariPendingConnections",
+          "condition": "B",
+          "for": "5m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "HikariPendingConnections",
+            "description": "At least one pending connection remains for 5m.",
+            "runbook": "Check saturation, connection leaks, transaction duration and database health."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "max by (service,environment,pool) (hikaricp_connections_pending)",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-collector-export-failures",
+          "title": "CollectorExportFailures",
+          "condition": "B",
+          "for": "5m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "CollectorExportFailures",
+            "description": "Sustained failed span export attempts; retries may recover, this is not a loss count.",
+            "runbook": "Check Tempo readiness, Collector exporter logs and queue utilization."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sum by (service,environment) (rate(otelcol_exporter_send_failed_spans[5m]))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-collector-queue-saturation",
+          "title": "CollectorQueueSaturation",
+          "condition": "B",
+          "for": "5m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "critical",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "CollectorQueueSaturation",
+            "description": "Persistent trace queue >80% for 5m; capacity is configured in bytes.",
+            "runbook": "Restore Tempo/connectivity, inspect exporter failures; do not erase the queue."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "max by (service,environment) (otelcol_exporter_queue_size / (otelcol_exporter_queue_capacity > 0))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0.8
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-fluent-bit-delivery-failures",
+          "title": "FluentBitDeliveryFailures",
+          "condition": "B",
+          "for": "5m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "FluentBitDeliveryFailures",
+            "description": "Sustained output errors, exhausted retries or dropped records; one underlying problem can increment multiple counters.",
+            "runbook": "Inspect output name on infrastructure dashboard, readiness, filesystem backlog and destination logs."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sum by (service,environment) (rate(fluentbit_output_errors_total[5m]) + rate(fluentbit_output_retries_failed_total[5m]) + rate(fluentbit_output_dropped_records_total[5m]))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-loki-ingestion-failures",
+          "title": "LokiIngestionFailures",
+          "condition": "B",
+          "for": "5m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "LokiIngestionFailures",
+            "description": "Loki HTTP push rejections/server errors or chunk flush failures persist; not a complete per-reason discard count.",
+            "runbook": "Inspect Loki push status, logs/WAL/free space and Fluent Bit Loki output; no complete discard coverage claimed."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sum by (service,environment) (rate(loki_ingester_chunks_flush_failures_total[5m]) or rate(loki_request_duration_seconds_count{route=\"loki_api_v1_push\",status_code=~\"4..|5..\"}[5m]))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        0
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-tempo-unavailable",
+          "title": "TempoUnavailable",
+          "condition": "B",
+          "for": "2m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "critical",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "TempoUnavailable",
+            "description": "Tempo metrics endpoint unreachable for 2m; query readiness is checked separately.",
+            "runbook": "Check internal /ready, Tempo logs, storage and Collector queue."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "up{job=\"observability\",service=\"tempo\"}",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "lt",
+                      "params": [
+                        1
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-prometheus-target-down",
+          "title": "PrometheusTargetDown",
+          "condition": "B",
+          "for": "3m",
+          "noDataState": "NoData",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "PrometheusTargetDown",
+            "description": "Infrastructure metrics endpoint unreachable for 3m; Tempo has its own alert.",
+            "runbook": "Inspect Prometheus target lastError, endpoint and container state."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "up{job=\"observability\",service!=\"tempo\"}",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "lt",
+                      "params": [
+                        1
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-elevated-authentication-failures",
+          "title": "ElevatedAuthenticationFailures",
+          "condition": "B",
+          "for": "5m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "ElevatedAuthenticationFailures",
+            "description": ">50 failed terminal authentication HTTP operations/10m for 5m; an investigation signal, not proof of an attack.",
+            "runbook": "Compare operation trends, deployments and expected negative tests using safe logs only."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sum by (service,environment) (increase(app_security_events_total{operation=~\"authentication|internal_authentication|login|refresh\",result=\"failure\"}[10m]))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        50
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "uid": "sb5-elevated-authorization-denials",
+          "title": "ElevatedAuthorizationDenials",
+          "condition": "B",
+          "for": "10m",
+          "noDataState": "OK",
+          "execErrState": "Error",
+          "keepFiringFor": "1m",
+          "isPaused": false,
+          "labels": {
+            "severity": "warning",
+            "environment": "production",
+            "phase": "5"
+          },
+          "annotations": {
+            "summary": "ElevatedAuthorizationDenials",
+            "description": ">100 terminal authorization denials/10m for 10m; higher threshold accounts for expected rejections.",
+            "runbook": "Inspect aggregate 403 routes and configuration; never add user identifiers to labels."
+          },
+          "notification_settings": {
+            "receiver": "$PHASE5_ALERT_RECEIVER",
+            "group_by": [
+              "service",
+              "environment",
+              "severity"
+            ],
+            "group_wait": "1m",
+            "group_interval": "5m",
+            "repeat_interval": "4h",
+            "mute_time_intervals": [
+              "phase5-delivery-disabled"
+            ]
+          },
+          "data": [
+            {
+              "refId": "A",
+              "relativeTimeRange": {
+                "from": 600,
+                "to": 0
+              },
+              "datasourceUid": "prometheus",
+              "model": {
+                "refId": "A",
+                "datasource": {
+                  "type": "prometheus",
+                  "uid": "prometheus"
+                },
+                "expr": "sum by (service,environment) (increase(app_security_events_total{operation=\"authorization\",result=\"failure\"}[10m]))",
+                "instant": true,
+                "range": false,
+                "intervalMs": 15000,
+                "maxDataPoints": 43200
+              }
+            },
+            {
+              "refId": "B",
+              "relativeTimeRange": {
+                "from": 0,
+                "to": 0
+              },
+              "datasourceUid": "__expr__",
+              "model": {
+                "refId": "B",
+                "datasource": {
+                  "type": "__expr__",
+                  "uid": "__expr__"
+                },
+                "type": "threshold",
+                "expression": "A",
+                "conditions": [
+                  {
+                    "type": "query",
+                    "query": {
+                      "params": [
+                        "B"
+                      ]
+                    },
+                    "reducer": {
+                      "type": "last",
+                      "params": []
+                    },
+                    "evaluator": {
+                      "type": "gt",
+                      "params": [
+                        100
+                      ]
+                    },
+                    "operator": {
+                      "type": "and"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

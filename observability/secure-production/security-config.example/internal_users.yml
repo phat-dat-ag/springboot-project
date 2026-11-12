@@ -1,0 +1,12 @@
+{
+  "_meta": {
+    "type": "internalusers",
+    "config_version": 2
+  },
+  "dashboards_svc": {
+    "hash": "REPLACE_WITH_OPERATOR_SUPPLIED_BCRYPT_HASH"
+  },
+  "observability_operator": {
+    "hash": "REPLACE_WITH_OPERATOR_SUPPLIED_BCRYPT_HASH"
+  }
+}

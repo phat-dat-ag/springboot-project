@@ -1,0 +1,29 @@
+[
+  {
+    "targets": [
+      "user-api:9091"
+    ],
+    "labels": {
+      "service": "user-learning",
+      "environment": "production"
+    }
+  },
+  {
+    "targets": [
+      "learning-api:9091"
+    ],
+    "labels": {
+      "service": "learning-api",
+      "environment": "production"
+    }
+  },
+  {
+    "targets": [
+      "jwks-api:9091"
+    ],
+    "labels": {
+      "service": "jwks-service",
+      "environment": "production"
+    }
+  }
+]
