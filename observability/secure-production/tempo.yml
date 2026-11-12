@@ -1,0 +1,39 @@
+auth_enabled: false
+usage_report:
+  reporting_enabled: false
+server:
+  http_tls_config:
+    cert_file: /run/tls/server.crt
+    key_file: /run/tls/server.key
+    client_ca_file: /run/tls/ca.pem
+    client_auth_type: RequireAndVerifyClientCert
+  grpc_listen_address: 127.0.0.1
+  http_listen_port: 3200
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+          tls:
+            cert_file: /run/tls/server.crt
+            key_file: /run/tls/server.key
+            client_ca_file: /run/tls/ca.pem
+ingester:
+  lifecycler:
+    address: 127.0.0.1
+  max_block_duration: 5m
+compactor:
+  compaction:
+    block_retention: 72h
+storage:
+  trace:
+    backend: local
+    wal:
+      path: /var/tempo/wal
+    local:
+      path: /var/tempo/blocks
+
+memberlist:
+  bind_addr: [127.0.0.1]
+  advertise_addr: 127.0.0.1

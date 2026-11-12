@@ -1,0 +1,708 @@
+{
+  "run_id": "phase6-20261112T031510Z-c66c0468",
+  "utc": "2026-11-12T03:15:30.471958+00:00",
+  "counts": {
+    "PASS": 750,
+    "NOT VERIFIED": 10,
+    "FAIL": 2,
+    "NOT APPLICABLE": 2
+  },
+  "maven": {
+    "springboot-user-api": {
+      "tests": 102,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 16
+    },
+    "springboot-learning-api": {
+      "tests": 118,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 17
+    },
+    "springboot-jwks-api": {
+      "tests": 80,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "report_files": 13
+    }
+  },
+  "container_count": 34,
+  "volume_count": 93,
+  "project_container_count": 18,
+  "jp_dev_count": 16,
+  "protected_file_count": 12,
+  "versions": {
+    "jwks-api": "springboot_project-jwks-api",
+    "user-api": "springboot_project-user-api",
+    "learning-api": "springboot_project-learning-api",
+    "grafana": "grafana/grafana:12.2.0",
+    "prometheus": "prom/prometheus:v3.13.5",
+    "fluent-bit": "cr.fluentbit.io/fluent/fluent-bit:3.2.10",
+    "opensearch-dashboards": "opensearchproject/opensearch-dashboards:3.9.0",
+    "loki": "grafana/loki:3.5.8",
+    "tempo": "grafana/tempo:2.9.0",
+    "opensearch": "opensearchproject/opensearch:3.9.0",
+    "otel-collector": "otel/opentelemetry-collector-contrib:0.143.0",
+    "otel-queue-init": "postgres:17.6",
+    "tempo-storage-init": "postgres:17.6",
+    "flyway-mysql": "flyway/flyway:latest@sha256:c748a1e82c40d4ee63b2f02a78295cf2460e8b4f1abae8abcd7ad5d6e879f959",
+    "flyway-postgres": "flyway/flyway:latest@sha256:c748a1e82c40d4ee63b2f02a78295cf2460e8b4f1abae8abcd7ad5d6e879f959",
+    "fluent-bit-state-init": "postgres:17.6",
+    "postgres": "postgres:17.6",
+    "mysql": "mysql:8.4@sha256:b3b90af2a6552ae30c266fdb7d5dd55f3afb72404bb78d37fe8a23eb857fd3fb"
+  },
+  "git": {
+    ".": {
+      "head": "ed8b88148ead44f01eb13766d6c6c1a1be0ac5b0",
+      "branch": "develop",
+      "status": " M .gitignore\n M observability/README.md\n M observability/logging-pipeline.md\n?? observability/backup-restore.md\n?? observability/capacity-planning.md\n?? observability/incident-response.md\n?? observability/operations-runbook.md\n?? observability/phase6-checklist.md\n?? observability/phase6-measurements.json\n?? observability/phase6b-validation-plan.md\n?? observability/production-readiness.md\n?? observability/summarize-phase6.py\n?? observability/test_phase6_tooling.py\n?? observability/verify-phase6.py\n"
+    },
+    "springboot-user-api": {
+      "head": "e7991b34d310b94696469dda30c108645e06d00e",
+      "branch": "develop",
+      "status": ""
+    },
+    "springboot-learning-api": {
+      "head": "f6a61f6a0d1284adc831fa6f04b83ce23c02faa2",
+      "branch": "develop",
+      "status": ""
+    },
+    "springboot-jwks-api": {
+      "head": "7879d155eddb45fb079800709f49a3c3a1566120",
+      "branch": "develop",
+      "status": ""
+    }
+  },
+  "events": [
+    {
+      "service": "user-learning",
+      "correlation": "5d6cbd2a-72b4-4411-a72a-67647d7a1048",
+      "trace": "9a96f83f12a3499298c516606a68963b",
+      "span": "acc76c0f2193cd9f",
+      "status": 401
+    },
+    {
+      "service": "user-learning",
+      "correlation": "phase6-20261112T031510Z-c66c0468-1",
+      "trace": "961c519c3be844c3ab48cc4b56b031c7",
+      "span": "fceea5f987157fb3",
+      "status": 401
+    },
+    {
+      "service": "learning-api",
+      "correlation": "2ea2028b-da13-4911-9523-d695f5db574d",
+      "trace": "19bd6222101a46cbbc912d2ab54c8bae",
+      "span": "82d99ee2f0a61e99",
+      "status": 401
+    },
+    {
+      "service": "learning-api",
+      "correlation": "phase6-20261112T031510Z-c66c0468-3",
+      "trace": "a1018f1831d64a739717095ebe9eabdb",
+      "span": "631f5519da755960",
+      "status": 401
+    },
+    {
+      "service": "jwks-service",
+      "correlation": "73896b63-e5b6-4091-92f2-7a838f21a31b",
+      "trace": "f43e9dfebbef40cab845118233d73871",
+      "span": "9df840757009679a",
+      "status": 200
+    },
+    {
+      "service": "jwks-service",
+      "correlation": "phase6-20261112T031510Z-c66c0468-5",
+      "trace": "fa7b940b4c4c40c8bdd67c7cddded5d7",
+      "span": "a7b87be85d242a35",
+      "status": 200
+    },
+    {
+      "service": "user-learning",
+      "correlation": "phase6-20261112T031510Z-c66c0468-6",
+      "trace": "13aabd665a4a49feb87cb8bb64d1c875",
+      "span": "bc8c5459dad971e7",
+      "status": 200
+    },
+    {
+      "service": "learning-api",
+      "correlation": "phase6-20261112T031510Z-c66c0468-7",
+      "trace": "1d14c95028b64158859fa1f77e365b9b",
+      "span": "cf04eabf4f1347dd",
+      "status": 200
+    },
+    {
+      "service": "user-learning",
+      "correlation": "phase6-20261112T031510Z-c66c0468-8",
+      "trace": "3339f20001424eaa86367774f9ed33f3",
+      "span": "da00998a57ce72e9",
+      "status": 403
+    },
+    {
+      "service": "user-learning",
+      "correlation": "phase6-20261112T031510Z-c66c0468-9",
+      "trace": "c7c1ec72d95d4f2abbbbeb2873df4980",
+      "span": "81c59be4650df940",
+      "status": 401
+    },
+    {
+      "service": "user-learning",
+      "correlation": "phase6-20261112T031510Z-c66c0468-10",
+      "trace": "ce755b6640334313abb16760e8190f6c",
+      "span": "8b8d136a8055ecca",
+      "status": 403
+    },
+    {
+      "service": "learning-api",
+      "correlation": "phase6-20261112T031510Z-c66c0468-11",
+      "trace": "f14336730fd541febe174dc97c373773",
+      "span": "dffe3518c97a7e12",
+      "status": 401
+    },
+    {
+      "service": "learning-api",
+      "correlation": "phase6-20261112T031510Z-c66c0468-12",
+      "trace": "152e8ba9676e424eaf5663d30265f676",
+      "span": "c90274dd488875f6",
+      "status": 200
+    },
+    {
+      "service": "user-learning",
+      "correlation": "phase6-20261112T031510Z-c66c0468-12",
+      "trace": "152e8ba9676e424eaf5663d30265f676",
+      "span": "89625d0bd5918abd",
+      "status": 200
+    },
+    {
+      "service": "learning-api",
+      "correlation": "phase6-20261112T031510Z-c66c0468-14",
+      "trace": "fadccb2cf6fc40118f06274bfe00ece3",
+      "span": "a2f54628253100f9",
+      "status": 200
+    }
+  ],
+  "linked_trace": "152e8ba9676e424eaf5663d30265f676",
+  "panel_query_count": 174,
+  "panel_query_latency_ms": {
+    "min": 2.43,
+    "max": 40.45,
+    "median": 6.19
+  },
+  "alert_states": [
+    {
+      "name": "ServiceDown",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "MissingMetricsUser",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "MissingMetricsLearning",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "MissingMetricsJWKS",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "High5xxErrorRate",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "HighHTTPErrorRatio",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "HighP95Latency",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "HighP99Latency",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "HighHeapUsage",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "HighCPUUsage",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "ExcessiveGCPause",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "HikariPoolSaturation",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "HikariPendingConnections",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "CollectorExportFailures",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "CollectorQueueSaturation",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "FluentBitDeliveryFailures",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "LokiIngestionFailures",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "TempoUnavailable",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "PrometheusTargetDown",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "ElevatedAuthenticationFailures",
+      "state": "inactive",
+      "health": "ok"
+    },
+    {
+      "name": "ElevatedAuthorizationDenials",
+      "state": "inactive",
+      "health": "ok"
+    }
+  ],
+  "docker_stats": [
+    {
+      "BlockIO": "4.1kB / 336kB",
+      "CPUPerc": "0.12%",
+      "Container": "798bd7fa5772d0951eebe75b209ad9e403f3ae53725e922c2b6d43362af13c9c",
+      "ID": "798bd7fa5772",
+      "MemPerc": "20.20%",
+      "MemUsage": "206.9MiB / 1GiB",
+      "Name": "springboot_project-jwks-api-1",
+      "NetIO": "294kB / 11.3MB",
+      "PIDs": "47"
+    },
+    {
+      "BlockIO": "0B / 414kB",
+      "CPUPerc": "0.31%",
+      "Container": "1bb4fa1f04935dee0718753015625079c7158be6c847d96965bed2085cd75226",
+      "ID": "1bb4fa1f0493",
+      "MemPerc": "33.76%",
+      "MemUsage": "345.7MiB / 1GiB",
+      "Name": "springboot_project-user-api-1",
+      "NetIO": "484kB / 13.9MB",
+      "PIDs": "53"
+    },
+    {
+      "BlockIO": "4.1kB / 270kB",
+      "CPUPerc": "0.13%",
+      "Container": "e0b0fd77a3a5abddea50d0c1adaa51bfd95277e472d916caad33821632f0d190",
+      "ID": "e0b0fd77a3a5",
+      "MemPerc": "30.65%",
+      "MemUsage": "313.8MiB / 1GiB",
+      "Name": "springboot_project-learning-api-1",
+      "NetIO": "352kB / 13.2MB",
+      "PIDs": "51"
+    },
+    {
+      "BlockIO": "16.2MB / 46.4MB",
+      "CPUPerc": "0.35%",
+      "Container": "a7eeab1601b0a70541873c72a29ab6eecdb5779d572c6888382e43fc08023eef",
+      "ID": "a7eeab1601b0",
+      "MemPerc": "26.21%",
+      "MemUsage": "134.2MiB / 512MiB",
+      "Name": "springboot_project-grafana-1",
+      "NetIO": "11.2MB / 34MB",
+      "PIDs": "31"
+    },
+    {
+      "BlockIO": "1.28MB / 23.1MB",
+      "CPUPerc": "0.83%",
+      "Container": "002a60c4bf0379ea50fd2ef367da10c5ba811a47f5bf041416e82a46dee3c03c",
+      "ID": "002a60c4bf03",
+      "MemPerc": "16.36%",
+      "MemUsage": "83.74MiB / 512MiB",
+      "Name": "springboot_project-prometheus-1",
+      "NetIO": "90.3MB / 5.2MB",
+      "PIDs": "9"
+    },
+    {
+      "BlockIO": "21.6MB / 4.02MB",
+      "CPUPerc": "0.05%",
+      "Container": "cb816eefd9453fe13f8692405b7d1083e8ed1f504b903ddf7433884961d5c703",
+      "ID": "cb816eefd945",
+      "MemPerc": "6.86%",
+      "MemUsage": "17.55MiB / 256MiB",
+      "Name": "springboot_project-fluent-bit-1",
+      "NetIO": "474kB / 2.77MB",
+      "PIDs": "7"
+    },
+    {
+      "BlockIO": "82.2MB / 0B",
+      "CPUPerc": "0.28%",
+      "Container": "94f2debdfe57ac7780e03889e9234aa9a0c8a54c5b17c266ae719f417cee2693",
+      "ID": "94f2debdfe57",
+      "MemPerc": "33.64%",
+      "MemUsage": "258.3MiB / 768MiB",
+      "Name": "springboot_project-opensearch-dashboards-1",
+      "NetIO": "1.58MB / 1.87MB",
+      "PIDs": "12"
+    },
+    {
+      "BlockIO": "92.8MB / 2.35MB",
+      "CPUPerc": "1.03%",
+      "Container": "db484f0766fa20871b140dfa150c05c4d2baa932d8a83100cec36e7a83358cb1",
+      "ID": "db484f0766fa",
+      "MemPerc": "33.88%",
+      "MemUsage": "173.5MiB / 512MiB",
+      "Name": "springboot_project-loki-1",
+      "NetIO": "936kB / 12.5MB",
+      "PIDs": "30"
+    },
+    {
+      "BlockIO": "82.3MB / 13.9MB",
+      "CPUPerc": "0.30%",
+      "Container": "1ecea818ba91ca035478d0d12376de5a20a701427b1f4e2f8d4bf93d85ff908d",
+      "ID": "1ecea818ba91",
+      "MemPerc": "14.46%",
+      "MemUsage": "74.05MiB / 512MiB",
+      "Name": "springboot_project-tempo-1",
+      "NetIO": "565kB / 4.29MB",
+      "PIDs": "11"
+    },
+    {
+      "BlockIO": "161MB / 27.9MB",
+      "CPUPerc": "3.34%",
+      "Container": "d46c3436c81b2304e1c8a94e75cae78f24e8c4be2fcd8c83e254d6771f341045",
+      "ID": "d46c3436c81b",
+      "MemPerc": "50.22%",
+      "MemUsage": "1.004GiB / 2GiB",
+      "Name": "springboot_project-opensearch-1",
+      "NetIO": "2.34MB / 1.97MB",
+      "PIDs": "71"
+    },
+    {
+      "BlockIO": "2.17MB / 6.44MB",
+      "CPUPerc": "0.10%",
+      "Container": "250c58854a58bc8741f07d6953b5e2a2831b4af2c2fa89e9f2dc0c95d267c523",
+      "ID": "250c58854a58",
+      "MemPerc": "15.97%",
+      "MemUsage": "40.88MiB / 256MiB",
+      "Name": "springboot_project-otel-collector-1",
+      "NetIO": "591kB / 856kB",
+      "PIDs": "21"
+    },
+    {
+      "BlockIO": "40.4MB / 299kB",
+      "CPUPerc": "4.53%",
+      "Container": "5ef09f086019ef893b4a5993ff4008fcb671a5ccf7b3fdf59b1ca18c67d6a670",
+      "ID": "5ef09f086019",
+      "MemPerc": "5.81%",
+      "MemUsage": "59.53MiB / 1GiB",
+      "Name": "springboot_project-postgres-1",
+      "NetIO": "136kB / 98.4kB",
+      "PIDs": "17"
+    },
+    {
+      "BlockIO": "70.4MB / 22.4MB",
+      "CPUPerc": "0.44%",
+      "Container": "c7169d8477a1edb23826789a6938326a27a6324af99b83021143d231cde34576",
+      "ID": "c7169d8477a1",
+      "MemPerc": "44.28%",
+      "MemUsage": "453.4MiB / 1GiB",
+      "Name": "springboot_project-mysql-1",
+      "NetIO": "269kB / 309kB",
+      "PIDs": "57"
+    }
+  ],
+  "opensearch_capacity": [
+    {
+      "available_bytes": 955883905024,
+      "total_bytes": 1081101176832,
+      "heap_used_percent": 60,
+      "cpu_percent": 0
+    }
+  ],
+  "capacity_queries": {
+    "sum by (service) (jvm_memory_used_bytes{area=\"heap\"}) / sum by (service) (jvm_memory_max_bytes{area=\"heap\"}>0)": [
+      {
+        "metric": {
+          "service": "learning-api"
+        },
+        "value": [
+          1794453328.428,
+          "0.21256038781368372"
+        ]
+      },
+      {
+        "metric": {
+          "service": "user-learning"
+        },
+        "value": [
+          1794453328.428,
+          "0.21700180516098486"
+        ]
+      },
+      {
+        "metric": {
+          "service": "jwks-service"
+        },
+        "value": [
+          1794453328.428,
+          "0.15834344420770202"
+        ]
+      }
+    ],
+    "process_cpu_usage{job=\"springboot\"}": [
+      {
+        "metric": {
+          "__name__": "process_cpu_usage",
+          "environment": "development",
+          "instance": "learning-api:9091",
+          "job": "springboot",
+          "service": "learning-api"
+        },
+        "value": [
+          1794453328.434,
+          "0.025"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "process_cpu_usage",
+          "environment": "development",
+          "instance": "user-api:9091",
+          "job": "springboot",
+          "service": "user-learning"
+        },
+        "value": [
+          1794453328.434,
+          "0.05"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "process_cpu_usage",
+          "environment": "development",
+          "instance": "jwks-api:9091",
+          "job": "springboot",
+          "service": "jwks-service"
+        },
+        "value": [
+          1794453328.434,
+          "0.011538461538461539"
+        ]
+      }
+    ],
+    "hikaricp_connections_active / (hikaricp_connections_max>0)": [
+      {
+        "metric": {
+          "environment": "development",
+          "instance": "learning-api:9091",
+          "job": "springboot",
+          "pool": "HikariPool-1",
+          "service": "learning-api"
+        },
+        "value": [
+          1794453328.449,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "environment": "development",
+          "instance": "user-api:9091",
+          "job": "springboot",
+          "pool": "HikariPool-1",
+          "service": "user-learning"
+        },
+        "value": [
+          1794453328.449,
+          "0"
+        ]
+      }
+    ],
+    "hikaricp_connections_pending": [
+      {
+        "metric": {
+          "__name__": "hikaricp_connections_pending",
+          "environment": "development",
+          "instance": "learning-api:9091",
+          "job": "springboot",
+          "pool": "HikariPool-1",
+          "service": "learning-api"
+        },
+        "value": [
+          1794453328.457,
+          "0"
+        ]
+      },
+      {
+        "metric": {
+          "__name__": "hikaricp_connections_pending",
+          "environment": "development",
+          "instance": "user-api:9091",
+          "job": "springboot",
+          "pool": "HikariPool-1",
+          "service": "user-learning"
+        },
+        "value": [
+          1794453328.457,
+          "0"
+        ]
+      }
+    ],
+    "otelcol_exporter_queue_size / (otelcol_exporter_queue_capacity>0)": [
+      {
+        "metric": {
+          "data_type": "traces",
+          "environment": "development",
+          "exporter": "otlp/tempo",
+          "instance": "otel-collector:8888",
+          "job": "observability",
+          "service": "otel-collector"
+        },
+        "value": [
+          1794453328.463,
+          "0"
+        ]
+      }
+    ],
+    "sum by (service) (rate(loki_distributor_bytes_received_total[5m]))": [
+      {
+        "metric": {
+          "service": "loki"
+        },
+        "value": [
+          1794453328.481,
+          "107.72135197349951"
+        ]
+      }
+    ],
+    "sum by (service) (rate(tempo_distributor_spans_received_total[5m]))": [
+      {
+        "metric": {
+          "service": "tempo"
+        },
+        "value": [
+          1794453328.497,
+          "0.18598057380270616"
+        ]
+      }
+    ]
+  },
+  "retention": {
+    "dated_indices": 6,
+    "legacy_unmanaged": [
+      "springboot-user-logs",
+      "springboot-learning-logs",
+      "springboot-jwks-logs"
+    ],
+    "prometheus_flags": {
+      "storage.tsdb.retention.size": "2GiB",
+      "storage.tsdb.retention.time": "15d",
+      "web.enable-admin-api": "false"
+    },
+    "opensearch_repositories": []
+  },
+  "gaps": [
+    {
+      "status": "NOT VERIFIED",
+      "check": "positive administrative User access",
+      "detail": "existing account lacks admin role; internal positive access is tested"
+    },
+    {
+      "status": "FAIL",
+      "check": "production telemetry access-control readiness",
+      "detail": "OpenSearch security disabled; Loki/Tempo/Collector/Prometheus trust internal plaintext network; loopback exposure is not production authentication"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "browser rendering and navigation",
+      "detail": "no browser automation available; API coverage only"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "elapsed Pending/Firing/Resolved lifecycle",
+      "detail": "preview-only; isolated timed rule plan is in Phase 6B"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "external notification delivery/recovery",
+      "detail": "forbidden in Phase 6A; mute remains active"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "crash durability and queue/buffer overflow",
+      "detail": "no live failure injection; historical restart evidence is not crash proof"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "physical retention deletion",
+      "detail": "policy/configuration checked, no expiration forced or deletion observed"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "backup integrity and restore",
+      "detail": "no restore rehearsal performed; repository state inspected"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "production load capacity",
+      "detail": "single bounded development snapshot, not representative load"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "runtime async endpoints",
+      "detail": "no public production async fixture; Maven integration tests provide isolated coverage"
+    },
+    {
+      "status": "NOT VERIFIED",
+      "check": "backend storage pressure alerting",
+      "detail": "reliable collected capacity metric/alert source absent"
+    },
+    {
+      "status": "FAIL",
+      "check": "lossless compressed-rollover collection",
+      "detail": "immediate gzip archive + exact-current-file tails can lose unread history while Fluent Bit is stopped; mitigation/test plan documented"
+    },
+    {
+      "status": "NOT APPLICABLE",
+      "check": "JWKS database pool",
+      "detail": "JWKS has no datasource"
+    },
+    {
+      "status": "NOT APPLICABLE",
+      "check": "Tempo service graphs/span-derived metrics",
+      "detail": "not enabled; no second metrics pipeline required"
+    }
+  ]
+}

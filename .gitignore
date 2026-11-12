@@ -32,3 +32,6 @@ observability/.phase3-state.json
 
 # Python validation cache
 __pycache__/
+
+# Phase 6 local evidence; no tokens or credential values are written here.
+observability/phase6-evidence/

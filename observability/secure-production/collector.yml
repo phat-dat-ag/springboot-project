@@ -1,0 +1,75 @@
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+        tls:
+          cert_file: /run/tls/server.crt
+          key_file: /run/tls/server.key
+          client_ca_file: /run/tls/ca.pem
+
+processors:
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 192
+    spike_limit_mib: 48
+  batch:
+    timeout: 1s
+    send_batch_size: 256
+    send_batch_max_size: 512
+
+exporters:
+  otlp/tempo:
+    endpoint: tempo:4317
+    timeout: 5s
+    tls:
+      insecure: false
+      ca_file: /run/tls/ca.pem
+      cert_file: /run/tls/client.crt
+      key_file: /run/tls/client.key
+    sending_queue:
+      enabled: true
+      num_consumers: 2
+      sizer: bytes
+      queue_size: ${env:OTEL_QUEUE_CAPACITY_BYTES}
+      storage: file_storage/queue
+      block_on_overflow: false
+    retry_on_failure:
+      enabled: true
+      initial_interval: 1s
+      max_interval: 10s
+      max_elapsed_time: 0s
+
+extensions:
+  file_storage/queue:
+    directory: /var/lib/otelcol/queue
+    create_directory: true
+    fsync: true
+    compaction:
+      on_start: true
+      on_rebound: true
+      rebound_needed_threshold_mib: 32
+      rebound_trigger_threshold_mib: 8
+      directory: /var/lib/otelcol/compaction
+  health_check:
+    endpoint: 127.0.0.1:13133
+
+service:
+  extensions: [health_check, file_storage/queue]
+  telemetry:
+    metrics:
+      level: normal
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 127.0.0.1
+                port: 8888
+                without_units: true
+                without_type_suffix: true
+                without_scope_info: true
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [otlp/tempo]

@@ -1,0 +1,8 @@
+{
+  "tls_config": {
+    "ca_file": "/run/tls/ca.pem",
+    "cert_file": "/run/tls/client.crt",
+    "key_file": "/run/tls/client.key",
+    "insecure_skip_verify": false
+  }
+}

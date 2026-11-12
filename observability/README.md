@@ -1,5 +1,14 @@
 # Observability baseline and standards
 
+Phase 6A assessment and non-destructive validation are complete. **Full production
+readiness is not established.** Start with [the Phase 6 report](phase6-verification.md)
+and [separate readiness conclusions](production-readiness.md). Operator references:
+[operations](operations-runbook.md), [incident response](incident-response.md),
+[backup/restore](backup-restore.md), [capacity](capacity-planning.md), and
+[consolidated verification checklist](phase6-checklist.md). The
+[Phase 6B plan](phase6b-validation-plan.md) is prepared only and requires separate
+approval; no destructive, restore, load or external-notification tests were run.
+
 Phase 5 dashboards and Grafana Unified Alerting are now deployed. Start with
 [dashboard operations](dashboards.md), [alerting operations](alerting.md) and
 [Phase 5 verification](phase5-verification.md). Evaluation is active; external
@@ -246,3 +255,16 @@ unauthenticated development storage. Existing Loki 720h retention and Logback
 Do not use destructive Docker commands, reset submodules, regenerate deployment
 keys, or export expanded Compose models to a report. The verifier captures models
 in memory and prints only allowlisted summaries; it does not write credentials.
+
+## Phase6A remediation — 2026-11-12
+
+- [Remediation verification and acceptance](phase6a-remediation.md): immutable-name bounded source spool deployed;12 isolated checks,309 Maven tests and fresh live regressions. Original Phase6A evidence is retained.
+- [Telemetry endpoint/security assessment](telemetry-security.md): current host publications are loopback-only; production plaintext/OpenSearch security failure remains open.
+- [Inactive secure-production candidate](secure-production/README.md): required PKI/secret inputs, structural validation, isolated migration/negative tests and rollback prerequisites. Not deployed; never enable against live volumes from examples alone.
+- `test_remediation_contract.py`, `test-rotation-remediation.py`, `verify-remediation.py`, `remediation-runtime.py`: offline contracts, isolated rotation, real regression and baseline-preservation checks respectively. A remaining security FAIL correctly produces nonzero regression exit status.
+
+No full production readiness, exactly-once delivery, crash durability or external notification verification is claimed. No Phase6B test was authorized by this remediation.
+
+## Phase6B isolated validation — 2026-11-12
+
+The subsequent explicit Phase6B authorization was executed in a separate disposable environment. See [verification report](phase6b-verification.md), [test matrix](phase6b-test-matrix.md), [measurements](phase6b-measurements.json) and [reusable harness/cleanup instructions](phase6b/README.md). Historical Phase6A and remediation evidence remains intact. Isolated security/restore/lifecycle successes do not activate production security, prove external notification delivery or establish overall readiness.

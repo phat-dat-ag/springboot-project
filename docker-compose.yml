@@ -205,6 +205,7 @@ services:
 
     volumes:
       - user_api_logs:/app/data/logs
+      - ./springboot-user-api/src/main/resources/logback-spring.xml:/etc/application/logback-spring.xml:ro
       - type: bind
         source: ${USER_SIGNING_KEYS_DIR:-./key}/userservice-private-v1.pem
         target: /run/keys/jwt/userservice-private-v1.pem
@@ -243,6 +244,10 @@ services:
       # Logging
       APP_LOG_DIR: /app/data/logs
       APP_NAME: ${USER_API_APP_NAME:-user-api}
+      LOGGING_CONFIG: file:/etc/application/logback-spring.xml
+      APP_LOG_MAX_FILE_SIZE: ${APP_LOG_MAX_FILE_SIZE:-100MB}
+      APP_LOG_MAX_HISTORY: ${APP_LOG_MAX_HISTORY:-30}
+      APP_LOG_TOTAL_SIZE_CAP: ${APP_LOG_TOTAL_SIZE_CAP:-2GB}
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
 
@@ -298,6 +303,7 @@ services:
 
     volumes:
       - learning_api_logs:/app/data/logs
+      - ./springboot-learning-api/src/main/resources/logback-spring.xml:/etc/application/logback-spring.xml:ro
       - type: bind
         source: ${LEARNING_SIGNING_KEYS_DIR:-./data/keys/learning}/learningservice-private-v1.pem
         target: /run/keys/learning/learningservice-private-v1.pem
@@ -340,6 +346,10 @@ services:
       # Logging
       APP_LOG_DIR: /app/data/logs
       APP_NAME: ${LEARNING_API_APP_NAME:-learning-api}
+      LOGGING_CONFIG: file:/etc/application/logback-spring.xml
+      APP_LOG_MAX_FILE_SIZE: ${APP_LOG_MAX_FILE_SIZE:-100MB}
+      APP_LOG_MAX_HISTORY: ${APP_LOG_MAX_HISTORY:-30}
+      APP_LOG_TOTAL_SIZE_CAP: ${APP_LOG_TOTAL_SIZE_CAP:-2GB}
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
 
@@ -388,6 +398,7 @@ services:
 
     volumes:
       - jwks_api_logs:/app/data/logs
+      - ./springboot-jwks-api/src/main/resources/logback-spring.xml:/etc/application/logback-spring.xml:ro
       - type: bind
         source: ${JWKS_KEYS_DIR:-./key}/userservice-public-v1.pem
         target: /run/keys/jwt/userservice-public-v1.pem
@@ -415,6 +426,10 @@ services:
       # Logging
       APP_LOG_DIR: /app/data/logs
       APP_NAME: ${JWKS_API_APP_NAME:-jwks-api}
+      LOGGING_CONFIG: file:/etc/application/logback-spring.xml
+      APP_LOG_MAX_FILE_SIZE: ${APP_LOG_MAX_FILE_SIZE:-100MB}
+      APP_LOG_MAX_HISTORY: ${APP_LOG_MAX_HISTORY:-30}
+      APP_LOG_TOTAL_SIZE_CAP: ${APP_LOG_TOTAL_SIZE_CAP:-2GB}
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
       LOG_LEVEL: ${JWKS_API_LOG_LEVEL:-INFO}
 

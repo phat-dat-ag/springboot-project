@@ -1,0 +1,56 @@
+[
+  {
+    "targets": [
+      "prometheus:9090"
+    ],
+    "labels": {
+      "service": "prometheus",
+      "environment": "production"
+    }
+  },
+  {
+    "targets": [
+      "loki:3100"
+    ],
+    "labels": {
+      "service": "loki",
+      "environment": "production"
+    }
+  },
+  {
+    "targets": [
+      "tempo:3200"
+    ],
+    "labels": {
+      "service": "tempo",
+      "environment": "production"
+    }
+  },
+  {
+    "targets": [
+      "fluent-bit:2020"
+    ],
+    "labels": {
+      "service": "fluent-bit",
+      "environment": "production"
+    }
+  },
+  {
+    "targets": [
+      "otel-collector:8888"
+    ],
+    "labels": {
+      "service": "otel-collector",
+      "environment": "production"
+    }
+  },
+  {
+    "targets": [
+      "grafana:3000"
+    ],
+    "labels": {
+      "service": "grafana",
+      "environment": "production"
+    }
+  }
+]

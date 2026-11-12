@@ -1,5 +1,12 @@
 # Logging pipeline reliability (Phase 4)
 
+Phase 6A revalidated this configuration and fresh dual-store delivery without
+restarting live components. The compressed-rollover gap remains a confirmed
+limitation; [the operational runbook](operations-runbook.md) specifies a candidate
+uncompressed retention/tail/delayed-compression mitigation. It was not deployed;
+[Phase 6B A4](phase6b-validation-plan.md) requires isolated validation and separate
+approval. Historical ordinary-restart evidence below is not crash durability proof.
+
 Logback JSON console and rolling files remain unchanged. Fluent Bit 3.2.10 tails
 the three exact current application files, preserving JSON types, service metadata,
 traceId, spanId and correlationId. Independent outputs send to Loki 3.5.8 and
@@ -138,3 +145,9 @@ Supported option references: [Fluent Bit 3.2 storage](https://docs.fluentbit.io/
 [tail input](https://docs.fluentbit.io/manual/3.2/pipeline/inputs/tail),
 [OpenSearch ISM](https://docs.opensearch.org/latest/im-plugin/ism/policies/),
 [Loki retention](https://grafana.com/docs/loki/latest/operations/storage/retention/).
+
+## 2026-11-12 source-spool remediation (supersedes old rotation paths)
+
+The earlier fixed-active/gzip path description is historical. Applications now use immutable `spool/<app>.YYYY-MM-DD.<index>.log` files, with no fixed `<file>` and no compression. Native Logback size/time rollover opens a new filename. Fluent Bit discovers retained spool files plus the old fixed active log with its unchanged persistent database and buffer mounts. Old gzip files are excluded and preserved. This removes the specific unread-gzip gap during ordinary collector downtime, without a rename/glob combination that can replay tracked files.
+
+Retention remains bounded (100MB/file,30 days,2GB/application by default, plus active/cleanup allowance); uncompressed bytes require additional capacity planning. Cleanup may evict unread files during excessive downtime. Possible duplicates, overflow/crash windows and acknowledgement ambiguity remain. The fixture's52 events per sink observed once do not establish exactly-once delivery. See [implementation/evidence](phase6a-remediation.md) and [current operations](operations-runbook.md).

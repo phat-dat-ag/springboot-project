@@ -1,0 +1,18 @@
+cluster.name: springboot-observability-secure
+network.host: 0.0.0.0
+discovery.type: single-node
+plugins.security.disabled: false
+plugins.security.allow_default_init_securityindex: false
+plugins.security.ssl.transport.pemcert_filepath: telemetry-tls/server.crt
+plugins.security.ssl.transport.pemkey_filepath: telemetry-tls/server.key
+plugins.security.ssl.transport.pemtrustedcas_filepath: telemetry-tls/ca.pem
+plugins.security.ssl.transport.enforce_hostname_verification: true
+plugins.security.ssl.http.enabled: true
+plugins.security.ssl.http.pemcert_filepath: telemetry-tls/server.crt
+plugins.security.ssl.http.pemkey_filepath: telemetry-tls/server.key
+plugins.security.ssl.http.pemtrustedcas_filepath: telemetry-tls/ca.pem
+plugins.security.ssl.http.clientauth_mode: REQUIRE
+plugins.security.authcz.admin_dn:
+  - ${OS_ADMIN_DN}
+plugins.security.nodes_dn:
+  - ${OS_NODE_DN}
