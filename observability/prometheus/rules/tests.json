@@ -1,0 +1,63 @@
+{
+  "rule_files": ["phase5.json"],
+  "evaluation_interval": "30s",
+  "tests": [
+    {
+      "name": "traffic with no error series becomes zero errors",
+      "interval": "30s",
+      "input_series": [
+        {"series": "http_server_requests_seconds_count{service=\"learning-api\",environment=\"test\",uri=\"/example/{id}\",status=\"200\"}", "values": "0+30x20"}
+      ],
+      "promql_expr_test": [
+        {"expr": "sb:http_requests:rate5m", "eval_time": "10m", "exp_samples": [{"labels": "{__name__=\"sb:http_requests:rate5m\",service=\"learning-api\",environment=\"test\"}", "value": 1}]},
+        {"expr": "sb:http_5xx:rate5m", "eval_time": "10m", "exp_samples": [{"labels": "{__name__=\"sb:http_5xx:rate5m\",service=\"learning-api\",environment=\"test\"}", "value": 0}]},
+        {"expr": "sb:http_errors:ratio5m", "eval_time": "10m", "exp_samples": [{"labels": "{__name__=\"sb:http_errors:ratio5m\",service=\"learning-api\",environment=\"test\"}", "value": 0}]}
+      ]
+    },
+    {
+      "name": "zero traffic is zero throughput and undefined ratio",
+      "interval": "30s",
+      "input_series": [
+        {"series": "http_server_requests_seconds_count{service=\"jwks-service\",environment=\"test\",uri=\"/example\",status=\"200\"}", "values": "0+0x20"}
+      ],
+      "promql_expr_test": [
+        {"expr": "sb:http_requests:rate5m", "eval_time": "10m", "exp_samples": [{"labels": "{__name__=\"sb:http_requests:rate5m\",service=\"jwks-service\",environment=\"test\"}", "value": 0}]},
+        {"expr": "sb:http_errors:ratio5m", "eval_time": "10m", "exp_samples": []},
+        {"expr": "sb:http_p95:seconds5m", "eval_time": "10m", "exp_samples": []}
+      ]
+    },
+    {
+      "name": "reachable target before any business request has zero rate",
+      "interval": "30s",
+      "input_series": [
+        {"series": "up{job=\"springboot\",service=\"learning-api\",environment=\"test\"}", "values": "1+0x20"}
+      ],
+      "promql_expr_test": [
+        {"expr": "sb:http_requests:rate5m", "eval_time": "10m", "exp_samples": [{"labels": "{__name__=\"sb:http_requests:rate5m\",service=\"learning-api\",environment=\"test\"}", "value": 0}]},
+        {"expr": "sb:http_errors:ratio5m", "eval_time": "10m", "exp_samples": []}
+      ]
+    },
+    {
+      "name": "no target telemetry never becomes a fake zero",
+      "interval": "30s",
+      "input_series": [],
+      "promql_expr_test": [
+        {"expr": "sb:http_requests:rate5m", "eval_time": "10m", "exp_samples": []}
+      ]
+    },
+    {
+      "name": "histogram boundaries retained and server error ratio correct",
+      "interval": "30s",
+      "input_series": [
+        {"series": "http_server_requests_seconds_count{service=\"learning-api\",environment=\"test\",uri=\"/example/{id}\",status=\"200\"}", "values": "0+90x20"},
+        {"series": "http_server_requests_seconds_count{service=\"learning-api\",environment=\"test\",uri=\"/example/{id}\",status=\"500\"}", "values": "0+10x20"},
+        {"series": "http_server_requests_seconds_bucket{service=\"learning-api\",environment=\"test\",uri=\"/example/{id}\",le=\"1\"}", "values": "0+100x20"},
+        {"series": "http_server_requests_seconds_bucket{service=\"learning-api\",environment=\"test\",uri=\"/example/{id}\",le=\"+Inf\"}", "values": "0+100x20"}
+      ],
+      "promql_expr_test": [
+        {"expr": "sb:http_errors:ratio5m", "eval_time": "10m", "exp_samples": [{"labels": "{__name__=\"sb:http_errors:ratio5m\",service=\"learning-api\",environment=\"test\"}", "value": 0.1}]},
+        {"expr": "sb:http_p95:seconds5m", "eval_time": "10m", "exp_samples": [{"labels": "{__name__=\"sb:http_p95:seconds5m\",service=\"learning-api\",environment=\"test\"}", "value": 0.95}]}
+      ]
+    }
+  ]
+}

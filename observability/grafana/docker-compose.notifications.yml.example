@@ -1,0 +1,7 @@
+# Explicit opt-in only after destination authorization. Not included by default.
+services:
+  grafana:
+    environment:
+      GRAFANA_ALERT_WEBHOOK_URL: ${GRAFANA_ALERT_WEBHOOK_URL:?Set an authorized webhook URL in ignored .env}
+    volumes:
+      - ./observability/grafana/notification-webhook.json.example:/etc/grafana/provisioning/alerting/approved-webhook.json:ro

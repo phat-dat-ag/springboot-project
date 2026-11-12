@@ -1,5 +1,13 @@
 # Application logs in Grafana and Loki
 
+Phase 5 adds eight dashboards in the existing Observability folder and 21 muted
+Grafana alert rules. The original Application logs dashboard and datasource UIDs
+are preserved. Use [dashboard operations](../dashboards.md) and
+[alerting operations](../alerting.md) for current provisioning, environment options
+and verification. Fluent Bit now uses Phase 4 persistent filesystem buffering;
+the historical memory-buffering limitation below is superseded by
+[logging-pipeline.md](../logging-pipeline.md).
+
 ## Open in your browser
 
 For the current local environment:

@@ -3,6 +3,9 @@ global:
   scrape_timeout: 5s
   evaluation_interval: 15s
 
+rule_files:
+  - /etc/prometheus/rules/phase5.json
+
 scrape_configs:
   - job_name: springboot
     metrics_path: /actuator/prometheus
@@ -11,5 +14,19 @@ scrape_configs:
     label_limit: 20
     label_name_length_limit: 100
     label_value_length_limit: 256
-    static_configs:
-      - targets: [user-api:9091, learning-api:9091, jwks-api:9091]
+    honor_labels: true
+    file_sd_configs:
+      - files: [/etc/prometheus/targets/applications.json]
+        refresh_interval: 30s
+
+  - job_name: observability
+    sample_limit: 20000
+    label_limit: 30
+    file_sd_configs:
+      - files: [/etc/prometheus/targets/infrastructure.json]
+        refresh_interval: 30s
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: fluent-bit:2020
+        target_label: __metrics_path__
+        replacement: /api/v1/metrics/prometheus

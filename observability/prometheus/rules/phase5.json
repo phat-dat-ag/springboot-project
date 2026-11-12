@@ -1,0 +1,30 @@
+{
+  "groups": [
+    {
+      "name": "springboot-phase5",
+      "interval": "30s",
+      "rules": [
+        {
+          "record": "sb:http_requests:rate5m",
+          "expr": "(sum by (service,environment) (rate(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) or on (service,environment) (0 * max by (service,environment) (up{job=\"springboot\"} == 1)))"
+        },
+        {
+          "record": "sb:http_5xx:rate5m",
+          "expr": "(sum by (service,environment) (rate(http_server_requests_seconds_count{uri!~\"/actuator/.*\",status=~\"5..\"}[5m])) or on (service,environment) (0 * (sum by (service,environment) (rate(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) or on (service,environment) (0 * max by (service,environment) (up{job=\"springboot\"} == 1)))))"
+        },
+        {
+          "record": "sb:http_errors:ratio5m",
+          "expr": "(sum by (service,environment) (rate(http_server_requests_seconds_count{uri!~\"/actuator/.*\",status=~\"4..|5..\"}[5m])) or on (service,environment) (0 * (sum by (service,environment) (rate(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) or on (service,environment) (0 * max by (service,environment) (up{job=\"springboot\"} == 1))))) / on (service,environment) ((sum by (service,environment) (rate(http_server_requests_seconds_count{uri!~\"/actuator/.*\"}[5m])) or on (service,environment) (0 * max by (service,environment) (up{job=\"springboot\"} == 1))) > 0)"
+        },
+        {
+          "record": "sb:http_p95:seconds5m",
+          "expr": "histogram_quantile(0.95, sum by (service,environment,le) (rate(http_server_requests_seconds_bucket{uri!~\"/actuator/.*\"}[5m])))"
+        },
+        {
+          "record": "sb:http_p99:seconds5m",
+          "expr": "histogram_quantile(0.99, sum by (service,environment,le) (rate(http_server_requests_seconds_bucket{uri!~\"/actuator/.*\"}[5m])))"
+        }
+      ]
+    }
+  ]
+}

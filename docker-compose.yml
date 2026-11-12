@@ -538,6 +538,8 @@ services:
       GF_USERS_ALLOW_SIGN_UP: "false"
 
       GF_LOG_MODE: console
+      # Rule-local routing preserves the existing policy tree. Delivery is always muted.
+      PHASE5_ALERT_RECEIVER: ${PHASE5_ALERT_RECEIVER:-grafana-default-email}
 
     ports:
       - "127.0.0.1:${GRAFANA_HOST_PORT:-3000}:3000"
@@ -549,6 +551,7 @@ services:
       - ./observability/grafana/provisioning/datasources/tempo.yml:/etc/grafana/provisioning/datasources/tempo.yml:ro
       - ./observability/grafana/provisioning/dashboards/application-logs.yml:/etc/grafana/provisioning/dashboards/application-logs.yml:ro
       - ./observability/grafana/dashboards:/etc/grafana/dashboards:ro
+      - ./observability/grafana/provisioning/alerting/phase5.json:/etc/grafana/provisioning/alerting/phase5.json:ro
 
   otel-collector:
     <<: *container-security
@@ -640,6 +643,8 @@ services:
       - "127.0.0.1:${PROMETHEUS_HOST_PORT:-9090}:9090"
     volumes:
       - ./observability/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./observability/prometheus/rules:/etc/prometheus/rules:ro
+      - ./observability/prometheus/targets:/etc/prometheus/targets:ro
       - prometheus_data:/prometheus
     healthcheck:
       test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:9090/-/ready"]

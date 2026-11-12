@@ -1,0 +1,203 @@
+[
+  {
+    "uid": "sb5-overview",
+    "title": "Spring Boot / Microservices Overview",
+    "panels": [
+      "Reading this dashboard",
+      "Service availability",
+      "HTTP requests per second",
+      "HTTP 4xx per second",
+      "HTTP 5xx per second",
+      "HTTP error percentage",
+      "HTTP p50 latency",
+      "HTTP p95 latency",
+      "HTTP p99 latency",
+      "Request volume over selected range",
+      "Recent application errors",
+      "JVM memory used",
+      "Process CPU",
+      "Application uptime"
+    ],
+    "variables": [
+      "environment",
+      "service"
+    ],
+    "datasources": [
+      "loki",
+      "prometheus"
+    ]
+  },
+  {
+    "uid": "sb5-http",
+    "title": "Spring Boot / HTTP Performance",
+    "panels": [
+      "Throughput by service",
+      "Top routes by throughput",
+      "HTTP method breakdown",
+      "Status distribution",
+      "4xx trend",
+      "5xx trend",
+      "HTTP error ratio",
+      "p50 latency",
+      "p95 latency",
+      "p99 latency",
+      "Slow endpoints by p95",
+      "Request duration distribution",
+      "Internal HTTP client throughput",
+      "Internal HTTP client p95"
+    ],
+    "variables": [
+      "environment",
+      "service"
+    ],
+    "datasources": [
+      "prometheus"
+    ]
+  },
+  {
+    "uid": "sb5-jvm",
+    "title": "Spring Boot / JVM & Runtime",
+    "panels": [
+      "Heap used",
+      "Heap maximum",
+      "Heap utilization",
+      "Non-heap memory",
+      "GC frequency",
+      "GC pause time per second",
+      "Mean GC pause",
+      "Live threads",
+      "Daemon threads",
+      "Process CPU",
+      "System CPU",
+      "Process uptime",
+      "Executor active threads",
+      "Executor maximum threads",
+      "Executor pool size",
+      "Executor queued tasks",
+      "Open file descriptors",
+      "JVM direct/mapped buffer memory"
+    ],
+    "variables": [
+      "environment",
+      "service"
+    ],
+    "datasources": [
+      "prometheus"
+    ]
+  },
+  {
+    "uid": "sb5-database",
+    "title": "Spring Boot / Database & Connection Pools",
+    "panels": [
+      "Active connections",
+      "Idle connections",
+      "Pending connections",
+      "Maximum connections",
+      "Pool utilization",
+      "Mean connection acquisition latency",
+      "Connection timeouts",
+      "Pool acquisition maximum"
+    ],
+    "variables": [
+      "environment",
+      "service"
+    ],
+    "datasources": [
+      "prometheus"
+    ]
+  },
+  {
+    "uid": "sb5-security",
+    "title": "Spring Boot / Security & Authentication",
+    "panels": [
+      "Security event meaning",
+      "Authentication failures",
+      "Authorization denials",
+      "Security event trends",
+      "Security events over selected range",
+      "HTTP 401 trend",
+      "HTTP 403 trend",
+      "Authentication and authorization logs"
+    ],
+    "variables": [
+      "environment",
+      "service"
+    ],
+    "datasources": [
+      "loki",
+      "prometheus"
+    ]
+  },
+  {
+    "uid": "sb5-logging",
+    "title": "Spring Boot / Centralized Logging",
+    "panels": [
+      "Log investigation",
+      "Log volume by service",
+      "Log volume by severity",
+      "ERROR trend",
+      "WARN trend",
+      "Recent errors",
+      "Recent warnings",
+      "HTTP request failures",
+      "Correlated logs"
+    ],
+    "variables": [
+      "environment",
+      "service",
+      "correlation",
+      "trace"
+    ],
+    "datasources": [
+      "loki"
+    ]
+  },
+  {
+    "uid": "sb5-tracing",
+    "title": "Spring Boot / Distributed Tracing",
+    "panels": [
+      "Trace investigation workflow",
+      "Service p95",
+      "Service p99",
+      "Request throughput",
+      "Recent errors with trace navigation"
+    ],
+    "variables": [
+      "environment",
+      "service"
+    ],
+    "datasources": [
+      "loki",
+      "prometheus"
+    ]
+  },
+  {
+    "uid": "sb5-infrastructure",
+    "title": "Spring Boot / Observability Infrastructure",
+    "panels": [
+      "Coverage and limitations",
+      "All scrape target health",
+      "Scrape duration",
+      "Collector queue utilization",
+      "Collector failed span export attempts",
+      "Collector refused spans",
+      "Fluent Bit output errors",
+      "Fluent Bit dropped records",
+      "Fluent Bit failed retries",
+      "Loki received lines",
+      "Loki flush failures",
+      "Loki WAL bytes",
+      "Tempo received spans",
+      "Tempo failed flushes",
+      "Grafana alert instances",
+      "Prometheus resident memory"
+    ],
+    "variables": [
+      "environment",
+      "service"
+    ],
+    "datasources": [
+      "prometheus"
+    ]
+  }
+]

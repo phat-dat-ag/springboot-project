@@ -51,7 +51,16 @@ service:
   extensions: [health_check, file_storage/queue]
   telemetry:
     metrics:
-      level: none
+      level: normal
+      readers:
+        - pull:
+            exporter:
+              prometheus:
+                host: 0.0.0.0
+                port: 8888
+                without_units: true
+                without_type_suffix: true
+                without_scope_info: true
   pipelines:
     traces:
       receivers: [otlp]

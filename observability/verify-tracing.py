@@ -89,6 +89,7 @@ def main():
     check('Server available' in internal('http://otel-collector:13133/'), 'Collector health extension')
     check('ready' in internal('http://tempo:3200/ready').lower(), 'Tempo readiness')
     targets = request(ports['prometheus'], '/api/v1/targets')[2]['data']['activeTargets']
+    targets = [t for t in targets if t['labels'].get('job') == 'springboot']
     check(len(targets) == 3 and all(t['health'] == 'up' for t in targets), 'three Prometheus targets UP')
 
     grafana = model['services']['grafana']['environment']

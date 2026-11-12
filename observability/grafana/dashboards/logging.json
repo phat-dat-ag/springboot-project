@@ -1,0 +1,515 @@
+{
+  "uid": "sb5-logging",
+  "title": "Spring Boot / Centralized Logging",
+  "schemaVersion": 41,
+  "version": 1,
+  "editable": false,
+  "timezone": "browser",
+  "tags": [
+    "springboot",
+    "phase5"
+  ],
+  "description": "Centralized Logging. Missing series remain gaps; idle percentiles have no value. See observability/dashboards.md.",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "30s",
+  "panels": [
+    {
+      "title": "Log investigation",
+      "type": "text",
+      "description": "Log investigation",
+      "options": {
+        "mode": "markdown",
+        "content": "Use an exact correlation ID or trace ID; default .* includes records with absent optional fields. Expand JSON details and choose TraceID \u2192 View trace. Sampling means some log trace IDs have no stored trace."
+      },
+      "id": 1,
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "Log volume by service",
+      "type": "timeseries",
+      "description": "Stream labels only; no request IDs become labels.",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "logs",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (service) (rate({job=\"springboot\",service=~\"$service\",environment=~\"$environment\"}[$__interval]))",
+          "legendFormat": "{{service}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 2,
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "Log volume by severity",
+      "type": "timeseries",
+      "description": "Log volume by severity",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "logs",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (service,level) (rate(({job=\"springboot\",service=~\"$service\",environment=~\"$environment\"} | json | __error__=\"\")[$__interval]))",
+          "legendFormat": "{{service}} {{level}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 3,
+      "gridPos": {
+        "x": 0,
+        "y": 9,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "ERROR trend",
+      "type": "timeseries",
+      "description": "ERROR trend",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "logs",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (service) (rate(({job=\"springboot\",service=~\"$service\",environment=~\"$environment\"} | json | __error__=\"\" | level=\"ERROR\")[$__interval]))",
+          "legendFormat": "{{service}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 4,
+      "gridPos": {
+        "x": 12,
+        "y": 9,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "WARN trend",
+      "type": "timeseries",
+      "description": "WARN trend",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "logs",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": {
+          "displayMode": "table",
+          "placement": "bottom",
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "sum by (service) (rate(({job=\"springboot\",service=~\"$service\",environment=~\"$environment\"} | json | __error__=\"\" | level=\"WARN\")[$__interval]))",
+          "legendFormat": "{{service}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 5,
+      "gridPos": {
+        "x": 0,
+        "y": 18,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "Recent errors",
+      "type": "logs",
+      "description": "Recent errors",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "dedupStrategy": "none"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{job=\"springboot\",service=~\"$service\",environment=~\"$environment\"} | json | __error__=\"\" | correlationId=~\"${correlation:regex}\" | traceId=~\"${trace:regex}\" | level=\"ERROR\"",
+          "legendFormat": "{{service}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 6,
+      "gridPos": {
+        "x": 12,
+        "y": 18,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "Recent warnings",
+      "type": "logs",
+      "description": "Recent warnings",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "dedupStrategy": "none"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{job=\"springboot\",service=~\"$service\",environment=~\"$environment\"} | json | __error__=\"\" | correlationId=~\"${correlation:regex}\" | traceId=~\"${trace:regex}\" | level=\"WARN\"",
+          "legendFormat": "{{service}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 7,
+      "gridPos": {
+        "x": 0,
+        "y": 27,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "HTTP request failures",
+      "type": "logs",
+      "description": "HTTP request failures",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "dedupStrategy": "none"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{job=\"springboot\",service=~\"$service\",environment=~\"$environment\"} | json | __error__=\"\" | correlationId=~\"${correlation:regex}\" | traceId=~\"${trace:regex}\" | event=\"http.request.completed\" | outcome=~\"client_error|server_error\"",
+          "legendFormat": "{{service}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 8,
+      "gridPos": {
+        "x": 12,
+        "y": 27,
+        "w": 12,
+        "h": 9
+      }
+    },
+    {
+      "title": "Correlated logs",
+      "type": "logs",
+      "description": "Correlated logs",
+      "datasource": {
+        "type": "loki",
+        "uid": "loki"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "noValue": "No telemetry",
+          "custom": {
+            "spanNulls": false
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "showTime": true,
+        "showLabels": false,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "enableLogDetails": true,
+        "dedupStrategy": "none"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "loki",
+            "uid": "loki"
+          },
+          "expr": "{job=\"springboot\",service=~\"$service\",environment=~\"$environment\"} | json | __error__=\"\" | correlationId=~\"${correlation:regex}\" | traceId=~\"${trace:regex}\"",
+          "legendFormat": "{{service}}",
+          "editorMode": "code",
+          "queryType": "range",
+          "maxLines": 100
+        }
+      ],
+      "id": 9,
+      "gridPos": {
+        "x": 0,
+        "y": 36,
+        "w": 12,
+        "h": 9
+      }
+    }
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "environment",
+        "label": "Environment",
+        "type": "query",
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "query": "label_values(app_build_info, environment)",
+        "options": [],
+        "datasource": {
+          "type": "prometheus",
+          "uid": "prometheus"
+        },
+        "definition": "label_values(app_build_info, environment)",
+        "refresh": 1
+      },
+      {
+        "name": "service",
+        "label": "Service",
+        "type": "custom",
+        "multi": true,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "query": "user-learning,learning-api,jwks-service",
+        "options": []
+      },
+      {
+        "name": "correlation",
+        "label": "Correlation ID regex (.* = all)",
+        "type": "textbox",
+        "query": ".*",
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        }
+      },
+      {
+        "name": "trace",
+        "label": "Trace ID regex (.* = all)",
+        "type": "textbox",
+        "query": ".*",
+        "current": {
+          "text": ".*",
+          "value": ".*"
+        }
+      }
+    ]
+  },
+  "links": [
+    {
+      "title": "All Spring Boot dashboards",
+      "type": "dashboards",
+      "tags": [
+        "phase5"
+      ],
+      "asDropdown": true,
+      "includeVars": true,
+      "keepTime": true
+    },
+    {
+      "title": "Alert rules",
+      "type": "link",
+      "url": "/alerting/list"
+    }
+  ]
+}

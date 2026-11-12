@@ -107,6 +107,7 @@ def main():
     # Wait for two scrape intervals so counters and rate-based percentile queries have samples.
     for _ in range(9):
         targets = request(prom_port, '/api/v1/targets')[2]['data']['activeTargets']
+        targets = [t for t in targets if t['labels'].get('job') == 'springboot']
         if len(targets) == 3 and all(t['health'] == 'up' for t in targets):
             break
         time.sleep(5)

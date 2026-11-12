@@ -29,3 +29,6 @@ key/**
 # Existing local runtime test account; never commit credentials.
 observability/local-test-credentials.json
 observability/.phase3-state.json
+
+# Python validation cache
+__pycache__/

@@ -1,0 +1,21 @@
+{
+  "apiVersion": 1,
+  "contactPoints": [
+    {
+      "orgId": 1,
+      "name": "phase5-webhook",
+      "receivers": [
+        {
+          "uid": "sb5-approved-webhook",
+          "type": "webhook",
+          "disableResolveMessage": false,
+          "settings": {
+            "url": "$GRAFANA_ALERT_WEBHOOK_URL",
+            "httpMethod": "POST",
+            "maxAlerts": "20"
+          }
+        }
+      ]
+    }
+  ]
+}
