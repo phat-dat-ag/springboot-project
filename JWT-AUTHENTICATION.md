@@ -126,3 +126,9 @@ paths; Compose env files are not automatically loaded by Java. Enable both Learn
 outbound attachment for a local authenticated integration run.
 
 See `SECURITY-INTEGRATION-REPORT.md` for checks actually performed and manual Git delivery.
+
+## Shared repository compatibility audit
+
+See [the 2026-11-16 compatibility audit](SHARED-JWKS-COMPATIBILITY-AUDIT.md) for
+revision comparisons, current owner trust boundaries, port conflicts, validation
+results and the limits of cross-repository runtime verification.
