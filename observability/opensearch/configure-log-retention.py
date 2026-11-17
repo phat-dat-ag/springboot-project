@@ -32,7 +32,7 @@ def main():
         assert health['number_of_data_nodes'] == 1, 'Never reduce replicas on a multi-node cluster'
         assert model['services']['opensearch']['environment']['discovery.type'] == 'single-node'
     policy_id = 'springboot-dated-logs-retention'
-    patterns = ['springboot-' + name + '-20*-logs' for name in ('user', 'learning', 'jwks')]
+    patterns = ['springboot-' + name + '-20*-logs' for name in ('user', 'hospital', 'jwks')]
     policy = {'description': 'Retention for new dated Spring Boot application indices only; legacy indices excluded',
               'default_state': 'hot',
               'states': [{'name': 'hot', 'actions': [], 'transitions': [
@@ -48,7 +48,7 @@ def main():
         actual = existing['policy']
         assert all(actual.get(k) == value for k, value in policy.items() if k != 'ism_template'), 'Existing policy differs; review before changing it'
         assert [{k: item[k] for k in ('index_patterns', 'priority')} for item in actual['ism_template']] == policy['ism_template']
-    for name, pattern in zip(('user', 'learning', 'jwks'), patterns):
+    for name, pattern in zip(('user', 'hospital', 'jwks'), patterns):
         legacy = 'springboot-' + name + '-logs'
         mapping = request('/' + legacy + '/_mapping')[legacy]['mappings']
         template = {'index_patterns': [pattern], 'priority': 200,

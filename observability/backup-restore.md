@@ -22,7 +22,7 @@ visible to this assessment and must not be assumed absent or working.
 | Secrets and keys | Examples only, never live credentials/key material | Original ignored env files, Grafana encryption secret/config, API signing keys/public files and required repository credentials in approved encrypted secret backup; preserve key IDs/issuers |
 | Application databases | Migration source only | MySQL/PostgreSQL require their own native consistent database backup/PITR plan. Copying Docker volumes live is not validated here |
 
-All named volumes currently use the `springboot_project_` prefix. Inventory actual
+All named volumes currently use the `hospital_dev_` prefix. Inventory actual
 mount identities, image IDs, ownership, modes, config hashes, retention and snapshot
 timestamps in a protected manifest. Include checksums, backup encryption/key-access
 procedure, destination authorization, retention/expiry owner and restore manifest.
@@ -78,11 +78,11 @@ approved execution. These references do not establish a successful local restore
    project/host, storage ceiling and acceptable exposure. Require a dedicated
    network, loopback test ports, no live volume mounts, no shared database access
    and no external notification transport. Prefer another Docker host for storage
-   and failure tests so `jp_dev` cannot suffer shared resource pressure.
+   and failure tests so `hospital_dev` cannot suffer shared resource pressure.
 2. Verify checksums/encryption access and create new destination volumes. Restore
    the exact images/config schema first, matching non-root UID/GID and permissions.
-   Keep original volumes immutable and disconnected. Never reuse `springboot_project`
-   or `jp_dev` as a test project name.
+   Keep original volumes immutable and disconnected. Never reuse `hospital_dev`
+   or `hospital_dev` as a test project name.
 3. Restore backend data first: native OpenSearch snapshot into isolated indices;
    consistent Loki/Tempo stores; Prometheus snapshot data with its own lock/WAL
    handling. Start/query backends before allowing buffered replay. Restore

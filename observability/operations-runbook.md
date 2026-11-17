@@ -1,7 +1,7 @@
 # Observability operations runbook
 
-All commands below target `springboot_project` from the repository root. `jp_dev`
-and `japanese-learning` are separate and must not be operated on by this runbook.
+All commands below target `hospital_dev` from the repository root. `hospital_dev`
+and `hospital-management` are separate and must not be operated on by this runbook.
 Routine health commands are read-only; maintenance commands require a reviewed
 maintenance window and are **documented, not executed in Phase 6A**.
 
@@ -9,7 +9,7 @@ maintenance window and are **documented, not executed in Phase 6A**.
 
 ```mermaid
 flowchart LR
-  C[Authenticated caller] --> L[Learning API]
+  C[Authenticated caller] --> L[Hospital Management API]
   L -->|internal JWT + W3C + correlation| U[User API]
   L --> J[JWKS API]
   U --> J
@@ -27,9 +27,9 @@ flowchart LR
 
 | Compose service | Telemetry identity / data | Storage |
 | --- | --- | --- |
-| user-api | `user-learning`; public8080/private9091 | `user_api_logs`, MySQL |
-| learning-api | `learning-api`; public8080/private9091 | `learning_api_logs`, PostgreSQL |
-| jwks-api | `jwks-service`; public8080/private9091 | `jwks_api_logs`, read-only public key mounts; no database |
+| hospital-user-api | `hospital-user-api`; public8080/private9091 | `user_api_logs`, MySQL |
+| hospital-api | `hospital-api`; public8080/private9091 | `hospital_api_logs`, PostgreSQL |
+| hospital-jwks-api | `hospital-jwks-api`; public8080/private9091 | `jwks_api_logs`, read-only public key mounts; no database |
 | fluent-bit | Tail/file collection, monitor2020 | `fluent_bit_state` |
 | otel-collector | Trace receiver4318, export4317, monitor8888, health13133 | `otel_queue` |
 | loki | Log query/ingest3100 | `loki_data` |
@@ -39,7 +39,7 @@ flowchart LR
 | grafana | Authenticated UI3000 | `grafana_data` |
 | mysql / postgres | Application databases | `mysql_data` / `postgres_data` |
 
-Volume names above have prefix `springboot_project_`. Inspect actual mounts before
+Volume names above have prefix `hospital_dev_`. Inspect actual mounts before
 maintenance. Do not create a similarly named project or substitute an empty volume.
 The deployed host ports are discovered from Compose; the current Grafana URL is
 http://localhost:3077. Collector/Tempo/Fluent Bit have no published host ports.
@@ -47,8 +47,8 @@ http://localhost:3077. Collector/Tempo/Fluent Bit have no published host ports.
 ## Health and safe rerunnable verification
 
 ```powershell
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
-docker compose -p springboot_project ps --all
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev ps --all
 python observability/verify-phase6.py
 python observability/summarize-phase6.py
 python -m unittest discover -s observability -p test_phase6_tooling.py -v
@@ -71,10 +71,10 @@ The project name is fixed and container checkout labels are verified before prob
 For internal read-only checks using the existing Prometheus image tools:
 
 ```powershell
-docker exec springboot_project-prometheus-1 wget -T 5 -q -O - http://otel-collector:13133/
-docker exec springboot_project-prometheus-1 wget -T 5 -q -O - http://tempo:3200/ready
-docker exec springboot_project-prometheus-1 wget -T 5 -q -O - http://fluent-bit:2020/api/v1/storage
-docker exec springboot_project-prometheus-1 promtool check config /etc/prometheus/prometheus.yml
+docker exec hospital_dev-prometheus-1 wget -T 5 -q -O - http://otel-collector:13133/
+docker exec hospital_dev-prometheus-1 wget -T 5 -q -O - http://tempo:3200/ready
+docker exec hospital_dev-prometheus-1 wget -T 5 -q -O - http://fluent-bit:2020/api/v1/storage
+docker exec hospital_dev-prometheus-1 promtool check config /etc/prometheus/prometheus.yml
 ```
 
 ## Dashboards, logs, metrics and traces
@@ -85,24 +85,24 @@ tracing/infrastructure dashboards. Full inventories: [dashboards](dashboard-inve
 and [alerts](alert-rules.md). Use the existing authenticated Grafana account.
 
 ```logql
-{job="springboot",service="learning-api",environment="development"}
+{job="springboot",service="hospital-api",environment="development"}
   | json | __error__="" | correlationId="PHASE6_CORRELATION_ID"
 
-{job="springboot",service=~"learning-api|user-learning"}
+{job="springboot",service=~"hospital-api|hospital-user-api"}
   | json | __error__="" | traceId="ACTUAL_32_HEX_TRACE_ID"
 ```
 
 ```promql
 up{job=~"springboot|observability"}
 sb:http_requests:rate5m{environment="development"}
-sb:http_errors:ratio5m{service="learning-api"}
+sb:http_errors:ratio5m{service="hospital-api"}
 histogram_quantile(0.95, sum by (service,environment,uri,le)
   (rate(http_server_requests_seconds_bucket{uri!~"/actuator/.*"}[5m])))
 otelcol_exporter_queue_size / (otelcol_exporter_queue_capacity > 0)
 hikaricp_connections_pending
 ```
 
-In Tempo Explore use `{ resource.service.name = "learning-api" }`,
+In Tempo Explore use `{ resource.service.name = "hospital-api" }`,
 `{ duration > 1s }` or `{ status = error }`. Expand a JSON log's TraceID link to
 resolve its sampled trace; use the trace's configured trace-to-logs action for the
 reverse query. Ten-percent root sampling means not every log has a stored trace.
@@ -165,7 +165,7 @@ time, never a whole project. Example after approval:
 
 ```powershell
 # Maintenance only; this was NOT run during Phase 6A.
-docker restart --time 45 springboot_project-otel-collector-1
+docker restart --time 45 hospital_dev-otel-collector-1
 ```
 
 Use the configured stop grace for the chosen service. Restore backend readiness

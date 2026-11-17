@@ -8,7 +8,7 @@ Final acceptance matrix counts: `{"PASS": 19, "NOT VERIFIED": 10, "BLOCKED": 1}`
 
 ## B. Isolation and baseline
 
-Run`20261112T044156Z-a029b2`; evidence`data/phase6b/20261112T044156Z-a029b2/evidence/`. Baseline captured41 containers (18 target,16`jp_dev`,7 prior stopped fixtures),97 existing volumes and12 networks before new Docker resources. This includes all93 original roadmap volumes. All remained intact. One new internal network and15 uniquely named tmpfs-backed volumes have per-run labels. No host ports, external networks, application databases or inherited Compose services were used.
+Run`20261112T044156Z-a029b2`; evidence`data/phase6b/20261112T044156Z-a029b2/evidence/`. Baseline captured41 containers (18 target,16`hospital_dev`,7 prior stopped fixtures),97 existing volumes and12 networks before new Docker resources. This includes all93 original roadmap volumes. All remained intact. One new internal network and15 uniquely named tmpfs-backed volumes have per-run labels. No host ports, external networks, application databases or inherited Compose services were used.
 
 The rendered model and actual mounts/networks/ports were audited. Only run-local read-only config/PKI binds and a writable run-local evidence directory are allowed. Exact project/run labels guard every stop/SIGKILL/start; cleanup validates each exact resource name. `probe` is a test-only orchestrator and volume anchor, never a production component. All actors have CPU/memory/swap/PID/log limits. Stores are explicitly size-limited, source generation capped4MiB/suite, physical fill restricted to2MiB tmpfs, host memory abort floor2GiB. Resource observations are in`resources-*.json`.
 
@@ -60,7 +60,7 @@ Only the internal local receiver was configured. Existing21 rules, contacts, pol
 
 ## L. Regression and preservation
 
-Every suite compared immutable original IDs/start times/mount identities/networks and retained97 baseline volumes. Docker mount-list ordering was normalized after an initial false difference; the original baseline was not rewritten. Existing16`jp_dev` containers,18 target containers and prior fixtures remained unchanged. Grafana datasource/dashboard/rule/contact/policy fingerprints and nine UP targets were rechecked. The separate remediation preservation verifier confirms historical logs/traces/Prometheus samples, OpenSearch index UUIDs/counts, keys/env fingerprints and JWKS responses. No recovery/restart of unavailable development endpoints was attempted. No application/submodule source changed in Phase6B; prior309 Java tests remain historical evidence, not a newly rerun suite.14 new Python safety/CI tests passed.
+Every suite compared immutable original IDs/start times/mount identities/networks and retained97 baseline volumes. Docker mount-list ordering was normalized after an initial false difference; the original baseline was not rewritten. Existing16`hospital_dev` containers,18 target containers and prior fixtures remained unchanged. Grafana datasource/dashboard/rule/contact/policy fingerprints and nine UP targets were rechecked. The separate remediation preservation verifier confirms historical logs/traces/Prometheus samples, OpenSearch index UUIDs/counts, keys/env fingerprints and JWKS responses. No recovery/restart of unavailable development endpoints was attempted. No application/submodule source changed in Phase6B; prior309 Java tests remain historical evidence, not a newly rerun suite.14 new Python safety/CI tests passed.
 
 ## M. Commands, results and evidence
 
@@ -72,7 +72,7 @@ Live telemetry authentication/TLS migration, real application/proxy and password
 
 ## O. Git changes
 
-Phase6B adds`observability/phase6b/` harness/probe/suites/safety tests/report renderer/environment example/README, this report, test matrix and sanitized measurements. Dated follow-ups append to production-readiness, telemetry-security, backup-restore, operations-runbook and observability README. All pre-existing uncommitted Phase6A/remediation files are retained. Root/submodule branches and HEADs are unchanged; module worktrees match the captured baseline. Full final modified/untracked inventory is in ignored`final-git.json`. No commit/push or unrelated-repository modification occurred; `japanese-learning` requires no changes.
+Phase6B adds`observability/phase6b/` harness/probe/suites/safety tests/report renderer/environment example/README, this report, test matrix and sanitized measurements. Dated follow-ups append to production-readiness, telemetry-security, backup-restore, operations-runbook and observability README. All pre-existing uncommitted Phase6A/remediation files are retained. Root/submodule branches and HEADs are unchanged; module worktrees match the captured baseline. Full final modified/untracked inventory is in ignored`final-git.json`. No commit/push or unrelated-repository modification occurred; `hospital-management` requires no changes.
 
 ## P. Cleanup and evidence retention
 

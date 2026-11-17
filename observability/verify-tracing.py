@@ -17,7 +17,7 @@ sys.dont_write_bytecode = True
 
 ROOT = Path(__file__).resolve().parents[1]
 STATE = ROOT / 'observability/.phase3-state.json'
-COMPOSE = ['compose', '-p', 'springboot_project', '--env-file', '.env',
+COMPOSE = ['compose', '-p', 'hospital_dev', '--env-file', '.env',
            '-f', 'docker-compose.yml', '-f', 'docker-compose.debug.yml']
 spec = importlib.util.spec_from_file_location('metrics', ROOT / 'observability/verify-metrics.py')
 metrics = importlib.util.module_from_spec(spec)
@@ -46,7 +46,7 @@ def inventory():
 
 def fingerprints():
     paths = list(ROOT.glob('.env*')) + list((ROOT / 'key').glob('*.pem'))
-    paths += list((ROOT / 'data/keys/learning').glob('*.pem'))
+    paths += list((ROOT / 'data/keys/hospital').glob('*.pem'))
     return {str(p.relative_to(ROOT)): hashlib.sha256(p.read_bytes()).hexdigest()
             for p in paths if p.is_file() and not p.name.endswith('.example')}
 
@@ -66,9 +66,9 @@ def main():
     args = parser.parse_args()
     model = json.loads(docker(*COMPOSE, 'config', '--format', 'json'))
     ports = {s: int(model['services'][s]['ports'][0]['published'])
-             for s in ('user-api', 'learning-api', 'jwks-api', 'grafana', 'loki', 'opensearch', 'prometheus')}
+             for s in ('hospital-user-api', 'hospital-api', 'hospital-jwks-api', 'grafana', 'loki', 'opensearch', 'prometheus')}
     if args.snapshot:
-        keys = {path: request(ports['jwks-api'], path)[1:] for path in
+        keys = {path: request(ports['hospital-jwks-api'], path)[1:] for path in
                 ('/api/v1/jwks/user', '/api/v1/jwks/learning')}
         # Persist only public response fingerprints, no keys or environment values.
         jwks = {p: {'body': hashlib.sha256(json.dumps(v[1], sort_keys=True).encode()).hexdigest(),
@@ -81,7 +81,7 @@ def main():
     start = time.time()
     marker = 'phase3-' + uuid.uuid4().hex[:16]
     print('Correlation marker:', marker, flush=True)
-    for service in ('user-api', 'learning-api', 'jwks-api'):
+    for service in ('hospital-user-api', 'hospital-api', 'hospital-jwks-api'):
         check(request(ports[service], '/actuator/health/readiness')[0] == 200, service + ' readiness')
         exposition = internal('http://' + service + ':9091/actuator/prometheus')
         check('spring_security_http_secured_requests_seconds_count' in exposition,
@@ -119,9 +119,9 @@ def main():
         return body if status == 200 else None
 
     probes = []
-    for service, path, expected in [('user-api', '/internal/users/' + str(uuid.uuid4()), 401),
-                                    ('learning-api', '/api/v1/learning/me', 401),
-                                    ('jwks-api', '/api/v1/jwks/user', 200)]:
+    for service, path, expected in [('hospital-user-api', '/internal/users/' + str(uuid.uuid4()), 401),
+                                    ('hospital-api', '/api/v1/hospital/technical/authentication', 401),
+                                    ('hospital-jwks-api', '/api/v1/jwks/user', 200)]:
         trace, parent = uuid.uuid4().hex, uuid.uuid4().hex[:16]
         correlation = marker + '-' + service
         status, headers, _ = request(ports[service], path + '?password=TRACE_QUERY_SECRET', headers={
@@ -133,10 +133,10 @@ def main():
 
     trace, parent = uuid.uuid4().hex, uuid.uuid4().hex[:16]
     correlation = marker + '-jwks-linked'
-    status, headers, _ = request(ports['learning-api'], '/api/v1/integration/jwks', headers={
+    status, headers, _ = request(ports['hospital-api'], '/api/v1/hospital/technical/jwks', headers={
         'traceparent': f'00-{trace}-{parent}-01', 'X-Correlation-ID': correlation})
     check(status == 200 and headers.get('X-Correlation-ID') == correlation,
-          'live public Learning -> JWKS request (distinct from Learning -> User)')
+          'live public Hospital -> JWKS request (distinct from Hospital -> User)')
     probes.append(('jwks-linked', trace, parent, correlation))
 
     credentials = ROOT / args.credentials
@@ -147,24 +147,24 @@ def main():
         account = json.loads(credentials.read_text(encoding='utf-8-sig'))
         refresh = token = None
         try:
-            status, _, body = request(ports['user-api'], '/auth/login', 'POST', account)
+            status, _, body = request(ports['hospital-user-api'], '/auth/login', 'POST', account)
             check(status == 200, 'existing account login')
             token, refresh = body['data']['accessToken'], body['data']['refreshToken']
             claims = json.loads(base64.urlsafe_b64decode(token.split('.')[1] + '==='))
             linked_trace, parent = uuid.uuid4().hex, uuid.uuid4().hex[:16]
-            status, headers, _ = request(ports['learning-api'],
-                '/api/v1/learning/internal-test/users/' + claims['sub'], headers={
+            status, headers, _ = request(ports['hospital-api'],
+                '/api/v1/hospital/technical/users/' + claims['sub'], headers={
                     'Authorization': 'Bearer ' + token, 'X-Correlation-ID': marker + '-linked',
                     'traceparent': f'00-{linked_trace}-{parent}-01'})
             check(status == 200 and headers.get('X-Correlation-ID') == marker + '-linked',
-                  'live authenticated Learning -> User request')
+                  'live authenticated Hospital -> User request')
             probes.append(('linked', linked_trace, parent, marker + '-linked'))
         finally:
             if refresh:
-                check(request(ports['user-api'], '/auth/logout', 'POST', {'refreshToken': refresh},
+                check(request(ports['hospital-user-api'], '/auth/logout', 'POST', {'refreshToken': refresh},
                               {'Authorization': 'Bearer ' + token})[0] == 200, 'verification session logout')
     else:
-        print('NOT VERIFIED: positive login/logout, internal JWT and live Learning -> User; no credentials', flush=True)
+        print('NOT VERIFIED: positive login/logout, internal JWT and live Hospital -> User; no credentials', flush=True)
 
     traces = {}
     for service, trace, parent, correlation in probes:
@@ -182,7 +182,7 @@ def main():
             identity = attrs.get('service.name')
             check(bool(re.fullmatch('[A-Za-z0-9][A-Za-z0-9._-]{0,127}', attrs.get('service.version', '')))
                   and attrs.get('deployment.environment.name') ==
-                  model['services']['learning-api']['environment']['DEPLOYMENT_ENVIRONMENT']
+                  model['services']['hospital-api']['environment']['DEPLOYMENT_ENVIRONMENT']
                   and 'deployment.environment' not in attrs, service + ' version/environment resource conventions')
             for scope in batch.get('scopeSpans', batch.get('instrumentationLibrarySpans', [])):
                 spans += [(identity, span) for span in scope['spans']]
@@ -194,22 +194,22 @@ def main():
         check(len({span['spanId'] for _, span in spans}) == len(spans), service + ' distinct span IDs')
         servers = [(s, v) for s, v in spans if v['kind'] in (2, 'SPAN_KIND_SERVER')]
         if service not in ('linked', 'jwks-linked'):
-            expected = {'user-api': 'user-learning', 'learning-api': 'learning-api', 'jwks-api': 'jwks-service'}[service]
+            expected = {'hospital-user-api': 'hospital-user-api', 'hospital-api': 'hospital-api', 'hospital-jwks-api': 'hospital-jwks-api'}[service]
             chosen = [v for s, v in servers if s == expected]
             check(len(chosen) == 1 and hexid(chosen[0]['parentSpanId']) == parent,
                   service + ' exactly one server span with remote parent')
         else:
-            destination = 'user-api' if service == 'linked' else 'jwks-api'
-            destination_identity = 'user-learning' if service == 'linked' else 'jwks-service'
-            outgoing = [v for s, v in spans if s == 'learning-api' and v['kind'] in (3, 'SPAN_KIND_CLIENT')
+            destination = 'hospital-user-api' if service == 'linked' else 'hospital-jwks-api'
+            destination_identity = 'hospital-user-api' if service == 'linked' else 'hospital-jwks-api'
+            outgoing = [v for s, v in spans if s == 'hospital-api' and v['kind'] in (3, 'SPAN_KIND_CLIENT')
                         and any(a['key'] == 'client.name' and a['value'].get('stringValue') == destination
                                 for a in v.get('attributes', []))]
             user = [v for s, v in servers if s == destination_identity]
-            learning = [v for s, v in servers if s == 'learning-api']
-            check(len(outgoing) == len(user) == len(learning) == 1, service + ' one source/client/destination span')
-            check(hexid(outgoing[0]['parentSpanId']) == hexid(learning[0]['spanId'])
+            hospital = [v for s, v in servers if s == 'hospital-api']
+            check(len(outgoing) == len(user) == len(hospital) == 1, service + ' one source/client/destination span')
+            check(hexid(outgoing[0]['parentSpanId']) == hexid(hospital[0]['spanId'])
                   and hexid(user[0]['parentSpanId']) == hexid(outgoing[0]['spanId']),
-                  service + ' live Learning server -> client -> destination server parent relationship')
+                  service + ' live Hospital server -> client -> destination server parent relationship')
         encoded = json.dumps(body)
         check('TRACE_QUERY_SECRET' not in encoded and 'TRACE_COOKIE_SECRET' not in encoded,
               service + ' sensitive probes absent from stored trace')
@@ -221,7 +221,7 @@ def main():
 
     # Verify fresh completions in both pre-existing backends, including SDK-owned IDs.
     for service, trace, parent, correlation in probes:
-        query = '{service=~"user-learning|learning-api|jwks-service"} |= "' + correlation + '"'
+        query = '{service=~"hospital-user-api|hospital-api|hospital-jwks-api"} |= "' + correlation + '"'
         loki = '/loki/api/v1/query_range?' + urllib.parse.urlencode({
             'query': query, 'start': str(int(start * 1e9)), 'end': str(time.time_ns()), 'limit': 200})
         hits = []
@@ -266,17 +266,17 @@ def main():
     for item in before['containers'].values():
         item['Mounts'] = sorted(item['Mounts'], key=lambda mount: mount['Destination'])
     after = inventory()
-    affected = {'/springboot_project-' + s + '-1' for s in ('user-api', 'learning-api', 'jwks-api', 'grafana')}
+    affected = {'/hospital_dev-' + s + '-1' for s in ('hospital-user-api', 'hospital-api', 'hospital-jwks-api', 'grafana')}
     unchanged = [name for name in before['containers'] if name not in affected]
     check(all(after.get(name) == before['containers'][name] for name in unchanged),
-          str(len(unchanged)) + ' unrelated containers unchanged, including jp_dev')
+          str(len(unchanged)) + ' unrelated containers unchanged, including hospital_dev')
     check(fingerprints() == before['files'], 'environment/key fingerprints unchanged')
     for path, original in before['jwks'].items():
-        status, headers, body = request(ports['jwks-api'], path)
+        status, headers, body = request(ports['hospital-jwks-api'], path)
         check(status == 200 and hashlib.sha256(json.dumps(body, sort_keys=True).encode()).hexdigest() == original['body']
               and headers.get('Content-Type') == original['contentType']
               and headers.get('Cache-Control') == original['cache'], 'JWKS public response unchanged: ' + path)
-    for service in ('user-api', 'learning-api', 'jwks-api'):
+    for service in ('hospital-user-api', 'hospital-api', 'hospital-jwks-api'):
         lines = docker(*COMPOSE, 'logs', '--since', '10m', '--no-color', '--no-log-prefix', service)
         errors = [line for line in lines.splitlines() if re.search('export.*(fail|error)|failed to export', line, re.I)]
         check(not errors, service + ' no exporter errors in checked window')

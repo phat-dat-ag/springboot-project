@@ -1,6 +1,6 @@
 # Phase 1/2 internal HTTP integration review
 
-Review date: 2026-11-05. Scope: User's internal user lookup and Learning's HTTP caller only.
+Review date: 2026-11-05. Scope: User's internal user lookup and Hospital's HTTP caller only.
 
 ## A. Reviewed scope and contract
 
@@ -9,7 +9,7 @@ Review date: 2026-11-05. Scope: User's internal user lookup and Learning's HTTP 
 - User: internal and external user controllers, `UserManagementService` and implementation,
   repository lookup, `UserDTO`/`UserResponse`, response wrappers, exception advice/error codes,
   security and correlation filters, application configuration, Maven setup and test conventions.
-- Learning: diagnostic controller/service, `UserServiceClient`, DTOs, client configuration,
+- Hospital: diagnostic controller/service, `UserServiceClient`, DTOs, client configuration,
   endpoint properties, existing caller interceptor, exception advice/error codes, response
   wrappers, correlation filter, security/OpenAPI configuration, Maven setup and tests.
 - Also read User's JWT notes and both modules' generated HELP documentation. No applicable
@@ -21,10 +21,10 @@ the older envelope discussed during debugging. Preserve the current, working con
 | Route | Success | Authentication |
 | --- | --- | --- |
 | User `GET /internal/users/{id}` | `{"user":{...}}` | Temporarily unauthenticated, existing rule unchanged |
-| Learning `GET /api/v1/learning/internal-test/users/{id}` | `{"user":{...}}` | Existing USER/ADMIN bearer authentication unchanged |
+| Hospital `GET /api/v1/hospital/technical/users/{id}` | `{"user":{...}}` | Existing USER/ADMIN bearer authentication unchanged |
 | User `GET /admin/users/{id}` | Existing `APIResponse` with `data.user` | Existing ADMIN requirement unchanged |
 
-User's missing-user response remains 404 / `USER_NOT_FOUND`. Learning's upstream failures
+User's missing-user response remains 404 / `USER_NOT_FOUND`. Hospital's upstream failures
 remain 500 / `INTERNAL_SERVER_ERROR` with the existing response envelope. No new status-code
 mapping, internal JWT, signing, token forwarding, retries or JWKS behavior was introduced.
 
@@ -45,12 +45,12 @@ mapping, internal JWT, signing, token forwarding, retries or JWKS behavior was i
 | Important | Connect/read timeout properties were declared but never applied | Fixed for the User client only; validate finite millisecond limits |
 | Important | Empty, null, incorrectly wrapped or wrong-user 200 responses could produce empty/incorrect results | Reject missing user/ID and ID mismatch; preserve valid response shape |
 | Important | Default HTTP exceptions include upstream response bodies; generic exception logging could expose them | Convert client failures to existing safe business exception; log only status or exception type |
-| Important | Learning test properties lacked the new User endpoint, breaking full application contexts | Supply isolated test settings |
+| Important | Hospital test properties lacked the new User endpoint, breaking full application contexts | Supply isolated test settings |
 | Important | Root `.env` User-client overrides were not forwarded by Compose | Forward/document the four existing settings |
 | Important | Shared User exception advice returns 500 for malformed UUID parameters | Recorded and preserved; fixing shared advice changes existing external behavior |
 | Important | Correlation IDs differ across services because User's shared filter generates a new ID | Outbound header is verified; shared filter left unchanged to preserve established behavior |
 | Optional | Internal User controller inherited `BaseController` without using it | Removed unused inheritance |
-| Optional | Thin Learning service has no interface; interceptor name mentions JWKS | Left alone: no demonstrated need for more abstraction or shared-code renaming |
+| Optional | Thin Hospital service has no interface; interceptor name mentions JWKS | Left alone: no demonstrated need for more abstraction or shared-code renaming |
 | Optional | Existing JWT tests assume authority array order | Full-suite failure reported; unrelated authentication test left unchanged |
 
 The temporary User endpoint remains reachable without credentials wherever the existing service
@@ -64,16 +64,16 @@ files are included in delivery commands, even when their contents required no re
 
 | Repository | File | Reason |
 | --- | --- | --- |
-| User | `src/main/java/com/japaneselearning/user/controller/internal/InternalUserController.java` | Remove unused base-class inheritance; retain direct DTO return and business-service reuse |
-| User | `src/test/java/com/japaneselearning/user/controller/internal/InternalUserControllerTest.java` | Six MVC/security regression tests for success, not-found, malformed ID, external admin rules/envelope, other internal paths |
-| Learning | `src/main/java/com/japaneselearning/learning/client/UserServiceClient.java` | Validate successful payload and sanitize upstream failures using existing exceptions |
-| Learning | `src/main/java/com/japaneselearning/learning/config/ServiceClientConfig.java` | Apply finite connect/read timeouts to User client only |
-| Learning | `src/main/java/com/japaneselearning/learning/config/ServiceEndpointProperties.java` | Fail early for missing endpoint settings and invalid timeout bounds |
-| Learning | `src/test/resources/application.properties` | Complete new client settings for Spring context tests |
-| Learning | `src/test/java/com/japaneselearning/learning/client/UserServiceClientTest.java` | Nineteen real local-HTTP checks, including parsing, metadata, failures, read timeout, unavailability and configuration bounds |
-| Learning | `src/test/java/com/japaneselearning/learning/controller/InternalUserControllerTest.java` | Three MVC checks for current security, success shape and generic upstream error envelope |
-| Learning | `src/test/java/com/japaneselearning/learning/controller/OpenApiDocumentationTest.java` | Check diagnostic endpoint's existing Swagger bearer declaration |
-| Learning | `src/test/java/com/japaneselearning/learning/client/JwksServiceClientTest.java` | Remove unrelated User setup; restored to committed contents, so no delivery change |
+| User | `src/main/java/com/hospitalmanagement/user/controller/internal/InternalUserController.java` | Remove unused base-class inheritance; retain direct DTO return and business-service reuse |
+| User | `src/test/java/com/hospitalmanagement/user/controller/internal/InternalUserControllerTest.java` | Six MVC/security regression tests for success, not-found, malformed ID, external admin rules/envelope, other internal paths |
+| Hospital | `src/main/java/com/hospitalmanagement/hospital/client/UserServiceClient.java` | Validate successful payload and sanitize upstream failures using existing exceptions |
+| Hospital | `src/main/java/com/hospitalmanagement/hospital/config/ServiceClientConfig.java` | Apply finite connect/read timeouts to User client only |
+| Hospital | `src/main/java/com/hospitalmanagement/hospital/config/ServiceEndpointProperties.java` | Fail early for missing endpoint settings and invalid timeout bounds |
+| Hospital | `src/test/resources/application.properties` | Complete new client settings for Spring context tests |
+| Hospital | `src/test/java/com/hospitalmanagement/hospital/client/UserServiceClientTest.java` | Nineteen real local-HTTP checks, including parsing, metadata, failures, read timeout, unavailability and configuration bounds |
+| Hospital | `src/test/java/com/hospitalmanagement/hospital/controller/InternalUserControllerTest.java` | Three MVC checks for current security, success shape and generic upstream error envelope |
+| Hospital | `src/test/java/com/hospitalmanagement/hospital/controller/OpenApiDocumentationTest.java` | Check diagnostic endpoint's existing Swagger bearer declaration |
+| Hospital | `src/test/java/com/hospitalmanagement/hospital/client/JwksServiceClientTest.java` | Remove unrelated User setup; restored to committed contents, so no delivery change |
 | Root | `docker-compose.yml`, `.env.example` | Pass through/document existing User-client environment settings, retaining defaults |
 | Root | `INTERNAL-HTTP-REVIEW.md` | Record scope, decisions, validation and manual Git delivery |
 
@@ -83,11 +83,11 @@ duration. Requests are not retried automatically by application code.
 
 ## E. Intentionally unchanged
 
-- User and Learning security rules, JWT configuration and all JWKS source/configuration.
+- User and Hospital security rules, JWT configuration and all JWKS source/configuration.
   The pre-existing root JWKS submodule pointer change is unrelated and excluded from delivery.
 - User business service/repository, external controllers, response envelopes, DTOs and shared
   exception/correlation filters; preserve existing business and external API behavior.
-- Learning diagnostic endpoint, service forwarding layer, DTOs and shared exception advice;
+- Hospital diagnostic endpoint, service forwarding layer, DTOs and shared exception advice;
   keep current routes/contracts without a stylistic refactor.
 - Dependencies, Maven versions, migrations and secrets; no new framework or test dependency.
 - Existing ordering-sensitive JWT test, which is outside this integration refinement.
@@ -95,11 +95,11 @@ duration. Requests are not retried automatically by application code.
 ## F. Validation
 
 - User `mvnw.cmd -B -ntp test`: **39 passed**, including six new MVC/security tests.
-- Learning full `mvnw.cmd -B -ntp test`: **50 run, 49 passed, 1 failed**. The failure is
+- Hospital full `mvnw.cmd -B -ntp test`: **50 run, 49 passed, 1 failed**. The failure is
   existing `JwtAuthenticationTest.adminTokenWithV2`: `$.data.authorities[0]` expected
   `ROLE_ADMIN`, received `FACTOR_BEARER`. It asserts ordering rather than membership;
   this review does not alter authentication production code or that test.
-- Learning focused suite: **27 passed**. Command:
+- Hospital focused suite: **27 passed**. Command:
   `mvnw.cmd -B -ntp "-Dtest=UserServiceClientTest,InternalUserControllerTest,OpenApiDocumentationTest,JwksServiceClientTest,JwksCallerInterceptorTest" test`.
   It includes client, controller, OpenAPI and existing caller/interceptor tests.
 - Maven test runs compiled production and test sources in both affected services.
@@ -108,20 +108,20 @@ duration. Requests are not retried automatically by application code.
   JDK HTTP server, not a stubbed RestClient. Read-timeout behavior and connection refusal
   are exercised. A real remote connect timeout is not simulated; its configuration is applied
   and validated. MVC checks use real security chains with mocked business services/JWT decoder.
-- User's MVC response fields match the Learning HTTP fixture (`user`, UUID, activation flag,
-  local timestamps). No envelope was added. External User envelope/security and Learning
+- User's MVC response fields match the Hospital HTTP fixture (`user`, UUID, activation flag,
+  local timestamps). No envelope was added. External User envelope/security and Hospital
   route/security are covered by regression checks.
 - No deployment/rebuild, database-backed two-service integration run, or end-to-end bearer
   authentication run was performed for these edits. No such success is claimed.
 - Postman simulation/status unavailable: CLI exits because a managed Private Cloud registry
   manifest cannot be read. No Postman artifacts, account setup or deployment was added.
-- Initial runs found the missing Learning test configuration (fixed) and User's existing
+- Initial runs found the missing Hospital test configuration (fixed) and User's existing
   malformed-ID 500 behavior (documented, not changed). No failing integration test is hidden.
 
 ## G. Remaining current-phase recommendations
 
 - Keep the current response shape covered by these tests when updating either service.
-- Plan a separate compatibility decision before changing Learning's 500 mapping to propagate
+- Plan a separate compatibility decision before changing Hospital's 500 mapping to propagate
   User's 404 or introduce 502/504. Do not silently change this phase's established contract.
 - Decide separately whether to accept validated inbound correlation IDs in shared filters and
   return 400 for malformed UUIDs across User APIs; both affect behavior beyond this controller.
@@ -143,9 +143,9 @@ cd /d C:\Personal\springboot-project\springboot-user-api
 git status --short
 git diff --cached --name-only
 git switch -c feat/internal-user-api
-git add src/main/java/com/japaneselearning/user/config/SecurityConfig.java
-git add src/main/java/com/japaneselearning/user/controller/internal/InternalUserController.java
-git add src/test/java/com/japaneselearning/user/controller/internal/InternalUserControllerTest.java
+git add src/main/java/com/hospitalmanagement/user/config/SecurityConfig.java
+git add src/main/java/com/hospitalmanagement/user/controller/internal/InternalUserController.java
+git add src/test/java/com/hospitalmanagement/user/controller/internal/InternalUserControllerTest.java
 git diff --cached --stat
 git commit -m "feat(user): expose and test internal user lookup"
 git push -u origin feat/internal-user-api
@@ -154,27 +154,27 @@ git push -u origin feat/internal-user-api
 The security file contains the pre-existing Phase 1 permission for `/internal/users/*`.
 This review did not edit that rule, but the initial implementation needs it in its commit.
 
-### 2. Learning submodule
+### 2. Hospital submodule
 
 ```cmd
-cd /d C:\Personal\springboot-project\springboot-learning-api
+cd /d C:\Personal\springboot-project\springboot-hospital-api
 git status --short
 git diff --cached --name-only
 git switch -c feat/user-service-http-integration
-git add src/main/java/com/japaneselearning/learning/client/UserServiceClient.java
-git add src/main/java/com/japaneselearning/learning/config/ServiceClientConfig.java
-git add src/main/java/com/japaneselearning/learning/config/ServiceEndpointProperties.java
-git add src/main/java/com/japaneselearning/learning/controller/InternalUserController.java
-git add src/main/java/com/japaneselearning/learning/dto/InternalUserDTO.java
-git add src/main/java/com/japaneselearning/learning/dto/response/InternalUserResponse.java
-git add src/main/java/com/japaneselearning/learning/service/impl/InternalUserService.java
+git add src/main/java/com/hospitalmanagement/hospital/client/UserServiceClient.java
+git add src/main/java/com/hospitalmanagement/hospital/config/ServiceClientConfig.java
+git add src/main/java/com/hospitalmanagement/hospital/config/ServiceEndpointProperties.java
+git add src/main/java/com/hospitalmanagement/hospital/controller/InternalUserController.java
+git add src/main/java/com/hospitalmanagement/hospital/dto/InternalUserDTO.java
+git add src/main/java/com/hospitalmanagement/hospital/dto/response/InternalUserResponse.java
+git add src/main/java/com/hospitalmanagement/hospital/service/impl/InternalUserService.java
 git add src/main/resources/application.properties
-git add src/test/java/com/japaneselearning/learning/client/UserServiceClientTest.java
-git add src/test/java/com/japaneselearning/learning/controller/InternalUserControllerTest.java
-git add src/test/java/com/japaneselearning/learning/controller/OpenApiDocumentationTest.java
+git add src/test/java/com/hospitalmanagement/hospital/client/UserServiceClientTest.java
+git add src/test/java/com/hospitalmanagement/hospital/controller/InternalUserControllerTest.java
+git add src/test/java/com/hospitalmanagement/hospital/controller/OpenApiDocumentationTest.java
 git add src/test/resources/application.properties
 git diff --cached --stat
-git commit -m "feat(learning): integrate bounded internal user HTTP client"
+git commit -m "feat(hospital): integrate bounded internal user HTTP client"
 git push -u origin feat/user-service-http-integration
 ```
 
@@ -184,19 +184,19 @@ git push -u origin feat/user-service-http-integration
 cd /d C:\Personal\springboot-project
 git status --short
 git diff --cached --name-only
-git switch -c feat/learning-user-http-integration
+git switch -c feat/hospital-user-http-integration
 git add .env.example
 git add docker-compose.yml
 git add INTERNAL-HTTP-REVIEW.md
 git add springboot-user-api
-git add springboot-learning-api
+git add springboot-hospital-api
 git diff --cached --stat
 git diff --cached --submodule=short
-git commit -m "feat(compose): wire learning-to-user HTTP integration"
-git push -u origin feat/learning-user-http-integration
+git commit -m "feat(compose): wire hospital-to-user HTTP integration"
+git push -u origin feat/hospital-user-http-integration
 ```
 
-The root stages only the newly committed User/Learning pointers. Do not stage
+The root stages only the newly committed User/Hospital pointers. Do not stage
 `springboot-jwks-api`, run `git add .`, or commit test logs/real environment files.
 When submodule PRs are squash-merged or rebased, update the root pointers to the final reachable
 commits before merging the root PR.

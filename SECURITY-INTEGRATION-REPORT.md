@@ -4,18 +4,18 @@ Completed 2026-11-06. No Git branch, staging, commit, push, reset or destructive
 
 ## Architecture and API
 
-One public JWKS mapping, `GET /api/v1/jwks/{owner}`, supports lowercase `user` and `learning`.
+One public JWKS mapping, `GET /api/v1/jwks/{owner}`, supports lowercase `user` and `hospital`.
 Each endpoint returns only its explicitly configured owner group in standard unwrapped JWK format.
 Unknown/missing owners return 404, never an all-keys fallback. Cache-Control remains max-age=300,
 public. Retired well-known routes have no compatibility mapping; every in-project application
 consumer was migrated. Root JWT-AUTHENTICATION.md documents the full contract and variable table.
 
-Explicit OWNER=USER/LEARNING is mandatory. Missing/invalid owners, malformed files and duplicate
+Explicit OWNER=USER/HOSPITAL is mandatory. Missing/invalid owners, malformed files and duplicate
 IDs fail startup. Multiple retained public keys per owner are supported. Ownership is not inferred
-from names. JWKS does not select a signing key or enforce an active count. User and Learning's
+from names. JWKS does not select a signing key or enforce an active count. User and Hospital's
 existing exactly-one-active private signing key requirements remain unchanged.
 
-User external JWT validation and Learning inbound JWT validation trust only `/api/v1/jwks/user`.
+User external JWT validation and Hospital inbound JWT validation trust only `/api/v1/jwks/user`.
 User has an ordered `/internal/**` chain whose separately qualified decoder trusts only
 `/api/v1/jwks/learning`. It enforces RS256, nonblank kid and jti, exact internal+jwt type,
 configured issuer/subject learning-service, audience user-service, required iat/exp, optional nbf,
@@ -23,12 +23,12 @@ configured issuer/subject learning-service, audience user-service, required iat/
 only on that decoder and replaced by explicit exact type validation; external type handling is
 unchanged. JWTs never determine their own trusted JWKS URL.
 
-Only the validated service identity receives SERVICE_LEARNING. GET /internal/users/* requires
+Only the validated service identity receives SERVICE_HOSPITAL. GET /internal/users/* requires
 that authority; other internal routes/methods are denied. User/Admin authorities remain external.
 Invalid/missing credentials and cross-token use return 401; authenticated route-policy denial
 returns 403. The business lookup and response contract are unchanged.
 
-Learning reuses its existing dedicated signer and per-request bearer attachment. Compose now
+Hospital reuses its existing dedicated signer and per-request bearer attachment. Compose now
 enables attachment, which replaces rather than forwards incoming user credentials. JWKS clients
 receive no Internal JWT. Existing timeouts, response mapping and safe error handling are retained.
 
@@ -37,7 +37,7 @@ receive no Internal JWT. Existing timeouts, response mapping and safe error hand
 ### User
 
 - New config/InternalJwtSecurityProperties.java: validated, independent internal trust/time settings.
-- New config/InternalJwtDecoderConfig.java: strict RS256 internal decoder using the Learning key source.
+- New config/InternalJwtDecoderConfig.java: strict RS256 internal decoder using the Hospital key source.
 - config/SecurityConfig.java: ordered and explicitly qualified external/internal security chains.
 - config/JwtDecoderConfig.java: retain the existing external decoder as primary; no global replacement.
 - application.properties: internal settings and canonical PRIVATEKEYPATH with first-key legacy fallback.
@@ -55,7 +55,7 @@ receive no Internal JWT. Existing timeouts, response mapping and safe error hand
 - Provider/logging tests and new controller/JwksEndpointsTest.java: isolation, binding, error and HTTP contracts.
 - README.md, LOGGING.md and docs/INTEGRATION.md: all consumer URLs and current configuration synchronized.
 
-### Learning
+### Hospital
 
 - application.properties: clarify authenticated User-client behavior; inbound trust policy preserved.
 - Test properties: user-owner JWKS URI.
@@ -83,10 +83,10 @@ volume settings were preserved. No real secret was replaced with a placeholder.
 | .env.example | New internal decoder variables, unified consumer URLs, enabled attachment and file-mount descriptions |
 | .env.user-api | Canonicalized existing PRIVATE_KEY_PATH names to PRIVATEKEYPATH, preserving IDs, paths and active selection |
 | .env.user-api.example | Canonical indexed private-key spelling |
-| .env.jwks-api | Canonical PUBLICKEYPATH, required explicit owners, preserved User entries and Learning entry; removed obsolete ACTIVE settings |
+| .env.jwks-api | Canonical PUBLICKEYPATH, required explicit owners, preserved User entries and Hospital entry; removed obsolete ACTIVE settings |
 | .env.jwks-api.example | Matching public-only owner configuration |
-| .env.learning-api | Reviewed and unchanged: dedicated Learning key ID/path/active settings already correct |
-| .env.learning-api.example | Reviewed and unchanged: indexed signer settings already correct |
+| .env.hospital-api | Reviewed and unchanged: dedicated Hospital key ID/path/active settings already correct |
+| .env.hospital-api.example | Reviewed and unchanged: indexed signer settings already correct |
 
 Standalone examples in all three submodules were also synchronized. User's separate local .env was
 reviewed and left unchanged because it is not consumed by root Compose; Java does not automatically
@@ -95,24 +95,24 @@ load .env files. Local users should export the standalone .env.example settings 
 ### Variables added or updated
 
 - User external: USER_JWT_JWK_SET_URI maps to JWT_JWK_SET_URI and app.security.jwt.jwk-set-uri,
-  now http://jwks-api:8080/api/v1/jwks/user. Existing JWT_ISSUER and token lifetimes are preserved.
-- User internal (new): INTERNAL_JWT_JWK_SET_URI=http://jwks-api:8080/api/v1/jwks/learning,
+  now http://hospital-jwks-api:8080/api/v1/jwks/user. Existing JWT_ISSUER and token lifetimes are preserved.
+- User internal (new): INTERNAL_JWT_JWK_SET_URI=http://hospital-jwks-api:8080/api/v1/jwks/learning,
   INTERNAL_JWT_ISSUER=learning-service, INTERNAL_JWT_SUBJECT=learning-service,
   INTERNAL_JWT_AUDIENCE=user-service, INTERNAL_JWT_CLOCK_SKEW=5s,
   INTERNAL_JWT_MAX_LIFETIME=300s. They bind to app.security.internal-jwt.*.
 - User signing: APP_SECURITY_SIGNING_KEYS_<n>_PRIVATEKEYPATH replaces the noncanonical spelling;
   KID and ACTIVE values remain unchanged. The first-key legacy property fallback is retained.
-- Learning inbound: LEARNING_JWT_JWK_SET_URI maps to JWT_JWK_SET_URI and the User owner URL.
+- Hospital inbound: HOSPITAL_JWT_JWK_SET_URI maps to JWT_JWK_SET_URI and the User owner URL.
   JWKS_SERVICE_GET_PUBLIC_KEYS is /api/v1/jwks/user. JWKS_SERVICE_BASE_URL remains Docker DNS.
-- Learning outbound: USER_SERVICE_INTERNAL_JWT_ENABLED=true; existing USER_SERVICE_BASE_URL,
+- Hospital outbound: USER_SERVICE_INTERNAL_JWT_ENABLED=true; existing USER_SERVICE_BASE_URL,
   GET_USER and timeouts are preserved/explicitly documented with internal User DNS and paths.
-- Learning signing: LEARNING_INTERNAL_JWT_ENABLED=true, ISSUER=learning-service,
-  AUDIENCE=user-service, TTL=60s (using the full LEARNING_INTERNAL_JWT_* names). Existing
-  APP_SECURITY_SIGNING_KEYS_<n>_KID/PRIVATEKEYPATH/ACTIVE remain dedicated to Learning.
+- Hospital signing: HOSPITAL_INTERNAL_JWT_ENABLED=true, ISSUER=learning-service,
+  AUDIENCE=user-service, TTL=60s (using the full HOSPITAL_INTERNAL_JWT_* names). Existing
+  APP_SECURITY_SIGNING_KEYS_<n>_KID/PRIVATEKEYPATH/ACTIVE remain dedicated to Hospital.
 - JWKS: APP_SECURITY_JWKS_KEYS_<n>_KID/PUBLICKEYPATH/OWNER; owners USER for User v1/v2 and
-  LEARNING for learning-rsa-v1. Obsolete JWKS ACTIVE entries removed; no private-path setting exists.
+  LEARNING for learning-rsa-v1 (protected shared owner contract). Obsolete JWKS ACTIVE entries removed; no private-path setting exists.
 - Algorithm RS256 and type internal+jwt are fixed profile constants, not runtime bypass switches.
-- USER_SIGNING_KEYS_DIR, JWKS_KEYS_DIR and LEARNING_SIGNING_KEYS_DIR retain their existing source locations.
+- USER_SIGNING_KEYS_DIR, JWKS_KEYS_DIR and HOSPITAL_SIGNING_KEYS_DIR retain their existing source locations.
 
 ## Final RSA layout and mounts
 
@@ -122,7 +122,7 @@ key/
   userservice-private-v2.pem
   userservice-public-v1.pem
   userservice-public-v2.pem
-data/keys/learning/
+data/keys/hospital/
   learningservice-private-v1.pem
   learningservice-public-v1.pem
 springboot-user-api/keys/
@@ -133,8 +133,8 @@ No key was moved, copied, regenerated or renamed. The existing legacy User publi
 the root files. Runtime source-of-truth locations are the root directories above.
 
 - User: only its private v1/v2 files mounted under /run/keys/jwt.
-- Learning: only its private v1 file mounted under /run/keys/learning.
-- JWKS: only User public v1/v2 and Learning public v1 files mounted under corresponding paths.
+- Hospital: only its private v1 file mounted under /run/keys/learning.
+- JWKS: only User public v1/v2 and Hospital public v1 files mounted under corresponding paths.
 - Every key mount is read-only and uses create_host_path=false. JWKS has no private-key or
   signing-directory mount. Existing database/log volumes, ports and health checks remain intact.
 - Future rotation requires explicit additional file mounts and matching indexed configuration.
@@ -147,15 +147,15 @@ All affected services passed mvnw.cmd -B -ntp verify (compilation, tests and exe
 | --- | --- | --- |
 | User | 61 | 0 |
 | JWKS | 52 | 0 |
-| Learning | 76 | 0 |
+| Hospital | 76 | 0 |
 
-User's new real-decoder tests include valid Learning identity, missing credentials, expiry,
+User's new real-decoder tests include valid Hospital identity, missing credentials, expiry,
 invalid signature, unknown/missing kid, wrong issuer/audience/type/subject, missing required claims,
 future iat/nbf, excessive/inverted lifetimes, wrong algorithm, cross-key-set issuer spoofing,
 User-token/internal-token separation, existing User/Admin roles, and valid-identity route denial.
 JWKS tests cover owner isolation, missing/invalid ownership, duplicates, multiple keys, exact
 public RSA components, response fields, public cache headers and controlled unknown/missing owner.
-Learning's existing signing/attachment/isolation/error/timeout and user JWT tests all pass.
+Hospital's existing signing/attachment/isolation/error/timeout and user JWT tests all pass.
 
 Initial test-slice wiring needed a test-only RestTemplateBuilder, which was fixed; final runs above
 are clean. Postman CLI validation is unavailable because its managed Private Cloud manifest cannot be read; Maven and live HTTP verification were used. No dependencies were added. Docker builds also passed. Compose resolution and Git
@@ -163,7 +163,7 @@ whitespace checks passed. No old JWKS URLs remain in active source/configuration
 
 ## Runtime verification actually performed
 
-Only jwks-api, user-api and learning-api were rebuilt/recreated using --no-deps. All three are
+Only hospital-jwks-api, hospital-user-api and hospital-api were rebuilt/recreated using --no-deps. All three are
 healthy. Databases, migrations, observability containers and persistent volumes were not recreated.
 Docker mount inspection confirmed the private/public separation stated above.
 
@@ -173,14 +173,14 @@ Live checks passed:
 - /api/v1/jwks/learning: 200, exactly learning-rsa-v1.
 - Every published modulus matches its configured public PEM; only standard public fields appear.
 - Unknown/missing owner: 404.
-- Learning public-key diagnostic client: 200 and only User v1/v2 keys, using the migrated URL.
+- Hospital public-key diagnostic client: 200 and only User v1/v2 keys, using the migrated URL.
 - Real User registration/login and authenticated logout: successful.
 - Admin user lookup: 200; ordinary User token on Admin route: 403.
-- Real User JWT accepted by Learning /api/v1/learning/me: 200.
+- Real User JWT accepted by Hospital /api/v1/hospital/technical/authentication: 200.
 - Anonymous internal request: 401; User JWT on internal endpoint: 401.
-- Valid Learning JWT on internal endpoint: 200; Learning JWT on external Admin endpoint: 401.
-- Valid Learning identity on an unauthorized internal route: 403.
-- Learning diagnostic user lookup, using real login token inbound and generated Internal JWT
+- Valid Hospital JWT on internal endpoint: 200; Hospital JWT on external Admin endpoint: 401.
+- Valid Hospital identity on an unauthorized internal route: 403.
+- Hospital diagnostic user lookup, using real login token inbound and generated Internal JWT
   outbound: 200 with the expected user ID.
 
 The first probe incorrectly attempted activation of an already-active new account and received
@@ -206,7 +206,7 @@ The ignored data/security-runtime-results.json stores only statuses/fixture ID, 
 - Dockerfiles require no change: they copy application source/JARs, not key files. Existing runtime
   Java versions and Spring versions were retained.
 - Never commit real .env files, PEM/private keys, data/, test passwords, complete JWTs or runtime logs.
-  In particular exclude root .env, .env.user-api, .env.jwks-api, .env.learning-api and User's local .env.
+  In particular exclude root .env, .env.user-api, .env.jwks-api, .env.hospital-api and User's local .env.
   Existing ignore rules cover them; tracked .example files contain no secrets.
 
 ## Exact Windows CMD Git delivery
@@ -248,32 +248,32 @@ git status --short
 git switch -c feat/internal-jwt-authentication
 git add .env.example
 git add JWT.md
-git add src/main/java/com/japaneselearning/user/config/InternalJwtDecoderConfig.java
-git add src/main/java/com/japaneselearning/user/config/InternalJwtSecurityProperties.java
-git add src/main/java/com/japaneselearning/user/config/JwtDecoderConfig.java
-git add src/main/java/com/japaneselearning/user/config/SecurityConfig.java
+git add src/main/java/com/hospitalmanagement/user/config/InternalJwtDecoderConfig.java
+git add src/main/java/com/hospitalmanagement/user/config/InternalJwtSecurityProperties.java
+git add src/main/java/com/hospitalmanagement/user/config/JwtDecoderConfig.java
+git add src/main/java/com/hospitalmanagement/user/config/SecurityConfig.java
 git add src/main/resources/application.properties
-git add src/test/java/com/japaneselearning/user/config/InternalJwtAuthenticationTest.java
-git add src/test/java/com/japaneselearning/user/config/JwtDecoderConfigTest.java
-git add src/test/java/com/japaneselearning/user/controller/internal/InternalUserControllerTest.java
+git add src/test/java/com/hospitalmanagement/user/config/InternalJwtAuthenticationTest.java
+git add src/test/java/com/hospitalmanagement/user/config/JwtDecoderConfigTest.java
+git add src/test/java/com/hospitalmanagement/user/controller/internal/InternalUserControllerTest.java
 git diff --cached --stat
 git commit -m "feat(user): isolate Internal JWT authentication from user tokens"
 git push -u origin feat/internal-jwt-authentication
 ```
 
-### springboot-learning-api
+### springboot-hospital-api
 
 ```cmd
-cd /d C:\Personal\springboot-project\springboot-learning-api
+cd /d C:\Personal\springboot-project\springboot-hospital-api
 git status --short
 git switch -c feat/authenticated-user-integration
 git add .env.example
 git add INTERNAL-JWT.md
 git add src/main/resources/application.properties
-git add src/test/java/com/japaneselearning/learning/controller/JwtAuthenticationTest.java
+git add src/test/java/com/hospitalmanagement/hospital/controller/JwtAuthenticationTest.java
 git add src/test/resources/application.properties
 git diff --cached --stat
-git commit -m "feat(learning): migrate JWKS consumers for authenticated service calls"
+git commit -m "feat(hospital): migrate JWKS consumers for authenticated service calls"
 git push -u origin feat/authenticated-user-integration
 ```
 
@@ -290,7 +290,7 @@ git add JWT-AUTHENTICATION.md
 git add SECURITY-INTEGRATION-REPORT.md
 git add docker-compose.yml
 git add springboot-jwks-api
-git add springboot-learning-api
+git add springboot-hospital-api
 git add springboot-user-api
 git diff --cached --stat
 git diff --cached --submodule=short

@@ -25,7 +25,7 @@ def main():
             print('NOT VERIFIED: missing authorized prerequisites:',', '.join(missing))
             return 2
         print('NOT VERIFIED: supplied PKI still requires isolated native startup, negative auth and TLS handshake tests; no activation performed')
-    cmd=['docker','compose','-p','springboot_project','--env-file','.env','-f','docker-compose.yml',
+    cmd=['docker','compose','-p','hospital_dev','--env-file','.env','-f','docker-compose.yml',
          '-f','observability/secure-production/compose.json','config','--format','json']
     result=subprocess.run(cmd,cwd=ROOT,env=env,capture_output=True,text=True,timeout=30)
     if result.returncode:
@@ -34,7 +34,7 @@ def main():
     model=json.loads(result.stdout)
     for name,service in model['services'].items():
         assert all(p.get('host_ip')=='127.0.0.1' for p in service.get('ports',[]))
-    for app in ['user-api','learning-api','jwks-api']:
+    for app in ['hospital-user-api','hospital-api','hospital-jwks-api']:
         cfg=model['services'][app]['environment']
         assert cfg['APP_METRICS_LISTENER_ADDRESS']=='127.0.0.1'
         assert cfg['MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT'].startswith('https://')

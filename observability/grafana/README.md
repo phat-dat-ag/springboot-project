@@ -28,7 +28,7 @@ by service and up to 1,000 recent log entries. Narrow the time range or use Expl
 for more targeted searches.
 
 Compose defaults are Grafana port 3000 and Loki port 3100. The current .env uses
-3077 and 3177 instead. Use docker compose -p springboot_project ps to see actual
+3077 and 3177 instead. Use docker compose -p hospital_dev ps to see actual
 published ports. No index-pattern setup is required for Loki.
 
 ## Start or apply configuration
@@ -37,16 +37,16 @@ Run from the repository root with Docker Desktop running and the application
 stack already configured:
 
 ```powershell
-docker compose -p springboot_project config --quiet
-docker compose -p springboot_project up -d loki grafana fluent-bit
-docker compose -p springboot_project restart fluent-bit
+docker compose -p hospital_dev config --quiet
+docker compose -p hospital_dev up -d loki grafana fluent-bit
+docker compose -p hospital_dev restart fluent-bit
 ```
 
 The restart reloads the mounted Fluent Bit configuration. Grafana provisions its
 Loki datasource and dashboard on startup. Dashboard JSON changes are scanned every
 30 seconds. Provider or datasource configuration changes require restarting Grafana.
 For a fresh installation, configure the existing environment files and start the
-whole stack with docker compose -p springboot_project up -d --build.
+whole stack with docker compose -p hospital_dev up -d --build.
 
 The dashboard is managed in Git. Edit dashboards/application-logs.json to change
 it, or save a separate copy in Grafana for personal customization.
@@ -59,7 +59,7 @@ sends the same records to OpenSearch and Loki. Loki streams have these labels:
 | Label | Values |
 | --- | --- |
 | job | springboot |
-| service | user-learning, learning-api, jwks-service |
+| service | hospital-user-api, hospital-api, hospital-jwks-api |
 | environment | development |
 
 The service label is read from each JSON record. Request IDs and other fields stay
@@ -72,7 +72,7 @@ In Explore, choose the Loki datasource and use LogQL in Code mode:
 ```
 
 ```logql
-{job="springboot", service="learning-api"}
+{job="springboot", service="hospital-api"}
 ```
 
 ```logql
@@ -89,11 +89,11 @@ filters can legitimately return no results when there are no matching events.
 ## Verification and troubleshooting
 
 ```powershell
-docker compose -p springboot_project ps loki grafana fluent-bit
+docker compose -p hospital_dev ps loki grafana fluent-bit
 Invoke-RestMethod http://localhost:3077/api/health
 Invoke-WebRequest -UseBasicParsing http://localhost:3177/ready
 Invoke-RestMethod http://localhost:3177/loki/api/v1/label/service/values
-docker compose -p springboot_project logs --since 5m --tail 100 fluent-bit loki grafana
+docker compose -p hospital_dev logs --since 5m --tail 100 fluent-bit loki grafana
 ```
 
 Generate a request, copy its correlation ID, allow about ten seconds for collection,
@@ -104,12 +104,12 @@ $response = Invoke-WebRequest -UseBasicParsing http://localhost:8783/api/v1/jwks
 $response.Headers['X-Correlation-ID']
 ```
 
-The current Learning and JWKS application ports are 8782 and 8783. A healthy Loki
+The current Hospital and JWKS application ports are 8782 and 8783. A healthy Loki
 datasource can also be checked under Connections > Data sources > Loki > Save & test.
 If logs appear absent, select All services and levels, widen the time range, and
 check collector errors. A brief readiness failure during startup can be retried.
 
-Existing tail offsets are preserved. Learning and JWKS records consumed before
+Existing tail offsets are preserved. Hospital and JWKS records consumed before
 their Loki output was enabled are not replayed; newly written records are collected.
 Do not delete tail databases or Docker volumes to force replay.
 

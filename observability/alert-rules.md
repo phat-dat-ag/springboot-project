@@ -19,19 +19,19 @@ Investigate: Check target lastError, API readiness, private port 9091 and contai
 UID: `sb5-missing-metrics-user`; severity **warning**; pending **2m**; no-data **OK**. Condition: `gt 0`.
 
 ```promql
-absent_over_time(up{job="springboot",instance="user-api:9091"}[5m])
+absent_over_time(up{job="springboot",instance="hospital-user-api:9091"}[5m])
 ```
 
 Expected scrape target disappeared for 5m plus pending period.
 
 Investigate: Check Prometheus target discovery and targets/applications.json.
 
-## MissingMetricsLearning
+## MissingMetricsHospital
 
-UID: `sb5-missing-metrics-learning`; severity **warning**; pending **2m**; no-data **OK**. Condition: `gt 0`.
+UID: `sb5-missing-metrics-hospital`; severity **warning**; pending **2m**; no-data **OK**. Condition: `gt 0`.
 
 ```promql
-absent_over_time(up{job="springboot",instance="learning-api:9091"}[5m])
+absent_over_time(up{job="springboot",instance="hospital-api:9091"}[5m])
 ```
 
 Expected scrape target disappeared for 5m plus pending period.
@@ -43,7 +43,7 @@ Investigate: Check Prometheus target discovery and targets/applications.json.
 UID: `sb5-missing-metrics-j-w-k-s`; severity **warning**; pending **2m**; no-data **OK**. Condition: `gt 0`.
 
 ```promql
-absent_over_time(up{job="springboot",instance="jwks-api:9091"}[5m])
+absent_over_time(up{job="springboot",instance="hospital-jwks-api:9091"}[5m])
 ```
 
 Expected scrape target disappeared for 5m plus pending period.

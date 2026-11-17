@@ -51,7 +51,7 @@ def text(title, body):
             'options': {'mode': 'markdown', 'content': body}}
 
 def dashboard(slug, title, panels, database=False, logs=False, infrastructure=False):
-    services = ['user-learning', 'learning-api'] + ([] if database else ['jwks-service'])
+    services = ['hospital-user-api', 'hospital-api'] + ([] if database else ['hospital-jwks-api'])
     if infrastructure:
         services += ['prometheus', 'loki', 'tempo', 'otel-collector', 'fluent-bit', 'grafana']
     variables = [variable('environment'), variable('service', services)]
@@ -84,7 +84,7 @@ def recording(name):
     return name + SELECT
 
 def generate(environment):
-    targets = [('user-api:9091', 'user-learning'), ('learning-api:9091', 'learning-api'), ('jwks-api:9091', 'jwks-service')]
+    targets = [('hospital-user-api:9091', 'hospital-user-api'), ('hospital-api:9091', 'hospital-api'), ('hospital-jwks-api:9091', 'hospital-jwks-api')]
     write(OBS / 'prometheus/targets/applications.json', [
         {'targets': [host], 'labels': {'service': service, 'environment': environment}} for host, service in targets])
     write(OBS / 'prometheus/targets/infrastructure.json', [
@@ -149,7 +149,7 @@ def generate(environment):
         panel('Open file descriptors','process_files_open_files'+SELECT),
         panel('JVM direct/mapped buffer memory','jvm_buffer_memory_used_bytes'+SELECT,'bytes',legend='{{service}} {{id}}')]
     dashboards.append(dashboard('jvm','JVM & Runtime',runtime))
-    pool = '{'+FILTER+',service=~"user-learning|learning-api"}'
+    pool = '{'+FILTER+',service=~"hospital-user-api|hospital-api"}'
     db = [panel(name,'hikaricp_connections_'+suffix+pool,legend='{{service}} {{pool}}') for name,suffix in
           [('Active connections','active'),('Idle connections','idle'),('Pending connections','pending'),('Maximum connections','max')]]
     db += [panel('Pool utilization','hikaricp_connections_active'+pool+' / (hikaricp_connections_max'+pool+' > 0)','percentunit','Unknown/zero maximum excluded.',legend='{{service}} {{pool}}'),
@@ -245,8 +245,8 @@ def build_alerts(environment):
                         'reducer':{'type':'last','params':[]},'evaluator':{'type':comparator,'params':[threshold]},
                         'operator':{'type':'and'}}]}}]})
     add('ServiceDown','up{job="springboot"}',1,'2m','critical','Private scrape endpoint failed continuously for 2m; not proof the public API is down.','Check target lastError, API readiness, private port 9091 and container health.',comparator='lt',no_data='NoData')
-    for host,service in [('user-api:9091','user-learning'),('learning-api:9091','learning-api'),('jwks-api:9091','jwks-service')]:
-        add('MissingMetrics'+('User' if service=='user-learning' else 'Learning' if service=='learning-api' else 'JWKS'),
+    for host,service in [('hospital-user-api:9091','hospital-user-api'),('hospital-api:9091','hospital-api'),('hospital-jwks-api:9091','hospital-jwks-api')]:
+        add('MissingMetrics'+('User' if service=='hospital-user-api' else 'Hospital' if service=='hospital-api' else 'JWKS'),
             f'absent_over_time(up{{job="springboot",instance="{host}"}}[5m])',0,'2m','warning',
             'Expected scrape target disappeared for 5m plus pending period.','Check Prometheus target discovery and targets/applications.json.',service=service)
     request='sb:http_requests:rate5m'

@@ -107,19 +107,19 @@ def preflight():
             check(p.get('host_ip')=='127.0.0.1','loopback-only published port: '+service)
     for name in ['otel-collector','tempo','fluent-bit']:
         check(not m[name].get('ports'),'internal-only endpoints: '+name)
-    for name in ['user-api','learning-api','jwks-api']:
+    for name in ['hospital-user-api','hospital-api','hospital-jwks-api']:
         check(not any(p['target']==9091 for p in m[name]['ports']),'private Actuator scrape listener: '+name)
         check(str(m[name]['environment']['MANAGEMENT_TRACING_SAMPLING_PROBABILITY'])=='0.1','10% tracing sampling: '+name)
     env=m['grafana']['environment']
     check(env['PHASE5_ALERT_RECEIVER'] in {x['name'] for x in base['contacts']} | {base['policies']['receiver']},'rule-local receiver exists')
     targets=load(OBS/'prometheus/targets/applications.json')
-    check({t['labels']['environment'] for t in targets}=={m['user-api']['environment']['DEPLOYMENT_ENVIRONMENT']},
+    check({t['labels']['environment'] for t in targets}=={m['hospital-user-api']['environment']['DEPLOYMENT_ENVIRONMENT']},
           'target environment agrees with actual Compose environment')
-    actual={c['service']:c for c in v.inventory() if c['project']=='springboot_project'}
+    actual={c['service']:c for c in v.inventory() if c['project']=='hospital_dev'}
     for name in ['grafana','prometheus','otel-collector']:
         expected={x['target']:x.get('source') for x in m[name].get('volumes',[]) if x['type']=='volume'}
         for dest,source in expected.items():
-            check(any(x['Destination']==dest and x.get('Name')=='springboot_project_'+source for x in actual[name]['mounts']),
+            check(any(x['Destination']==dest and x.get('Name')=='hospital_dev_'+source for x in actual[name]['mounts']),
                   'existing persistent volume preserved: '+name+' '+dest)
 
 def runtime():
@@ -202,9 +202,9 @@ def runtime():
     after={c['name']:c for c in v.inventory()}
     for name,c in before.items():
         check(name in after,'baseline container still present: '+name)
-        if c['project']!='springboot_project' or c['service'] not in ['grafana','prometheus','otel-collector']:
+        if c['project']!='hospital_dev' or c['service'] not in ['grafana','prometheus','otel-collector']:
             check(c['id']==after[name]['id'] and c['started']==after[name]['started'], 'container identity/start unchanged: '+name)
-        if c['project']=='springboot_project':
+        if c['project']=='hospital_dev':
             oldvol={x['Name'] for x in c['mounts'] if x['Type']=='volume'}
             newvol={x['Name'] for x in after[name]['mounts'] if x['Type']=='volume'}
             check(oldvol==newvol,'persistent mounts retained: '+name)

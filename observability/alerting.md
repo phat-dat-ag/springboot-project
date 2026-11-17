@@ -17,7 +17,7 @@ supports rule-local `notification_settings`, keep-firing and no-data/error field
 | Alert | Threshold / minimum traffic | Pending | Severity |
 | --- | --- | --- | --- |
 | ServiceDown | Application `up < 1` | 2m | critical |
-| MissingMetricsUser/Learning/JWKS (3 rules) | Expected `up` absent for 5m | additional 2m | warning |
+| MissingMetricsUser/Hospital/JWKS (3 rules) | Expected `up` absent for 5m | additional 2m | warning |
 | High5xxErrorRate | 5xx fraction >5%; ≥100 requests/5m | 5m | critical |
 | HighHTTPErrorRatio | 4xx+5xx fraction >20%; ≥100 requests/5m | 10m | warning |
 | HighP95Latency | >1s; ≥100 requests/5m | 10m | warning |
@@ -117,7 +117,7 @@ python observability/build-phase5.py --environment development
 python observability/verify-phase5.py static
 python observability/verify-phase5.py preflight
 python observability/verify-phase5.py native
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --pull never grafana prometheus
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --pull never grafana prometheus
 python observability/verify-phase5.py runtime
 python observability/test-phase5-alerts.py
 ```

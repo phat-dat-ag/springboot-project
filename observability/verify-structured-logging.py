@@ -1,7 +1,7 @@
 """Local Phase 1 runtime probes; credentials are read only from process environment.
 
 No account/role changes. Login creates one refresh session; finally logs it out.
-Requires the existing springboot_project deployment and local backend ports.
+Requires the existing hospital_dev deployment and local backend ports.
 Never prints response bodies, credentials or tokens. Does not upload test events.
 """
 import base64
@@ -76,8 +76,8 @@ def main():
             probe(name, 8783, path, 200, cid=cid)
         probe('jwks404', 8783, '/api/v1/jwks/SENSITIVE_PATH_SENTINEL?secret=SENSITIVE_QUERY_SENTINEL', 404)
         probe('user401', 8781, '/internal/users/' + str(uuid.uuid4()), 401)
-        probe('learning401', 8782, '/api/v1/learning/me', 401)
-        probe('badjwt', 8782, '/api/v1/learning/me', 401, auth='SENSITIVE_HEADER_SENTINEL')
+        probe('learning401', 8782, '/api/v1/hospital/technical/authentication', 401)
+        probe('badjwt', 8782, '/api/v1/hospital/technical/authentication', 401, auth='SENSITIVE_HEADER_SENTINEL')
         if not username or not password:
             print('NOT VERIFIED: authenticated login/logout/internal JWT checks: no process credentials')
         else:
@@ -87,14 +87,14 @@ def main():
             secrets += [token, refresh]
             claims = json.loads(base64.urlsafe_b64decode(token.split('.')[1] + '==='))
             subject = claims['sub']
-            probe('identity', 8782, '/api/v1/learning/me', 200, auth=token)
-            linked = probe('linked', 8782, '/api/v1/learning/internal-test/users/' + subject,
+            probe('identity', 8782, '/api/v1/hospital/technical/authentication', 200, auth=token)
+            linked = probe('linked', 8782, '/api/v1/hospital/technical/users/' + subject,
                            200, auth=token)
-            check(subject in json.dumps(linked), 'Learning -> User authenticated subject')
+            check(subject in json.dumps(linked), 'Hospital -> User authenticated subject')
             expected[(8781, marker + '-linked')] = 200
             probe('userjwtinternal', 8781, '/internal/users/' + subject, 401, auth=token)
             print('NOT VERIFIED: real non-admin account rejection; account roles are preserved')
-            probe('missinguser', 8782, '/api/v1/learning/internal-test/users/' + str(uuid.uuid4()),
+            probe('missinguser', 8782, '/api/v1/hospital/technical/users/' + str(uuid.uuid4()),
                   500, auth=token)
             expected[(8781, marker + '-missinguser')] = 404
             probe('refresh404', 8781, '/auth/refresh', 404, 'POST',
@@ -103,11 +103,11 @@ def main():
         if refresh:
             probe('logout', 8781, '/auth/logout', 200, 'POST', {'refreshToken': refresh}, token)
 
-    services = {8781: ('user-api', 'user-learning'), 8782: ('learning-api', 'learning-api'),
-                8783: ('jwks-api', 'jwks-service')}
+    services = {8781: ('hospital-user-api', 'hospital-user-api'), 8782: ('hospital-api', 'hospital-api'),
+                8783: ('hospital-jwks-api', 'hospital-jwks-api')}
     records = {}
     for port, (service, identity) in services.items():
-        result = subprocess.run(['docker', 'compose', '-p', 'springboot_project',
+        result = subprocess.run(['docker', 'compose', '-p', 'hospital_dev',
             'logs', '--no-color', '--no-log-prefix', '--since', str(int(begin)), service],
             capture_output=True, text=True, check=True)
         lines = result.stdout.splitlines()
@@ -152,7 +152,7 @@ def main():
         check(bool(found), identity + ': fresh Loki ingestion')
         check(all(abs(int(stamp) / 1e9 - dt.datetime.fromisoformat(r['@timestamp'].replace('Z', '+00:00')).timestamp()) < .002
                   for stamp, r in found), identity + ': Loki uses application timestamp')
-        index = {8781: 'user', 8782: 'learning', 8783: 'jwks'}[port]
+        index = {8781: 'user', 8782: 'hospital', 8783: 'jwks'}[port]
         query = {'size': 100, 'query': {'bool': {'filter': [
             {'prefix': {'correlationId.keyword': marker}}, {'term': {'event.keyword': 'http.request.completed'}}]}}}
         result = http(9277, f'/springboot-{index}-logs/_search', 'POST', query)[2]

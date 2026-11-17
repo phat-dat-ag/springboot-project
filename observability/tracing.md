@@ -8,15 +8,15 @@ See [verification evidence](phase3-verification.md) for actual results and gaps.
 ## Instrumentation and compatibility
 
 All three modules use the Boot-managed `spring-boot-starter-opentelemetry`.
-User already had it (Boot 4.1.1); Learning/JWKS add it (Boot 4.1.2). The managed
+User already had it (Boot 4.1.1); Hospital/JWKS add it (Boot 4.1.2). The managed
 Micrometer OTel bridge is the only bridge; no Java agent, Sleuth, Brave, native
 OTel SDK auto-configuration or parallel HTTP instrumentation is installed.
 Java targets, Boot versions, authentication and endpoint contracts stay unchanged.
-The existing Maven target is Java 17; User/Learning images run Java 21 and JWKS
+The existing Maven target is Java 17; User/Hospital images run Java 21 and JWKS
 runs Java 17. This phase does not perform a Java migration.
 
 Boot servlet observations create SERVER spans and managed `RestClient.Builder` /
-`RestTemplateBuilder` create CLIENT spans. Learning's existing `ServiceClientConfig`
+`RestTemplateBuilder` create CLIENT spans. Hospital's existing `ServiceClientConfig`
 already clones the managed builder, preserves the `/internal/users/{id}` template,
 connect/read timeouts, caller/correlation interceptor, service JWT interceptor and
 error translation. No client architecture change is required. JWKS has no current
@@ -30,7 +30,7 @@ is a direct child of the server span. Authentication and HTTP observations remai
 uses Boot's `spring.task.execution.propagate-context=true`; arbitrary unmanaged
 executors still require explicit context capture and restoration.
 
-Resources retain `service.name=user-learning|learning-api|jwks-service`,
+Resources retain `service.name=hospital-user-api|hospital-api|hospital-jwks-api`,
 `service.version=${app.version}` (build version unless `APP_VERSION` overrides),
 and `deployment.environment.name=${app.deployment-environment}`. No duplicate
 legacy environment attribute is introduced. SDK metadata is also supplied by OTel.
@@ -44,9 +44,9 @@ No arbitrary request headers are copied. Baggage propagation and baggage-to-MDC 
 with management.tracing.baggage.enabled=false and correlation.enabled=false;
 remote/correlation fields are also empty: do not add account, email, token, or other sensitive baggage.
 
-The expected relationship is Learning SERVER -> Learning CLIENT -> User SERVER.
+The expected relationship is Hospital SERVER -> Hospital CLIENT -> User SERVER.
 All share one trace ID; each span has its own ID. User's parent is the client span,
-not the original Learning server span. JWKS key retrieval can add further client /
+not the original Hospital server span. JWKS key retrieval can add further client /
 server spans when a decoder actually fetches keys; cached retrieval creates no HTTP call.
 
 `X-Correlation-ID` is independent: existing validation, response header, propagation,
@@ -133,7 +133,7 @@ overflow, disk exhaustion or process crashes can still lose traces. See
 Tempo **2.9.0**, single binary, OTLP gRPC on internal 4317 and HTTP query/readiness
 on internal 3200. Non-root 10001, read-only root, 512 MiB / one CPU / 128 PIDs,
 45s stop grace, unless-stopped. A network-disabled one-shot storage initializer
-sets ownership of the new volume root only. `springboot_project_tempo_data`
+sets ownership of the new volume root only. `hospital_dev_tempo_data`
 persists `/var/tempo/wal` and `/var/tempo/blocks`. Configured block retention is
 **72 hours**, with 5-minute maximum ingester block duration. Retention is a
 policy, not a hard disk quota; deletion enforcement is not verified by this phase.
@@ -144,14 +144,14 @@ from the existing trusted Prometheus container, rather than installing tools in
 them or publishing diagnostic ports:
 
 ```powershell
-docker compose -p springboot_project exec -T prometheus wget -q -O - http://otel-collector:13133/
-docker compose -p springboot_project exec -T prometheus wget -q -O - http://tempo:3200/ready
+docker compose -p hospital_dev exec -T prometheus wget -q -O - http://otel-collector:13133/
+docker compose -p hospital_dev exec -T prometheus wget -q -O - http://tempo:3200/ready
 ```
 
 These containers have no Docker HEALTHCHECK; an orchestrator should probe these
 endpoints internally. Health-extension availability does not itself prove export;
 the verifier queries real stored spans separately. The trust boundary is the
-existing `springboot_project_default` bridge and privileged Docker administrators.
+existing `hospital-network` bridge and privileged Docker administrators.
 Ingestion/query endpoints are unauthenticated plaintext within that boundary.
 Do not attach untrusted workloads. TLS/authentication, HA, remote object storage,
 backups, crash recovery and hard disk quotas still need Phase 6 review. Phase 4
@@ -171,14 +171,14 @@ sampled trace within retention; absent data yields no result.
 Grafana Explore -> Tempo -> TraceQL examples:
 
 ```traceql
-{ resource.service.name = "learning-api" }
-{ resource.service.name = "user-learning" && span:kind = server }
-{ resource.service.name = "jwks-service" && duration > 100ms }
+{ resource.service.name = "hospital-api" }
+{ resource.service.name = "hospital-user-api" && span:kind = server }
+{ resource.service.name = "hospital-jwks-api" && duration > 100ms }
 { status = error }
 ```
 
 Paste an observed trace ID in Explore's Trace ID query to inspect the waterfall.
-Do not substitute independent endpoint traces for a verified Learning -> User chain.
+Do not substitute independent endpoint traces for a verified Hospital -> User chain.
 Full operations dashboards/alerts remain Phase 5.
 
 ## Verification
@@ -189,7 +189,7 @@ W3C and tracestate, malformed parents, sampling=0/1, async context, parenting,
 correlation, counts and privacy; previous JWT/JWKS/logging/metrics suites remain.
 
 ```powershell
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
 python observability/verify-baseline.py --runtime
 python observability/verify-tracing.py --snapshot
 # Build/recreate only affected services, as recorded in phase3-verification.md.

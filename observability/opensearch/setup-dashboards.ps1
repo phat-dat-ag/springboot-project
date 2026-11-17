@@ -89,7 +89,7 @@ catch {
     $searchBody = @{
         attributes = @{
             title = 'Application logs'
-            description = 'User, Learning, and JWKS application logs'
+            description = 'User, Hospital, and JWKS application logs'
             columns = $structuredColumns
             sort = ,@('@timestamp', 'desc')
             kibanaSavedObjectMeta = @{ searchSourceJSON = $searchSource }

@@ -11,7 +11,7 @@ v=importlib.import_module('verify-phase6')
 class Followup(v.Validation):
     def metrics(self):
         if self.details.get('linked_trace'):
-            self.wait(lambda:self.query('http_client_requests_seconds_count{service="learning-api",uri="/internal/users/{id}",status="200"}'))
+            self.wait(lambda:self.query('http_client_requests_seconds_count{service="hospital-api",uri="/internal/users/{id}",status="200"}'))
         super().metrics()
 
     def gaps(self):

@@ -18,7 +18,7 @@ counters, Grafana proxy querying, both logging backends, public JWKS compatibili
 and historical samples across an application restart were observed.
 
 Runtime acceptance is **partial**: successful login/logout, successful refresh,
-authenticated Learning -> User calls/client meters and their end-to-end
+authenticated Hospital -> User calls/client meters and their end-to-end
 correlation were **NOT VERIFIED in this phase**. The user-specified
 `observability/local-test-credentials.json` did not exist when checked, including
 before final reporting. No credentials were invented/persisted, and no account
@@ -36,7 +36,7 @@ changes in this root or the three Spring repositories were discarded.
 
 - `pom.xml`: add only `io.micrometer:micrometer-registry-prometheus`, with version
   managed by the existing Boot parent. No Boot/Java/logging/tracing upgrades.
-- New `src/main/java/com/japaneselearning/<service>/metrics/MetricsConfiguration.java`:
+- New `src/main/java/com/hospitalmanagement/<service>/metrics/MetricsConfiguration.java`:
   stable common tags, one version-info gauge, URI budgets, security-counter bean.
 - New `metrics/MetricsEndpointConfiguration.java`: opt-in extra Tomcat scrape
   connector and highest-priority security chain; deny scrape on application port.
@@ -56,7 +56,7 @@ authentication, authorization, refresh, internal JWT decoder and HTTP behavior
 are unchanged. No datasource URL, credentials, pool size, timeout or signing key
 configuration changed.
 
-### Learning
+### Hospital
 
 Also adds test `HikariPoolMetricsTest.java` and `InternalClientMetricsTest.java`.
 `ServiceClientConfig` and `UserServiceClient` production code did not require any
@@ -91,7 +91,7 @@ cache contract or application authorization rules changed.
 ## C. Actual metrics inventory and labels
 
 Registry versions resolved by existing parents: **User Micrometer 1.17.1**,
-**Learning/JWKS 1.17.2**. Boot remains 4.1.1 / 4.1.2 / 4.1.2; Java target 17;
+**Hospital/JWKS 1.17.2**. Boot remains 4.1.1 / 4.1.2 / 4.1.2; Java target 17;
 Docker JVMs 21 / 21 / 17. Encoder 8.1 and existing trace dependencies are unchanged.
 
 The following names and label sets were actually queried after deployment:
@@ -99,15 +99,15 @@ The following names and label sets were actually queried after deployment:
 | Meter | Observed scope | Label keys beyond metric name |
 | --- | --- | --- |
 | `http_server_requests_seconds_count` / buckets | All three; 13 count series in initial sample | environment, error, exception, instance, job, method, outcome, service, status, uri; buckets also le |
-| `http_client_requests_seconds_count` / buckets | Live Learning -> JWKS; automated Learning -> User | client_name, environment, error, exception, instance, job, method, outcome, service, status, uri; buckets also le |
+| `http_client_requests_seconds_count` / buckets | Live Hospital -> JWKS; automated Hospital -> User | client_name, environment, error, exception, instance, job, method, outcome, service, status, uri; buckets also le |
 | `jvm_memory_used_bytes` | All three; 24 initial series | area, environment, id, instance, job, service |
 | `jvm_gc_pause_seconds_count` | GC events observed across all three; 4 initial series | action, cause, environment, gc, instance, job, service |
 | `jvm_threads_live_threads` | All three | environment, instance, job, service |
 | `process_uptime_seconds`, `process_cpu_usage`, `system_cpu_usage` | All three | environment, instance, job, service |
 | `executor_active_threads` | All three, applicationTaskExecutor | environment, instance, job, name, service |
-| `hikaricp_connections_active` / idle/pending/max | User/Learning only | environment, instance, job, pool, service |
-| `hikaricp_connections_acquire_seconds_count` | User/Learning only | environment, instance, job, pool, service |
-| `jdbc_connections_active` | User/Learning only | environment, instance, job, name, service |
+| `hikaricp_connections_active` / idle/pending/max | User/Hospital only | environment, instance, job, pool, service |
+| `hikaricp_connections_acquire_seconds_count` | User/Hospital only | environment, instance, job, pool, service |
+| `jdbc_connections_active` | User/Hospital only | environment, instance, job, name, service |
 | `app_security_events_total` | 21 initialized bounded series | environment, instance, job, operation, result, service |
 | `app_build_info` | Three constant identity gauges | environment, instance, job, service, version |
 
@@ -145,8 +145,8 @@ No promise is made for arbitrary unregistered/background executors or platform
 OS metrics not supplied by the runtime.
 
 Hikari active/idle/pending/max and acquisition meters were queried for exactly
-User and Learning. Both existing pools reported maximum 10; sampled acquisition
-counts were User 4 and Learning 2. These are existing pool settings, not changes.
+User and Hospital. Both existing pools reported maximum 10; sampled acquisition
+counts were User 4 and Hospital 2. These are existing pool settings, not changes.
 Actual Hikari tracker tests used a JDBC stub and verified borrow/return/acquisition
 metrics without starting or adding a real database. Pool snapshots cache values
 for one second; tests wait for refresh rather than weaken idle-count assertions.
@@ -168,21 +168,21 @@ No accounts were created or changed. Successful auth/refresh counter increments
 are covered by instrumentation contracts only as applicable; live positive flows
 remain NOT VERIFIED without the specified credentials file.
 
-The managed Learning client test made two successful and one upstream-404 real
+The managed Hospital client test made two successful and one upstream-404 real
 HTTP exchanges through `ServiceClientConfig`/`UserServiceClient`: exactly three
 standard client observations, status counts 2/1, URI `/internal/users/{id}`, no raw
 UUID/correlation/JWT labels; correlation header retained. Existing service-token
-and timeout tests still pass. Live **Learning -> User** client metrics remain
-NOT VERIFIED; the public Learning -> JWKS diagnostic call did produce a live
+and timeout tests still pass. Live **Hospital -> User** client metrics remain
+NOT VERIFIED; the public Hospital -> JWKS diagnostic call did produce a live
 standard client timer and shared correlation in both Loki and OpenSearch.
 
 ## G. Prometheus deployment and persistence
 
 - Image: `prom/prometheus:v3.13.5`, explicitly versioned LTS, successfully pulled.
-- Targets: `user-api:9091`, `learning-api:9091`, `jwks-api:9091`; all **UP**, lastError
+- Targets: `hospital-user-api:9091`, `hospital-api:9091`, `hospital-jwks-api:9091`; all **UP**, lastError
   empty in sampled target API output; observed scrape durations around 8–11 ms.
 - 15s interval, 5s timeout; 20k sample and bounded label limits.
-- Named volume `springboot_project_prometheus_data`; 15d retention and 2GB flag
+- Named volume `hospital_dev_prometheus_data`; 15d retention and 2GB flag
   (Prometheus reports 2GiB). Retention size is not a hard disk quota.
 - Non-root/read-only root filesystem, 512MiB memory, one CPU, PID limit128,
   unless-stopped restart, native wget readiness health check passed.
@@ -221,14 +221,14 @@ Final command from each module:
 | Module | Tests | Failures | Errors | Skips | Result |
 | --- | ---: | ---: | ---: | ---: | --- |
 | User | 99 | 0 | 0 | 0 | PASS |
-| Learning | 115 | 0 | 0 | 0 | PASS |
+| Hospital | 115 | 0 | 0 | 0 | PASS |
 | JWKS | 77 | 0 | 0 | 0 | PASS |
 | Total | 291 | 0 | 0 | 0 | PASS |
 
 New tests exercise real Tomcat connectors/security/Actuator exposition, shipped
 configuration binding, JVM meters, histograms, templated routes, async/error
 recording, bounded counter semantics, Hikari tracking and the actual managed
-Learning client. Existing JWT/JWKS, internal JWT, correlation/MDC and safe JSON
+Hospital client. Existing JWT/JWKS, internal JWT, correlation/MDC and safe JSON
 logging tests remain enabled and passing.
 
 Focused runs used `-Dtest=MetricsIntegrationTest,SecurityMetricsTest` and expanded
@@ -236,7 +236,7 @@ selections adding `InternalClientMetricsTest,HikariPoolMetricsTest`. Initial
 compilation used `.\mvnw.cmd -q -DskipTests compile` to resolve registries.
 Development failures were corrected before final suites: Boot4 API is
 `addAdditionalConnectors`, duration binding needs `2500ms` rather than `2.5s`,
-SimpleMeterRegistry needs explicit close, Learning test resources shadowed main
+SimpleMeterRegistry needs explicit close, Hospital test resources shadowed main
 configuration, client fixtures needed the full DTO, and Hikari cached gauges need
 a bounded wait. One unquoted PowerShell Maven property was parsed incorrectly;
 the unnecessary property was removed. No assertions were weakened and no failed
@@ -252,18 +252,18 @@ Commands actually executed (Compose mutations always specify this project):
 
 ```powershell
 docker compose ls --format json
-docker compose -p springboot_project ps --format json
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev ps --format json
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
 python observability/verify-baseline.py
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml pull prometheus
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build user-api learning-api jwks-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 jwks-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 user-api learning-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 90 prometheus grafana
-docker compose -p springboot_project exec -T prometheus promtool check config /etc/prometheus/prometheus.yml
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml pull prometheus
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build hospital-user-api hospital-api hospital-jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 hospital-jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 hospital-user-api hospital-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 90 prometheus grafana
+docker compose -p hospital_dev exec -T prometheus promtool check config /etc/prometheus/prometheus.yml
 python observability/verify-metrics.py --credentials observability/local-test-credentials.json
 python observability/verify-baseline.py --runtime
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml restart --no-deps --timeout 45 jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml restart --no-deps --timeout 45 hospital-jwks-api
 ```
 
 These final commands passed. Baseline's generic NOT VERIFIED footer means that
@@ -292,14 +292,14 @@ corrected aggregate/history probe passed.
 
 ### Containers and preservation
 
-Recreated existing containers: `springboot_project-user-api-1`, `-learning-api-1`,
-`-jwks-api-1`, `-grafana-1`. Added `springboot_project-prometheus-1`. JWKS also had
+Recreated existing containers: `hospital_dev-hospital-user-api-1`, `-hospital-api-1`,
+`-jwks-api-1`, `-grafana-1`. Added `hospital_dev-prometheus-1`. JWKS also had
 one deliberate restart for the persistence check, without another recreation.
 Three APIs and Prometheus are healthy; Grafana is running with API health OK
 (no configured Docker healthcheck).
 
 Before/after comparison proved **25 unrelated existing containers unchanged**,
-including all **16 `jp_dev` containers**, checking IDs/images/start times/restart
+including all **16 `hospital_dev` containers**, checking IDs/images/start times/restart
 counts/ports/mounts/networks. Fluent Bit, Loki, OpenSearch, databases and migration
 containers were not recreated. Exactly one Prometheus volume and one read-only
 Grafana datasource mount were added. All original ports, networks and storage
@@ -313,8 +313,8 @@ OpenSearch remained yellow as in Phase0's single-node setup.
 ### Logging compatibility
 
 All three services produced fresh records ingested into Loki and OpenSearch.
-Valid response correlation IDs were retained; Learning -> JWKS shared exactly
-one final completion per service in both backends. Authenticated Learning -> User
+Valid response correlation IDs were retained; Hospital -> JWKS shared exactly
+one final completion per service in both backends. Authenticated Hospital -> User
 is explicitly not substituted by this check. Framework-owned User trace/span
 logging remains available. No unexpected OTLP export errors or successful scrape
 INFO noise were found in checked application logs; tested secret sentinels were
@@ -331,7 +331,7 @@ durability/backpressure investigation remains Phase6 work if warnings recur.
 
 ## K. Cross-project JWKS compatibility
 
-`japanese-learning` requires **no changes**. Public User/Learning JWKS bodies,
+`hospital-management` requires **no changes**. Public User/Hospital JWKS bodies,
 RSA key material/key IDs, content types and cache headers matched the pre-rollout
 snapshot exactly, including after the controlled restart. Existing API ports,
 service DNS/network membership, issuer/audience validation and application
@@ -339,13 +339,13 @@ security rules remain. The additional unpublished scrape listener changes no
 consumer request/response contract. Read-only review of its .NET
 `JwksConfigurationRetriever` and Quarkus OIDC JWKS configuration confirmed the
 unchanged standalone JWKS contract. Its root had pre-existing dirty `angular`
-and `quarkus` pointers; nothing there was modified. All `jp_dev` containers were
+and `quarkus` pointers; nothing there was modified. All `hospital_dev` containers were
 unchanged, so no separate consumer implementation prompt is needed.
 
 ## L. Known limitations and phase boundaries
 
 - No local credentials file was available at the supplied path. Positive live
-  auth/logout/refresh and Learning -> User JWT/client/correlation checks remain
+  auth/logout/refresh and Hospital -> User JWT/client/correlation checks remain
   NOT VERIFIED; run the documented verifier with an existing ignored file later.
 - Runtime non-admin role-based403 remains the prior Phase1 gap. Published metrics
  403 denial and real test-container role rejection were verified; they are distinct.
@@ -370,16 +370,16 @@ unchanged, so no separate consumer implementation prompt is needed.
 | Uniform Micrometer/Prometheus identity/naming | PASS | Managed registries, actual labels/info gauge across all services |
 | HTTP count/status/outcome/duration and aggregatable histograms | PASS | Real requests, templated routes, live buckets/p50/p95/p99 |
 | JVM/process/system and supported executors | PASS | Stored meters all three, actual applicationTaskExecutor inventory |
-| Hikari/JDBC where applicable | PASS | Live User/Learning pools; real tracker tests; JWKS intentionally N/A |
+| Hikari/JDBC where applicable | PASS | Live User/Hospital pools; real tracker tests; JWKS intentionally N/A |
 | Bounded security metrics without double counting | PASS | Exclusive terminal hook/tests and live rejection counters |
-| Learning -> User client instrumentation | PASS | Real managed-client integration test, exactly three exchanges |
-| Deployed authenticated Learning -> User client/JWT/correlation | NOT VERIFIED | Specified credentials file missing |
+| Hospital -> User client instrumentation | PASS | Real managed-client integration test, exactly three exchanges |
+| Deployed authenticated Hospital -> User client/JWT/correlation | NOT VERIFIED | Specified credentials file missing |
 | Successful deployed login/logout/refresh | NOT VERIFIED | Specified credentials file missing; no accounts created/modified |
 | Secure scrape exposure, health/API rules preserved | PASS | Main port403/private scrape200; private other endpoints403; real security tests |
 | Prometheus deployment/storage/retention/health | PASS | Explicit image, native validation, three targets UP, app-restart history |
 | Grafana datasource/query integration | PASS | Authenticated datasource health and proxied three-target UP query |
-| Existing logs/correlation/trace metadata protected | PASS | Regression tests, fresh both-backend ingestion; live Learning -> JWKS correlation |
-| JWKS consumer compatibility and jp_dev preservation | PASS | Exact public contract comparison, read-only consumers, 16 unchanged containers |
+| Existing logs/correlation/trace metadata protected | PASS | Regression tests, fresh both-backend ingestion; live Hospital -> JWKS correlation |
+| JWKS consumer compatibility and hospital_dev preservation | PASS | Exact public contract comparison, read-only consumers, 16 unchanged containers |
 | Tests without weakened/skipped regressions | PASS | 291 passing tests, zero skips |
 | No unexpected OTLP export errors/Phase3–6 work | PASS | Disabled exports and observed logs; no future infrastructure |
 | Documentation and safe Git behavior | PASS | Contract/report/examples; no commit/push/reset/branch operation |
@@ -393,7 +393,7 @@ without review.
 Root/submodules began clean. HEADs remain at the initial values:
 root `8c8659976efd42beff055df6756dcded5752512a`,
 User `fcf000aa3388bd6fc498053c806fa582a5a8a8d8`,
-Learning `87d7eb28377f0258fd2f5371a71ec2b0a522aa60`,
+Hospital `87d7eb28377f0258fd2f5371a71ec2b0a522aa60`,
 JWKS `1ab00362e725bb5ec7f64a3380b0464c19db6d85`.
 All four branches remain `develop`. All Phase2 changes remain unstaged/uncommitted;
 new metrics/config/test/documentation files are untracked. Root shows dirty

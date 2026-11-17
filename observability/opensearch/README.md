@@ -1,7 +1,7 @@
 # Local OpenSearch application logs
 
 Run commands from C:\Personal\springboot-project. Always use Compose project
-name springboot_project to reuse the existing network and data volumes.
+name hospital_dev to reuse the existing network and data volumes.
 
 ## Open in your browser
 
@@ -9,12 +9,12 @@ The current local environment publishes:
 - Dashboards: http://localhost:5677
 - Saved Application logs view: http://localhost:5677/app/discover#/view/springboot-application-logs-view
 - OpenSearch API: http://localhost:9277
-- User / Learning / JWKS APIs: ports 8781 / 8782 / 8783
+- User / Hospital / JWKS APIs: ports 8781 / 8782 / 8783
 
 These ports come from local environment overrides. Compose defaults are 5601
 for Dashboards and 9200 for OpenSearch. Check actual bindings with:
 ~~~powershell
-docker compose -p springboot_project ps
+docker compose -p hospital_dev ps
 ~~~
 
 Open Discover, select springboot-*-logs*, choose Last 15 minutes, and refresh.
@@ -22,9 +22,9 @@ The Application logs saved search includes service, level, message, HTTP fields,
 and correlationId. Set an automatic refresh interval in the time picker if desired.
 
 Example DQL filters:
-- service: "user-learning"
-- service: "learning-api"
-- service: "jwks-service"
+- service: "hospital-user-api"
+- service: "hospital-api"
+- service: "hospital-jwks-api"
 - level: ERROR
 - correlationId: "YOUR-ID"
 
@@ -33,13 +33,13 @@ Example DQL filters:
 Docker Desktop must be running. Its Linux VM needs vm.max_map_count >= 262144.
 For an existing stack:
 ~~~powershell
-docker compose -p springboot_project config --quiet
-docker compose -p springboot_project up -d opensearch opensearch-dashboards fluent-bit
+docker compose -p hospital_dev config --quiet
+docker compose -p hospital_dev up -d opensearch opensearch-dashboards fluent-bit
 powershell -NoProfile -ExecutionPolicy Bypass -File .\observability\opensearch\setup-dashboards.ps1 -DashboardsUrl http://localhost:5677
 ~~~
 
 For a fresh installation, configure .env, .env.user-api and .env.jwks-api from their matching .example files
-and run docker compose -p springboot_project up -d --build first.
+and run docker compose -p hospital_dev up -d --build first.
 Use your actual Dashboards port when running setup. Run setup after ingestion starts.
 
 The setup script creates or refreshes the combined index pattern with @timestamp
@@ -53,9 +53,9 @@ You can also create the pattern manually under Management > Dashboards Managemen
 ## Pipeline and scope
 
 JSON application log files are mounted read-only into Fluent Bit:
-- User: /logs/user-api.log -> springboot-user-logs
-- Learning: /learning-logs/learning-api.log -> springboot-learning-logs
-- JWKS: /jwks-logs/jwks-api.log -> springboot-jwks-logs
+- User: /logs/hospital-user-api.log -> springboot-user-logs
+- Hospital: /hospital-logs/hospital-api.log -> springboot-hospital-logs
+- JWKS: /jwks-logs/hospital-jwks-api.log -> springboot-jwks-logs
 
 Fluent Bit adds environment=development and flushes every five seconds.
 All three applications also send logs to Loki; see the [Grafana guide](../grafana/README.md).
@@ -67,16 +67,16 @@ The fluent-bit-state-init service fixes ownership of the state volume to
 shell utilities, has no network, and only mounts the collector state volume.
 The collector itself remains non-root with a read-only root filesystem.
 Without initialization, a root-owned state volume causes:
-cannot open database /fluent-bit/state/user-api.db.
+cannot open database /fluent-bit/state/hospital-user-api.db.
 
 ## Verify and troubleshoot
 
 ~~~powershell
-docker compose -p springboot_project ps
+docker compose -p hospital_dev ps
 Invoke-RestMethod http://localhost:9277/_cluster/health
 Invoke-RestMethod 'http://localhost:9277/_cat/indices/springboot*?format=json'
 Invoke-RestMethod http://localhost:5677/api/status
-docker compose -p springboot_project logs --tail 100 fluent-bit opensearch opensearch-dashboards
+docker compose -p hospital_dev logs --tail 100 fluent-bit opensearch opensearch-dashboards
 ~~~
 
 Call an application's readiness endpoint, record the response X-Correlation-ID,

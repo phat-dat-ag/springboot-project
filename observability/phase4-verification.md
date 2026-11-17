@@ -2,9 +2,9 @@
 
 ## A. Executive summary
 
-Implemented and deployed to `springboot_project` with the existing debug override.
+Implemented and deployed to `hospital_dev` with the existing debug override.
 The three downstream-outage/restart recovery exercises passed, as did authenticated
-Learning -> User tracing, fresh log/trace delivery and metrics regression. No
+Hospital -> User tracing, fresh log/trace delivery and metrics regression. No
 application source or Java configuration changed. No commits or pushes were made.
 This is development pipeline hardening, not unconditional production acceptance:
 disk-full/overflow, crash recovery, physical retention deletion and collection of
@@ -46,7 +46,7 @@ Fields and existing labels are preserved. Native dry-run accepted the config.
 Isolated native Linux-volume tail fixture: five events survived rename, late old
 inode write, new file, truncation and restart/current-file append without duplicate
 replay; compressed history excluded and trace/span fields retained. Eight focused
-assertions passed. Fixture `springboot_project-phase4-tail-8367439b65` stopped;
+assertions passed. Fixture `hospital_dev-phase4-tail-8367439b65` stopped;
 its volume and earlier stopped fixture attempts were retained. Initial fixture
 permission/parser/Windows-bind assumptions failed and were corrected before the
 native Linux fixture passed; no production application log was manipulated.
@@ -133,11 +133,11 @@ and security-disabled OpenSearch remain development-only limitations.
 Executed with the existing project/debug override:
 
 ```powershell
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml run --rm --no-deps fluent-bit /fluent-bit/bin/fluent-bit --dry-run -c /fluent-bit/etc/fluent-bit.conf
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml run --rm --no-deps otel-collector validate --config=/etc/otelcol/config.yml
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml run --rm --no-deps loki '-config.file=/etc/loki/loki-config.yml' '-verify-config=true'
-docker compose -p springboot_project exec -T prometheus promtool check config /etc/prometheus/prometheus.yml
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml run --rm --no-deps fluent-bit /fluent-bit/bin/fluent-bit --dry-run -c /fluent-bit/etc/fluent-bit.conf
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml run --rm --no-deps otel-collector validate --config=/etc/otelcol/config.yml
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml run --rm --no-deps loki '-config.file=/etc/loki/loki-config.yml' '-verify-config=true'
+docker compose -p hospital_dev exec -T prometheus promtool check config /etc/prometheus/prometheus.yml
 python observability/opensearch/configure-log-retention.py
 python observability/verify-pipeline.py config
 python observability/verify-pipeline.py health
@@ -148,7 +148,7 @@ python observability/verify-metrics.py --credentials observability/local-test-cr
 
 Tempo config unchanged and validated by startup/readiness/query/restart, not a
 claimed standalone configuration checker. Existing Maven suites executed with
-`.\mvnw.cmd -o test` in each submodule: User102, Learning118, JWKS80; **300 tests,
+`.\mvnw.cmd -o test` in each submodule: User102, Hospital118, JWKS80; **300 tests,
 zero failures, errors or skips**. No tests weakened. Metrics verifier query target
 now includes dated indices. No Java files modified.
 
@@ -178,12 +178,12 @@ independent correlation `phase4-auth-752d77a245014eaa`.
 | Span | ID | Parent |
 | --- | --- | --- |
 | external sampled W3C parent | ffd5fa23db42464f | external |
-| Learning server | f247f76f49af9251 | ffd5fa23db42464f |
-| Learning client | b1682d4b9a1293b6 | f247f76f49af9251 |
+| Hospital server | f247f76f49af9251 | ffd5fa23db42464f |
+| Hospital client | b1682d4b9a1293b6 | f247f76f49af9251 |
 | User server | dfdff7b2231ed531 | b1682d4b9a1293b6 |
 
 Grafana Tempo query returned real spans; Loki/OpenSearch each had exactly two core
-Learning/User completion records matching SDK span IDs, trace, correlation and200.
+Hospital/User completion records matching SDK span IDs, trace, correlation and200.
 Actual credentials, session tokens and identity values plus JWT-shaped strings
 were absent from inspected auth spans, matching backend logs and the bounded
 application container-log window. This is observed-window evidence, not proof
@@ -195,7 +195,7 @@ process counters showed zero permanently failed retries and dropped records.
 
 JWKS public response bodies matched baseline, IDs/key contracts unchanged;
 authenticated internal JWT communication passed. No application, key, endpoint or
-header contract changes. `japanese-learning` requires no changes and was untouched.
+header contract changes. `hospital-management` requires no changes and was untouched.
 
 ## N. Acceptance matrix
 
@@ -219,7 +219,7 @@ header contract changes. `japanese-learning` requires no changes and was untouch
 | Datasources/fresh logs/fresh traces/API health | PASS | final health sweep |
 | Endpoint/security/key/env preservation | PASS | config + hashes + runtime checks |
 | Maven regression | PASS | 300/0/0/0 |
-| jp_dev/unrelated containers unchanged | PASS |16 jp_dev;21 unrelated baseline containers |
+| hospital_dev/unrelated containers unchanged | PASS |16 hospital_dev;21 unrelated baseline containers |
 | Hard quotas/HA/backup-restore/production capacity | NOT VERIFIED | Phase6 acceptance |
 
 ## O. Git and container inventory
@@ -229,12 +229,12 @@ the intended Compose/example-env/config/verification/documentation changes. No
 commit, push, reset, branch switch or unrelated repository changes.
 
 Eleven main containers recreated with existing images (no application build):
-User, Learning, JWKS, Fluent Bit, Loki, OpenSearch, OpenSearch Dashboards,
+User, Hospital, JWKS, Fluent Bit, Loki, OpenSearch, OpenSearch Dashboards,
 Prometheus, Collector, Tempo and Grafana. New queue initializer/volume added.
 An early `compose start tempo` reran its existing related storage initializer;
 only StartedAt changed, with same container/image/mounts. Recovery helpers now
 use exact `docker start` to avoid dependency reruns. Twenty-one unrelated baseline
-containers, including all16 jp_dev containers, retained identity/start/mounts/ports.
+containers, including all16 hospital_dev containers, retained identity/start/mounts/ports.
 Existing databases/volumes/keys were preserved; test fixture volumes retained.
 
 ## P. Remaining limits and follow-up

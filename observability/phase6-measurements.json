@@ -15,7 +15,7 @@
       "skipped": 0,
       "report_files": 16
     },
-    "springboot-learning-api": {
+    "springboot-hospital-api": {
       "tests": 118,
       "failures": 0,
       "errors": 0,
@@ -33,12 +33,12 @@
   "container_count": 34,
   "volume_count": 93,
   "project_container_count": 18,
-  "jp_dev_count": 16,
+  "hospital_dev_count": 16,
   "protected_file_count": 12,
   "versions": {
-    "jwks-api": "springboot_project-jwks-api",
-    "user-api": "springboot_project-user-api",
-    "learning-api": "springboot_project-learning-api",
+    "hospital-jwks-api": "hospital_dev-jwks-api",
+    "hospital-user-api": "hospital_dev-user-api",
+    "hospital-api": "hospital_dev-hospital-api",
     "grafana": "grafana/grafana:12.2.0",
     "prometheus": "prom/prometheus:v3.13.5",
     "fluent-bit": "cr.fluentbit.io/fluent/fluent-bit:3.2.10",
@@ -66,7 +66,7 @@
       "branch": "develop",
       "status": ""
     },
-    "springboot-learning-api": {
+    "springboot-hospital-api": {
       "head": "f6a61f6a0d1284adc831fa6f04b83ce23c02faa2",
       "branch": "develop",
       "status": ""
@@ -79,105 +79,105 @@
   },
   "events": [
     {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "correlation": "5d6cbd2a-72b4-4411-a72a-67647d7a1048",
       "trace": "9a96f83f12a3499298c516606a68963b",
       "span": "acc76c0f2193cd9f",
       "status": 401
     },
     {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-1",
       "trace": "961c519c3be844c3ab48cc4b56b031c7",
       "span": "fceea5f987157fb3",
       "status": 401
     },
     {
-      "service": "learning-api",
+      "service": "hospital-api",
       "correlation": "2ea2028b-da13-4911-9523-d695f5db574d",
       "trace": "19bd6222101a46cbbc912d2ab54c8bae",
       "span": "82d99ee2f0a61e99",
       "status": 401
     },
     {
-      "service": "learning-api",
+      "service": "hospital-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-3",
       "trace": "a1018f1831d64a739717095ebe9eabdb",
       "span": "631f5519da755960",
       "status": 401
     },
     {
-      "service": "jwks-service",
+      "service": "hospital-jwks-api",
       "correlation": "73896b63-e5b6-4091-92f2-7a838f21a31b",
       "trace": "f43e9dfebbef40cab845118233d73871",
       "span": "9df840757009679a",
       "status": 200
     },
     {
-      "service": "jwks-service",
+      "service": "hospital-jwks-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-5",
       "trace": "fa7b940b4c4c40c8bdd67c7cddded5d7",
       "span": "a7b87be85d242a35",
       "status": 200
     },
     {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-6",
       "trace": "13aabd665a4a49feb87cb8bb64d1c875",
       "span": "bc8c5459dad971e7",
       "status": 200
     },
     {
-      "service": "learning-api",
+      "service": "hospital-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-7",
       "trace": "1d14c95028b64158859fa1f77e365b9b",
       "span": "cf04eabf4f1347dd",
       "status": 200
     },
     {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-8",
       "trace": "3339f20001424eaa86367774f9ed33f3",
       "span": "da00998a57ce72e9",
       "status": 403
     },
     {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-9",
       "trace": "c7c1ec72d95d4f2abbbbeb2873df4980",
       "span": "81c59be4650df940",
       "status": 401
     },
     {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-10",
       "trace": "ce755b6640334313abb16760e8190f6c",
       "span": "8b8d136a8055ecca",
       "status": 403
     },
     {
-      "service": "learning-api",
+      "service": "hospital-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-11",
       "trace": "f14336730fd541febe174dc97c373773",
       "span": "dffe3518c97a7e12",
       "status": 401
     },
     {
-      "service": "learning-api",
+      "service": "hospital-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-12",
       "trace": "152e8ba9676e424eaf5663d30265f676",
       "span": "c90274dd488875f6",
       "status": 200
     },
     {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-12",
       "trace": "152e8ba9676e424eaf5663d30265f676",
       "span": "89625d0bd5918abd",
       "status": 200
     },
     {
-      "service": "learning-api",
+      "service": "hospital-api",
       "correlation": "phase6-20261112T031510Z-c66c0468-14",
       "trace": "fadccb2cf6fc40118f06274bfe00ece3",
       "span": "a2f54628253100f9",
@@ -203,7 +203,7 @@
       "health": "ok"
     },
     {
-      "name": "MissingMetricsLearning",
+      "name": "MissingMetricsHospital",
       "state": "inactive",
       "health": "ok"
     },
@@ -306,7 +306,7 @@
       "ID": "798bd7fa5772",
       "MemPerc": "20.20%",
       "MemUsage": "206.9MiB / 1GiB",
-      "Name": "springboot_project-jwks-api-1",
+      "Name": "hospital_dev-hospital-jwks-api-1",
       "NetIO": "294kB / 11.3MB",
       "PIDs": "47"
     },
@@ -317,7 +317,7 @@
       "ID": "1bb4fa1f0493",
       "MemPerc": "33.76%",
       "MemUsage": "345.7MiB / 1GiB",
-      "Name": "springboot_project-user-api-1",
+      "Name": "hospital_dev-hospital-user-api-1",
       "NetIO": "484kB / 13.9MB",
       "PIDs": "53"
     },
@@ -328,7 +328,7 @@
       "ID": "e0b0fd77a3a5",
       "MemPerc": "30.65%",
       "MemUsage": "313.8MiB / 1GiB",
-      "Name": "springboot_project-learning-api-1",
+      "Name": "hospital_dev-hospital-api-1",
       "NetIO": "352kB / 13.2MB",
       "PIDs": "51"
     },
@@ -339,7 +339,7 @@
       "ID": "a7eeab1601b0",
       "MemPerc": "26.21%",
       "MemUsage": "134.2MiB / 512MiB",
-      "Name": "springboot_project-grafana-1",
+      "Name": "hospital_dev-grafana-1",
       "NetIO": "11.2MB / 34MB",
       "PIDs": "31"
     },
@@ -350,7 +350,7 @@
       "ID": "002a60c4bf03",
       "MemPerc": "16.36%",
       "MemUsage": "83.74MiB / 512MiB",
-      "Name": "springboot_project-prometheus-1",
+      "Name": "hospital_dev-prometheus-1",
       "NetIO": "90.3MB / 5.2MB",
       "PIDs": "9"
     },
@@ -361,7 +361,7 @@
       "ID": "cb816eefd945",
       "MemPerc": "6.86%",
       "MemUsage": "17.55MiB / 256MiB",
-      "Name": "springboot_project-fluent-bit-1",
+      "Name": "hospital_dev-fluent-bit-1",
       "NetIO": "474kB / 2.77MB",
       "PIDs": "7"
     },
@@ -372,7 +372,7 @@
       "ID": "94f2debdfe57",
       "MemPerc": "33.64%",
       "MemUsage": "258.3MiB / 768MiB",
-      "Name": "springboot_project-opensearch-dashboards-1",
+      "Name": "hospital_dev-opensearch-dashboards-1",
       "NetIO": "1.58MB / 1.87MB",
       "PIDs": "12"
     },
@@ -383,7 +383,7 @@
       "ID": "db484f0766fa",
       "MemPerc": "33.88%",
       "MemUsage": "173.5MiB / 512MiB",
-      "Name": "springboot_project-loki-1",
+      "Name": "hospital_dev-loki-1",
       "NetIO": "936kB / 12.5MB",
       "PIDs": "30"
     },
@@ -394,7 +394,7 @@
       "ID": "1ecea818ba91",
       "MemPerc": "14.46%",
       "MemUsage": "74.05MiB / 512MiB",
-      "Name": "springboot_project-tempo-1",
+      "Name": "hospital_dev-tempo-1",
       "NetIO": "565kB / 4.29MB",
       "PIDs": "11"
     },
@@ -405,7 +405,7 @@
       "ID": "d46c3436c81b",
       "MemPerc": "50.22%",
       "MemUsage": "1.004GiB / 2GiB",
-      "Name": "springboot_project-opensearch-1",
+      "Name": "hospital_dev-opensearch-1",
       "NetIO": "2.34MB / 1.97MB",
       "PIDs": "71"
     },
@@ -416,7 +416,7 @@
       "ID": "250c58854a58",
       "MemPerc": "15.97%",
       "MemUsage": "40.88MiB / 256MiB",
-      "Name": "springboot_project-otel-collector-1",
+      "Name": "hospital_dev-otel-collector-1",
       "NetIO": "591kB / 856kB",
       "PIDs": "21"
     },
@@ -427,7 +427,7 @@
       "ID": "5ef09f086019",
       "MemPerc": "5.81%",
       "MemUsage": "59.53MiB / 1GiB",
-      "Name": "springboot_project-postgres-1",
+      "Name": "hospital_dev-postgres-1",
       "NetIO": "136kB / 98.4kB",
       "PIDs": "17"
     },
@@ -438,7 +438,7 @@
       "ID": "c7169d8477a1",
       "MemPerc": "44.28%",
       "MemUsage": "453.4MiB / 1GiB",
-      "Name": "springboot_project-mysql-1",
+      "Name": "hospital_dev-mysql-1",
       "NetIO": "269kB / 309kB",
       "PIDs": "57"
     }
@@ -455,7 +455,7 @@
     "sum by (service) (jvm_memory_used_bytes{area=\"heap\"}) / sum by (service) (jvm_memory_max_bytes{area=\"heap\"}>0)": [
       {
         "metric": {
-          "service": "learning-api"
+          "service": "hospital-api"
         },
         "value": [
           1794453328.428,
@@ -464,7 +464,7 @@
       },
       {
         "metric": {
-          "service": "user-learning"
+          "service": "hospital-user-api"
         },
         "value": [
           1794453328.428,
@@ -473,7 +473,7 @@
       },
       {
         "metric": {
-          "service": "jwks-service"
+          "service": "hospital-jwks-api"
         },
         "value": [
           1794453328.428,
@@ -486,9 +486,9 @@
         "metric": {
           "__name__": "process_cpu_usage",
           "environment": "development",
-          "instance": "learning-api:9091",
+          "instance": "hospital-api:9091",
           "job": "springboot",
-          "service": "learning-api"
+          "service": "hospital-api"
         },
         "value": [
           1794453328.434,
@@ -499,9 +499,9 @@
         "metric": {
           "__name__": "process_cpu_usage",
           "environment": "development",
-          "instance": "user-api:9091",
+          "instance": "hospital-user-api:9091",
           "job": "springboot",
-          "service": "user-learning"
+          "service": "hospital-user-api"
         },
         "value": [
           1794453328.434,
@@ -512,9 +512,9 @@
         "metric": {
           "__name__": "process_cpu_usage",
           "environment": "development",
-          "instance": "jwks-api:9091",
+          "instance": "hospital-jwks-api:9091",
           "job": "springboot",
-          "service": "jwks-service"
+          "service": "hospital-jwks-api"
         },
         "value": [
           1794453328.434,
@@ -526,10 +526,10 @@
       {
         "metric": {
           "environment": "development",
-          "instance": "learning-api:9091",
+          "instance": "hospital-api:9091",
           "job": "springboot",
           "pool": "HikariPool-1",
-          "service": "learning-api"
+          "service": "hospital-api"
         },
         "value": [
           1794453328.449,
@@ -539,10 +539,10 @@
       {
         "metric": {
           "environment": "development",
-          "instance": "user-api:9091",
+          "instance": "hospital-user-api:9091",
           "job": "springboot",
           "pool": "HikariPool-1",
-          "service": "user-learning"
+          "service": "hospital-user-api"
         },
         "value": [
           1794453328.449,
@@ -555,10 +555,10 @@
         "metric": {
           "__name__": "hikaricp_connections_pending",
           "environment": "development",
-          "instance": "learning-api:9091",
+          "instance": "hospital-api:9091",
           "job": "springboot",
           "pool": "HikariPool-1",
-          "service": "learning-api"
+          "service": "hospital-api"
         },
         "value": [
           1794453328.457,
@@ -569,10 +569,10 @@
         "metric": {
           "__name__": "hikaricp_connections_pending",
           "environment": "development",
-          "instance": "user-api:9091",
+          "instance": "hospital-user-api:9091",
           "job": "springboot",
           "pool": "HikariPool-1",
-          "service": "user-learning"
+          "service": "hospital-user-api"
         },
         "value": [
           1794453328.457,
@@ -623,7 +623,7 @@
     "dated_indices": 6,
     "legacy_unmanaged": [
       "springboot-user-logs",
-      "springboot-learning-logs",
+      "springboot-hospital-logs",
       "springboot-jwks-logs"
     ],
     "prometheus_flags": {

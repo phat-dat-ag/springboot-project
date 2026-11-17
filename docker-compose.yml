@@ -1,3 +1,5 @@
+name: hospital_dev
+
 # Shared runtime restrictions; writable state is declared explicitly per service.
 x-observability-logging: &observability-logging
   driver: json-file
@@ -174,9 +176,10 @@ services:
     command: ["migrate"]
 
     volumes:
-      - ${LEARNING_API_MIGRATION_PATH:-./db/migration/learning}:/flyway/sql:ro
+      - ${HOSPITAL_API_MIGRATION_PATH:-./springboot-hospital-api/src/main/resources/db/migration}:/flyway/sql:ro
   
-  user-api:
+  hospital-user-api:
+    image: hospital-management/hospital-user-api:dev
     <<: *container-security
     logging: *observability-logging
     mem_limit: 1g
@@ -231,10 +234,10 @@ services:
 
       # Authentication
       JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER in .env}
-      JWT_JWK_SET_URI: ${USER_JWT_JWK_SET_URI:-http://jwks-api:8080/api/v1/jwks/user}
+      JWT_JWK_SET_URI: ${USER_JWT_JWK_SET_URI:-http://hospital-jwks-api:8080/api/v1/jwks/user}
       JWT_ACCESS_TOKEN_TTL_SECONDS: ${JWT_ACCESS_TOKEN_TTL_SECONDS:-900}
       JWT_REFRESH_TOKEN_TTL_DAYS: ${JWT_REFRESH_TOKEN_TTL_DAYS:-30}
-      INTERNAL_JWT_JWK_SET_URI: ${INTERNAL_JWT_JWK_SET_URI:-http://jwks-api:8080/api/v1/jwks/learning}
+      INTERNAL_JWT_JWK_SET_URI: ${INTERNAL_JWT_JWK_SET_URI:-http://hospital-jwks-api:8080/api/v1/jwks/learning}
       INTERNAL_JWT_ISSUER: ${INTERNAL_JWT_ISSUER:-learning-service}
       INTERNAL_JWT_SUBJECT: ${INTERNAL_JWT_SUBJECT:-learning-service}
       INTERNAL_JWT_AUDIENCE: ${INTERNAL_JWT_AUDIENCE:-user-service}
@@ -243,7 +246,8 @@ services:
 
       # Logging
       APP_LOG_DIR: /app/data/logs
-      APP_NAME: ${USER_API_APP_NAME:-user-api}
+      SPRING_APPLICATION_NAME: hospital-user-api
+      APP_NAME: ${USER_API_APP_NAME:-hospital-user-api}
       LOGGING_CONFIG: file:/etc/application/logback-spring.xml
       APP_LOG_MAX_FILE_SIZE: ${APP_LOG_MAX_FILE_SIZE:-100MB}
       APP_LOG_MAX_HISTORY: ${APP_LOG_MAX_HISTORY:-30}
@@ -273,12 +277,13 @@ services:
       retries: 12
       start_period: 30s
 
-  learning-api:
+  hospital-api:
+    image: hospital-management/hospital-api:dev
     <<: *container-security
     logging: *observability-logging
 
     env_file:
-      - ./.env.learning-api
+      - ./.env.hospital-api
 
     mem_limit: 1g
     memswap_limit: 1g
@@ -290,7 +295,7 @@ services:
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777
 
     build:
-      context: ./springboot-learning-api
+      context: ./springboot-hospital-api
       dockerfile: Dockerfile
 
     restart: unless-stopped
@@ -302,10 +307,10 @@ services:
         condition: service_completed_successfully
 
     volumes:
-      - learning_api_logs:/app/data/logs
-      - ./springboot-learning-api/src/main/resources/logback-spring.xml:/etc/application/logback-spring.xml:ro
+      - hospital_api_logs:/app/data/logs
+      - ./springboot-hospital-api/src/main/resources/logback-spring.xml:/etc/application/logback-spring.xml:ro
       - type: bind
-        source: ${LEARNING_SIGNING_KEYS_DIR:-./data/keys/learning}/learningservice-private-v1.pem
+        source: ${HOSPITAL_SIGNING_KEYS_DIR:-./data/keys/learning}/learningservice-private-v1.pem
         target: /run/keys/learning/learningservice-private-v1.pem
         read_only: true
         bind:
@@ -323,21 +328,24 @@ services:
 
       # Authentication
       JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER in .env}
-      JWT_JWK_SET_URI: ${LEARNING_JWT_JWK_SET_URI:-http://jwks-api:8080/api/v1/jwks/user}
+      JWT_JWK_SET_URI: ${HOSPITAL_JWT_JWK_SET_URI:-http://hospital-jwks-api:8080/api/v1/jwks/user}
       JWT_CLOCK_SKEW: ${JWT_CLOCK_SKEW:-60s}
 
       # Internal service identity signing
-      LEARNING_INTERNAL_JWT_ENABLED: ${LEARNING_INTERNAL_JWT_ENABLED:-true}
-      LEARNING_INTERNAL_JWT_ISSUER: ${LEARNING_INTERNAL_JWT_ISSUER:-learning-service}
-      LEARNING_INTERNAL_JWT_AUDIENCE: ${LEARNING_INTERNAL_JWT_AUDIENCE:-user-service}
-      LEARNING_INTERNAL_JWT_TTL: ${LEARNING_INTERNAL_JWT_TTL:-60s}
+      HOSPITAL_INTERNAL_JWT_ENABLED: ${HOSPITAL_INTERNAL_JWT_ENABLED:-true}
+      HOSPITAL_INTERNAL_JWT_ISSUER: ${HOSPITAL_INTERNAL_JWT_ISSUER:-learning-service}
+      HOSPITAL_INTERNAL_JWT_AUDIENCE: ${HOSPITAL_INTERNAL_JWT_AUDIENCE:-user-service}
+      HOSPITAL_INTERNAL_JWT_TTL: ${HOSPITAL_INTERNAL_JWT_TTL:-60s}
+      HOSPITAL_DB_POOL_MAX_SIZE: ${HOSPITAL_DB_POOL_MAX_SIZE:-10}
+      HOSPITAL_DB_POOL_MIN_IDLE: ${HOSPITAL_DB_POOL_MIN_IDLE:-2}
+      HOSPITAL_DB_CONNECTION_TIMEOUT: ${HOSPITAL_DB_CONNECTION_TIMEOUT:-30000}
 
       # JWKS diagnostic client
-      JWKS_SERVICE_BASE_URL: ${JWKS_SERVICE_BASE_URL:-http://jwks-api:8080}
+      JWKS_SERVICE_BASE_URL: ${JWKS_SERVICE_BASE_URL:-http://hospital-jwks-api:8080}
       JWKS_SERVICE_GET_PUBLIC_KEYS: ${JWKS_SERVICE_GET_PUBLIC_KEYS:-/api/v1/jwks/user}
 
       # User Service HTTP client
-      USER_SERVICE_BASE_URL: ${USER_SERVICE_BASE_URL:-http://user-api:8080}
+      USER_SERVICE_BASE_URL: ${USER_SERVICE_BASE_URL:-http://hospital-user-api:8080}
       USER_SERVICE_GET_USER: ${USER_SERVICE_GET_USER:-/internal/users}
       USER_SERVICE_CONNECT_TIMEOUT: ${USER_SERVICE_CONNECT_TIMEOUT:-3s}
       USER_SERVICE_READ_TIMEOUT: ${USER_SERVICE_READ_TIMEOUT:-5s}
@@ -345,13 +353,14 @@ services:
 
       # Logging
       APP_LOG_DIR: /app/data/logs
-      APP_NAME: ${LEARNING_API_APP_NAME:-learning-api}
+      SPRING_APPLICATION_NAME: hospital-api
+      APP_NAME: ${HOSPITAL_API_APP_NAME:-hospital-api}
       LOGGING_CONFIG: file:/etc/application/logback-spring.xml
       APP_LOG_MAX_FILE_SIZE: ${APP_LOG_MAX_FILE_SIZE:-100MB}
       APP_LOG_MAX_HISTORY: ${APP_LOG_MAX_HISTORY:-30}
       APP_LOG_TOTAL_SIZE_CAP: ${APP_LOG_TOTAL_SIZE_CAP:-2GB}
       DEPLOYMENT_ENVIRONMENT: ${DEPLOYMENT_ENVIRONMENT:-development}
-      LOG_LEVEL: ${LEARNING_API_LOG_LEVEL:-INFO}
+      LOG_LEVEL: ${HOSPITAL_API_LOG_LEVEL:-INFO}
 
       # Private scrape listener; no published host port. Public metrics remain forbidden.
       METRICS_LISTENER_ENABLED: "true"
@@ -366,7 +375,7 @@ services:
       MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED: "true"
 
     ports:
-      - "127.0.0.1:${LEARNING_API_HOST_PORT:-8081}:8080"
+      - "127.0.0.1:${HOSPITAL_API_HOST_PORT:-8081}:8080"
 
     healthcheck:
       test: ["CMD", "curl", "--fail", "--silent", "--output", "/dev/null", "--max-time", "5", "http://127.0.0.1:8080/actuator/health/readiness"]
@@ -375,7 +384,8 @@ services:
       retries: 12
       start_period: 30s
 
-  jwks-api:
+  hospital-jwks-api:
+    image: hospital-management/hospital-jwks-api:dev
     <<: *container-security
     logging: *observability-logging
     mem_limit: 1g
@@ -412,7 +422,7 @@ services:
         bind:
           create_host_path: false
       - type: bind
-        source: ${LEARNING_SIGNING_KEYS_DIR:-./data/keys/learning}/learningservice-public-v1.pem
+        source: ${HOSPITAL_SIGNING_KEYS_DIR:-./data/keys/learning}/learningservice-public-v1.pem
         target: /run/keys/learning/learningservice-public-v1.pem
         read_only: true
         bind:
@@ -425,7 +435,8 @@ services:
 
       # Logging
       APP_LOG_DIR: /app/data/logs
-      APP_NAME: ${JWKS_API_APP_NAME:-jwks-api}
+      SPRING_APPLICATION_NAME: hospital-jwks-api
+      APP_NAME: ${JWKS_API_APP_NAME:-hospital-jwks-api}
       LOGGING_CONFIG: file:/etc/application/logback-spring.xml
       APP_LOG_MAX_FILE_SIZE: ${APP_LOG_MAX_FILE_SIZE:-100MB}
       APP_LOG_MAX_HISTORY: ${APP_LOG_MAX_HISTORY:-30}
@@ -527,7 +538,7 @@ services:
       - ./observability/fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
       - ./observability/fluent-bit/parsers.conf:/fluent-bit/etc/application-parsers.conf:ro
       - user_api_logs:/logs:ro
-      - learning_api_logs:/learning-logs:ro
+      - hospital_api_logs:/hospital-logs:ro
       - jwks_api_logs:/jwks-logs:ro
       - fluent_bit_state:/fluent-bit/state
 
@@ -744,7 +755,7 @@ volumes:
   prometheus_data:
   mysql_data:
   user_api_logs:
-  learning_api_logs:
+  hospital_api_logs:
   jwks_api_logs:
   loki_data:
   fluent_bit_state:
@@ -752,3 +763,7 @@ volumes:
   opensearch_data:
   opensearch_logs:
   postgres_data:
+
+networks:
+  default:
+    name: hospital-network

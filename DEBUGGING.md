@@ -3,17 +3,17 @@
 Normal startup does not configure JDWP:
 
 ```powershell
-docker compose -p springboot_project -f docker-compose.yml up -d
+docker compose -p hospital_dev -f docker-compose.yml up -d
 ```
 
-Explicitly include the override to enable debugging for User, Learning and JWKS:
+Explicitly include the override to enable debugging for User, Hospital and JWKS:
 
 ```powershell
-docker compose -p springboot_project -f docker-compose.yml -f docker-compose.debug.yml config --quiet
-docker compose -p springboot_project -f docker-compose.yml -f docker-compose.debug.yml up -d
+docker compose -p hospital_dev -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev -f docker-compose.yml -f docker-compose.debug.yml up -d
 ```
 
-The existing local project name is `springboot_project`. Use your own project
+The existing local project name is `hospital_dev`. Use your own project
 name if running a separate stack.
 
 Set these values in the **root `.env`** or shell. Service-specific `env_file`
@@ -22,7 +22,7 @@ files supply container variables, not Compose interpolation values.
 | Service | Port variable | Default | JVM options variable |
 | --- | --- | --- | --- |
 | User | `USER_API_DEBUG_PORT` | `5005` | `USER_API_JAVA_TOOL_OPTIONS` |
-| Learning | `LEARNING_API_DEBUG_PORT` | `5006` | `LEARNING_API_JAVA_TOOL_OPTIONS` |
+| Hospital | `HOSPITAL_API_DEBUG_PORT` | `5006` | `HOSPITAL_API_JAVA_TOOL_OPTIONS` |
 | JWKS | `JWKS_API_DEBUG_PORT` | `5007` | `JWKS_API_JAVA_TOOL_OPTIONS` |
 
 Each port is used for both the host mapping and the container's JDWP listener.

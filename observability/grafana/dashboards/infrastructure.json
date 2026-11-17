@@ -831,7 +831,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "query": "user-learning,learning-api,jwks-service,prometheus,loki,tempo,otel-collector,fluent-bit,grafana",
+        "query": "hospital-user-api,hospital-api,hospital-jwks-api,prometheus,loki,tempo,otel-collector,fluent-bit,grafana",
         "options": []
       }
     ]

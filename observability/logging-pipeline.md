@@ -36,7 +36,7 @@ Grace is 30s, Compose stop grace 40s. Existing DB identities are retained.
 
 ## Rotation and restart scope
 
-Inputs match only `user-api.log`, `learning-api.log`, `jwks-api.log`, never archives.
+Inputs match only `hospital-user-api.log`, `hospital-api.log`, `hospital-jwks-api.log`, never archives.
 `Read_from_Head On` applies to previously unknown files; persisted DB offsets avoid
 replaying known files after normal restart. Rotate_Wait is 30s. Logback retains
 its existing 100 MB rollover, immediate gzip archives, 30-day/2 GB archive cap per
@@ -64,7 +64,7 @@ physical expiry was not observed during this short test.
 OpenSearch is intentionally single-node. The three legacy application indices
 retain UUIDs, documents and mappings; only their replica counts change from one
 to zero. New UTC event-date indices are `springboot-user-YYYY.MM.DD-logs`,
-`springboot-learning-YYYY.MM.DD-logs`, `springboot-jwks-YYYY.MM.DD-logs`.
+`springboot-hospital-YYYY.MM.DD-logs`, `springboot-jwks-YYYY.MM.DD-logs`.
 Existing `springboot-*-logs*` discovery remains compatible; queries naming an exact
 legacy index must include the dated indices to find new records. No application
 API changes. Numeric status/duration and searchable IDs keep the original mappings.
@@ -131,7 +131,7 @@ their dedicated volumes are retained; no cleanup/prune command is run.
 
 If delivery stalls, check destination readiness, internal Fluent Bit 2020 storage
 and retry counters, free disk, tail DB permissions, and Collector health/logs.
-Restore the exact destination using `docker start springboot_project-<service>-1`
+Restore the exact destination using `docker start hospital_dev-<service>-1`
 to avoid rerunning dependencies. Do not erase state to clear a queue.
 
 No new public ingestion ports were added. Existing Loki/OpenSearch/Prometheus

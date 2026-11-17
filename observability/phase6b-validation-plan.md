@@ -9,7 +9,7 @@ backend volumes may be changed to force a result.
 ## Mandatory isolation and approval manifest
 
 Prefer a dedicated disposable Docker host/VM; disk/crash/load work on the shared
-Docker Desktop host can affect `jp_dev` even without touching its containers.
+Docker Desktop host can affect `hospital_dev` even without touching its containers.
 If the shared host is proposed, require explicit acceptance of that risk and hard
 per-fixture memory/CPU/PID/storage limits with adequate measured host headroom.
 Never fill the host/root filesystem or bind production data into a fixture.
@@ -19,7 +19,7 @@ immutable manifest of **exact container IDs, image IDs, networks, ports and volu
 names**. The role names below (`FB`, `COLLECTOR`, `LOKI`, `OS`, `TEMPO`, `PROM`,
 `GRAFANA`, `GENERATOR`) refer exclusively to that manifest's clone, never matching
 containers by broad substring. Require all new names to be absent before creating
-the clone. The manifest must prohibit any `springboot_project_*`/`jp_dev_*` volume
+the clone. The manifest must prohibit any `hospital_dev_*`/`hospital_dev_*` volume
 or network attachment, real signing keys, live DB access, real accounts and
 unapproved outbound transport. Use pinned existing images and synthetic data.
 
@@ -336,7 +336,7 @@ of physical deletion.
   sanitized DB fixtures, test keys, metrics baseline and acceptance thresholds.
 - **Isolation:** Separate host preferred; complete app/backend clone; no real accounts,
   key regeneration, live DBs or shared load targets.
-- **Targets:** Fixture User/Learning/JWKS, test DBs, collectors, backends and Grafana.
+- **Targets:** Fixture User/Hospital/JWKS, test DBs, collectors, backends and Grafana.
 - **Risks:** CPU/memory/storage contention, excessive logs/cardinality, false paging.
 - **Precautions:** Rate/concurrency/total-request caps, staged ramp, isolated egress,
   storage ceiling, automatic abort and on-call observer; no unbounded soak.
@@ -375,7 +375,7 @@ of physical deletion.
 
 Choose which individual tests to authorize; approval of this document alone is not
 execution authorization. Reject any execution manifest that names production
-volumes, `jp_dev` resources or real external destinations without specific consent.
+volumes, `hospital_dev` resources or real external destinations without specific consent.
 After each approved test, update evidence and readiness classifications separately.
 Do not convert historical ordinary-restart results into crash/restore/deletion PASS.
 
@@ -385,4 +385,4 @@ An explicitly authorized, isolated ordinary collector-downtime/rotation test was
 
 All Phase6B gates above remain in force: no disk exhaustion, hard crash, backend crash, forced expiry/deletion, destructive restore, external delivery or representative load was executed. Future tests must measure retained-file expiration/size-cap eviction, output acknowledgement ambiguity, duplication and hard-crash windows separately. A successful graceful restart is not crash proof.
 
-The [secure-production candidate](secure-production/README.md) also requires approved credentials/PKI, a separately named isolated clone with new volumes, native positive/negative access tests, consistent backup/restore proof and coordinated rollback review before live activation. Structural validation is not approval to alter the existing OpenSearch security index. No existing production volumes,16`jp_dev` containers or `japanese-learning` resources may be used for isolated failure injection.
+The [secure-production candidate](secure-production/README.md) also requires approved credentials/PKI, a separately named isolated clone with new volumes, native positive/negative access tests, consistent backup/restore proof and coordinated rollback review before live activation. Structural validation is not approval to alter the existing OpenSearch security index. No existing production volumes,16`hospital_dev` containers or `hospital-management` resources may be used for isolated failure injection.

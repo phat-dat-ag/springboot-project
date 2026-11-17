@@ -28,7 +28,7 @@ pushed. Independent module commits remain:
 | Module | HEAD |
 | --- | --- |
 | User | `e6855457f1a841e3321c35016a32b3a321436203` |
-| Learning | `19e16b4cd4010c1653bc099bfaeb245268fdcba4` |
+| Hospital | `19e16b4cd4010c1653bc099bfaeb245268fdcba4` |
 | JWKS | `476df1142de3162d248cf3b497ac8dfdf963f9ac` |
 
 ## Source and runtime capability inventory
@@ -36,18 +36,18 @@ pushed. Independent module commits remain:
 | Capability | Classification | Evidence / limit |
 | --- | --- | --- |
 | JSON console and rolling-file logs | IMPLEMENTED; VERIFIED AT RUNTIME for existing builds | Fresh JSON in Loki for all APIs; new identity fields rendered by test application contexts |
-| Stable existing service labels | VERIFIED AT RUNTIME | `user-learning`, `learning-api`, `jwks-service` |
+| Stable existing service labels | VERIFIED AT RUNTIME | `hospital-user-api`, `hospital-api`, `hospital-jwks-api` |
 | New `serviceVersion` and source environment metadata | IMPLEMENTED; CONFIGURED BUT NOT VERIFIED in deployed containers | New configuration passes binding/rendered-JSON checks; containers were not rebuilt |
-| Fluent Bit collection -> Loki | VERIFIED AT RUNTIME | Final last-hour sample: 360 User, 359 Learning, 360 JWKS JSON records, freshest roughly 4-6 seconds old |
+| Fluent Bit collection -> Loki | VERIFIED AT RUNTIME | Final last-hour sample: 360 User, 359 Hospital, 360 JWKS JSON records, freshest roughly 4-6 seconds old |
 | Fluent Bit collection -> OpenSearch | VERIFIED AT RUNTIME | Final query: 91 records per index in the last 15 minutes; latest timestamps around 09:13:25-27 UTC |
 | New collector environment configuration | IMPLEMENTED; CONFIGURED BUT NOT VERIFIED as loaded by running collector | Fluent Bit 3.2.10 dry-run succeeded with the shared environment supplied; no reload performed |
-| Request correlation | IMPLEMENTED inconsistently; VERIFIED AT RUNTIME | Valid supplied ID replaced by User/Learning; preserved by JWKS; full fix DEFERRED TO FUTURE PHASE 1 |
-| Sensitive-data protection | Partial IMPLEMENTED | JWKS field/path/throwable controls; User email/login/token-hash logs and User/Learning raw paths/exception messages remain risks |
+| Request correlation | IMPLEMENTED inconsistently; VERIFIED AT RUNTIME | Valid supplied ID replaced by User/Hospital; preserved by JWKS; full fix DEFERRED TO FUTURE PHASE 1 |
+| Sensitive-data protection | Partial IMPLEMENTED | JWKS field/path/throwable controls; User email/login/token-hash logs and User/Hospital raw paths/exception messages remain risks |
 | Actuator health | VERIFIED AT RUNTIME | Readiness UP for all APIs |
 | Micrometer local metrics | IMPLEMENTED dependency/configuration foundation | Exact live meter inventory NOT VERIFIED; no HTTP metrics exposure or persistent metrics destination |
 | Metrics export | Disabled in source baseline | User has OTLP registry; others lack it; Prometheus backend/registry MISSING, DEFERRED TO FUTURE PHASE 2 |
 | User trace/span IDs | VERIFIED AT RUNTIME | Both present in all 360 sampled User records in final query |
-| Learning/JWKS trace/span IDs | MISSING from sampled runtime records | No tracing bridge in source dependencies; end-to-end instrumentation DEFERRED TO FUTURE PHASE 3 |
+| Hospital/JWKS trace/span IDs | MISSING from sampled runtime records | No tracing bridge in source dependencies; end-to-end instrumentation DEFERRED TO FUTURE PHASE 3 |
 | W3C HTTP propagation | Partial IMPLEMENTED | Managed HTTP builders; tests preserve existing headers; actual multi-service span relationships NOT VERIFIED |
 | Trace/log OTLP export | Explicitly disabled in source baseline | No active destinations; Collector/Tempo MISSING, DEFERRED TO FUTURE PHASES 3/4 |
 | Grafana | VERIFIED AT RUNTIME health; CONFIGURED BUT NOT VERIFIED datasource/dashboard functionality | Health database OK; Loki provisioning exists; authenticated datasource API and UI not exercised |
@@ -61,14 +61,14 @@ tests cover those contracts with their existing fixtures/mocks, not live databas
 
 ## Docker baseline
 
-Detected project: `springboot_project`, config files in this repository (base plus
-debug override). `jp_dev` uses `C:/Personal/japanese-learning/docker-compose.yml`
-and was not modified or targeted. Default network: `springboot_project_default`.
+Detected project: `hospital_dev`, config files in this repository (base plus
+debug override). `hospital_dev` uses `C:/Personal/hospital-management/docker-compose.yml`
+and was not modified or targeted. Default network: `hospital-network`.
 
 | Component | Observed state | Host HTTP endpoint |
 | --- | --- | --- |
 | User | Running, healthy | `127.0.0.1:8781` |
-| Learning | Running, healthy | `127.0.0.1:8782` |
+| Hospital | Running, healthy | `127.0.0.1:8782` |
 | JWKS | Running, healthy | `127.0.0.1:8783` |
 | Fluent Bit | Running, no Docker health check | File-tail inputs, no published ingestion endpoint |
 | Loki | Running, HTTP readiness was verified during audit | `127.0.0.1:3177` |
@@ -93,7 +93,7 @@ all primary shards were active during the audit. No mapping/retention alteration
 or cluster repair was attempted.
 
 User's Dockerfile does not explicitly install the `curl` used by its healthcheck,
-unlike Learning/JWKS. Current container health passes, but fresh-image availability
+unlike Hospital/JWKS. Current container health passes, but fresh-image availability
 of that executable has not been tested; keep this as a rebuild risk, not proof of
 a currently broken healthcheck. No Dockerfile change was needed for Phase 0.
 
@@ -109,19 +109,19 @@ environment contents, private keys and JWT values were not printed.
 | `git submodule status` | Initial sandbox failure: Windows Git shell could not create signal pipe; authorized retry PASS; commits unchanged |
 | `java -version` | Java 17.0.19 on host; module target 17; Docker JDKs documented separately |
 | `docker compose ls --format json` | PASS: correct project detected by config path |
-| `docker compose -p springboot_project --env-file .env -f docker-compose.yml config --quiet` | PASS |
-| `docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet` | PASS |
+| `docker compose -p hospital_dev --env-file .env -f docker-compose.yml config --quiet` | PASS |
+| `docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet` | PASS |
 | `python observability/verify-baseline.py --runtime` | PASS: configuration/defaults/storage/port checks; live health and log summaries; limits explicitly printed |
-| `docker compose -p springboot_project exec -T fluent-bit /fluent-bit/bin/fluent-bit --help` | PASS: confirmed dry-run support |
-| `docker compose -p springboot_project exec -T -e DEPLOYMENT_ENVIRONMENT=development fluent-bit /fluent-bit/bin/fluent-bit --dry-run -c /fluent-bit/etc/fluent-bit.conf` | PASS: configuration test successful; running collector not reloaded |
-| `docker compose -p springboot_project logs --no-color --since 1h --tail 500 fluent-bit` (aggregate-only output) | PASS: sampled error/retry/HTTP-400 counts all zero; not an outage guarantee |
+| `docker compose -p hospital_dev exec -T fluent-bit /fluent-bit/bin/fluent-bit --help` | PASS: confirmed dry-run support |
+| `docker compose -p hospital_dev exec -T -e DEPLOYMENT_ENVIRONMENT=development fluent-bit /fluent-bit/bin/fluent-bit --dry-run -c /fluent-bit/etc/fluent-bit.conf` | PASS: configuration test successful; running collector not reloaded |
+| `docker compose -p hospital_dev logs --no-color --since 1h --tail 500 fluent-bit` (aggregate-only output) | PASS: sampled error/retry/HTTP-400 counts all zero; not an outage guarantee |
 | `./mvnw.cmd -o test` in User | PASS: 63 tests, zero failures/errors/skips; compilation included |
-| `./mvnw.cmd -o test` in Learning | PASS: 78 tests, zero failures/errors/skips; compilation included |
-| Additional Learning regression run before assertion correction | FAIL: existing test assumed `ROLE_USER` was first; framework also supplies `FACTOR_BEARER`. Changed user/admin tests to assert role membership, preserving production logic; final suite rerun recorded above |
+| `./mvnw.cmd -o test` in Hospital | PASS: 78 tests, zero failures/errors/skips; compilation included |
+| Additional Hospital regression run before assertion correction | FAIL: existing test assumed `ROLE_USER` was first; framework also supplies `FACTOR_BEARER`. Changed user/admin tests to assert role membership, preserving production logic; final suite rerun recorded above |
 | `./mvnw.cmd -o test` in JWKS | PASS: 54 tests, zero failures/errors/skips; compilation included |
 | Added `ObservabilityBaselineTest` in each module | PASS: defaults, uppercase environment overrides, resource-map binding and absent destinations |
 | Updated JWKS `LoggingConfigurationTest` | PASS: release/environment overrides render in JSON; no duplicate context metadata; existing key/HTTP behavior checks retained |
-| Parsed final Surefire JSON output with an in-memory Python check | PASS: 45 User, 69 Learning, 58 JWKS JSON records with metadata and no duplicate context fields |
+| Parsed final Surefire JSON output with an in-memory Python check | PASS: 45 User, 69 Hospital, 58 JWKS JSON records with metadata and no duplicate context fields |
 | In-memory Python XML/AST structural check (`python -`) | PASS: console/file metadata definitions agree in all APIs; verifier parses without generating bytecode |
 | `git diff --check` in all four repositories | PASS |
 
@@ -157,7 +157,7 @@ remain explicitly unverified or deferred.
 ## Changed-file inventory and final Git state
 
 Root modified files: `.env.example`, `.env.user-api.example`,
-`.env.learning-api.example`, `.env.jwks-api.example`, `docker-compose.yml`,
+`.env.hospital-api.example`, `.env.jwks-api.example`, `docker-compose.yml`,
 `observability/fluent-bit/fluent-bit.conf`, `observability/grafana/README.md`,
 `observability/opensearch/README.md`.
 
@@ -166,9 +166,9 @@ Root added files: `observability/README.md`, `observability/phase-plan.md`,
 
 In each submodule, modified `.env.example`, `src/main/resources/application.properties`,
 and `src/main/resources/logback-spring.xml`; added
-`src/test/java/com/japaneselearning/<user|learning|jwks>/observability/ObservabilityBaselineTest.java`.
+`src/test/java/com/hospitalmanagement/<user|hospital|jwks>/observability/ObservabilityBaselineTest.java`.
 JWKS additionally modifies `src/test/java/com/japaneselearning/jwks/logging/LoggingConfigurationTest.java`.
-Learning additionally modifies `src/test/java/com/japaneselearning/learning/security/jwt/user/JwtAuthenticationTest.java`
+Hospital additionally modifies `src/test/java/com/hospitalmanagement/hospital/security/jwt/user/JwtAuthenticationTest.java`
 to remove an ordering assumption exposed by regression testing.
 No tracked files were deleted. Temporary edit helpers were removed, not retained
 as implementation artifacts.

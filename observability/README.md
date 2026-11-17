@@ -54,12 +54,12 @@ log stores remain necessary; no backend is removed in Phase 0.
 
 | API | Canonical `service.name` / Spring application name | Compose DNS | Log filename |
 | --- | --- | --- | --- |
-| User | `user-learning` | `user-api` | `user-api.log` |
-| Learning | `learning-api` | `learning-api` | `learning-api.log` |
-| JWKS | `jwks-service` | `jwks-api` | `jwks-api.log` |
+| User | `hospital-user-api` | `hospital-user-api` | `hospital-user-api.log` |
+| Hospital | `hospital-api` | `hospital-api` | `hospital-api.log` |
+| JWKS | `hospital-jwks-api` | `hospital-jwks-api` | `hospital-jwks-api.log` |
 
 These deliberately preserve existing Loki labels and indexed records. Historical
-documentation sometimes called User `user`; query `user-learning` for this stack.
+documentation sometimes called User `user`; query `hospital-user-api` for this stack.
 JWT issuer/subject names identify authentication contracts, not observability
 resources; do not rename them to match this table.
 
@@ -157,7 +157,7 @@ over service `env_file`; shell values win over root `.env` interpolation.
 | `APP_VERSION` | Optional release override; default is build version, not a copied fixed Compose version |
 | `DEPLOYMENT_ENVIRONMENT` | Shared root Compose value, default `development`, supplied to APIs and Fluent Bit |
 | `APP_NAME`, `APP_LOG_DIR` | Existing filename/path conventions; volumes and collector paths must agree |
-| `LOG_LEVEL` | Standalone root logger; Compose retains existing `LOG_LEVEL`, `LEARNING_API_LOG_LEVEL`, `JWKS_API_LOG_LEVEL` mapping |
+| `LOG_LEVEL` | Standalone root logger; Compose retains existing `LOG_LEVEL`, `HOSPITAL_API_LOG_LEVEL`, `JWKS_API_LOG_LEVEL` mapping |
 | `MANAGEMENT_METRICS_ENABLE_ALL` | `management.metrics.enable.all`, default true; Prometheus collects enabled meters in Phase 2 |
 | `MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE` | Health standalone; Compose health,prometheus with private port protection; never `*` |
 | `MANAGEMENT_TRACING_ENABLED` | `management.tracing.enabled`, default true; requires tracing dependencies |
@@ -195,7 +195,7 @@ and a Micrometer exporter for the same instruments unintentionally.
 There is no root Maven aggregator or parent POM. Each submodule has an independent
 Spring Boot parent, Java 17 target and Maven Wrapper. Do not run a root Maven build.
 
-| Component | User | Learning | JWKS |
+| Component | User | Hospital | JWKS |
 | --- | --- | --- | --- |
 | Spring Boot parent | 4.1.1 | 4.1.2 | 4.1.2 |
 | Java target | 17 | 17 | 17 |
@@ -215,13 +215,13 @@ inventory of deployed jars. No dependency/Java/Boot upgrades are made in Phase 0
 Boot manages framework versions; avoid hand-pinning a bridge/SDK independently.
 Logstash encoder 8.1 uses Jackson 2; User also explicitly includes Jackson 2
 compatibility dependencies. Do not remove these without focused compatibility tests.
-Optional DevTools in Learning/JWKS is not telemetry. The two log stores duplicate
+Optional DevTools in Hospital/JWKS is not telemetry. The two log stores duplicate
 storage by design today; evaluate the operational need later, not through removal now.
 
 ## Docker, security and operations
 
 Use the Compose project whose config path belongs to this checkout. The observed
-project is `springboot_project`; `jp_dev` points at a separate repository. Never
+project is `hospital_dev`; `hospital_dev` points at a separate repository. Never
 reuse its name or network here. Run `python observability/verify-baseline.py --runtime`
 for read-only detection and checks, or pass `--project` explicitly when not running.
 
@@ -246,7 +246,7 @@ or whole environment/configuration dumps. JSON escaping is not redaction.
 
 Phase 1 removes the known sensitive business logging and unsafe request paths/
 throwable messages. Remaining gaps include the credential-dependent deployed
-Learning -> User tracing acceptance gate (see Phase 3 evidence), no durable
+Hospital -> User tracing acceptance gate (see Phase 3 evidence), no durable
 collector outage queue, no repository-defined OpenSearch retention, Docker
 `json-file` without per-container rotation options, no alerting, and single-node
 unauthenticated development storage. Existing Loki 720h retention and Logback

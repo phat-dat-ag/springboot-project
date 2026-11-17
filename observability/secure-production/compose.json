@@ -1,10 +1,10 @@
 {
   "services": {
-    "user-api": {
+    "hospital-user-api": {
       "volumes": [
         {
           "type": "bind",
-          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/user-api",
+          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/hospital-user-api",
           "target": "/run/tls",
           "read_only": true,
           "bind": {
@@ -22,11 +22,11 @@
         "SPRING_SSL_BUNDLE_PEM_TELEMETRY_KEYSTORE_PRIVATE_KEY": "file:/run/tls/client.key"
       }
     },
-    "learning-api": {
+    "hospital-api": {
       "volumes": [
         {
           "type": "bind",
-          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/learning-api",
+          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/hospital-api",
           "target": "/run/tls",
           "read_only": true,
           "bind": {
@@ -44,11 +44,11 @@
         "SPRING_SSL_BUNDLE_PEM_TELEMETRY_KEYSTORE_PRIVATE_KEY": "file:/run/tls/client.key"
       }
     },
-    "jwks-api": {
+    "hospital-jwks-api": {
       "volumes": [
         {
           "type": "bind",
-          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/jwks-api",
+          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/hospital-jwks-api",
           "target": "/run/tls",
           "read_only": true,
           "bind": {
@@ -370,12 +370,12 @@
         ]
       }
     },
-    "user-api-metrics-tls": {
+    "hospital-user-api-metrics-tls": {
       "image": "nginx@sha256:73c75df4075c918f91017fdda46ad81e55e5af77ba3a64ca3d5014bd9244fe7f",
       "user": "10001:10001",
-      "network_mode": "service:user-api",
+      "network_mode": "service:hospital-user-api",
       "depends_on": {
-        "user-api": {
+        "hospital-user-api": {
           "condition": "service_started"
         }
       },
@@ -405,7 +405,7 @@
       "volumes": [
         {
           "type": "bind",
-          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/user-api",
+          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/hospital-user-api",
           "target": "/run/tls",
           "read_only": true,
           "bind": {
@@ -414,7 +414,7 @@
         },
         {
           "type": "bind",
-          "source": "./observability/secure-production/user-api-metrics-tls.conf",
+          "source": "./observability/secure-production/hospital-user-api-metrics-tls.conf",
           "target": "/etc/nginx/nginx.conf",
           "read_only": true,
           "bind": {
@@ -423,12 +423,12 @@
         }
       ]
     },
-    "learning-api-metrics-tls": {
+    "hospital-api-metrics-tls": {
       "image": "nginx@sha256:73c75df4075c918f91017fdda46ad81e55e5af77ba3a64ca3d5014bd9244fe7f",
       "user": "10001:10001",
-      "network_mode": "service:learning-api",
+      "network_mode": "service:hospital-api",
       "depends_on": {
-        "learning-api": {
+        "hospital-api": {
           "condition": "service_started"
         }
       },
@@ -458,7 +458,7 @@
       "volumes": [
         {
           "type": "bind",
-          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/learning-api",
+          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/hospital-api",
           "target": "/run/tls",
           "read_only": true,
           "bind": {
@@ -467,7 +467,7 @@
         },
         {
           "type": "bind",
-          "source": "./observability/secure-production/learning-api-metrics-tls.conf",
+          "source": "./observability/secure-production/hospital-api-metrics-tls.conf",
           "target": "/etc/nginx/nginx.conf",
           "read_only": true,
           "bind": {
@@ -476,12 +476,12 @@
         }
       ]
     },
-    "jwks-api-metrics-tls": {
+    "hospital-jwks-api-metrics-tls": {
       "image": "nginx@sha256:73c75df4075c918f91017fdda46ad81e55e5af77ba3a64ca3d5014bd9244fe7f",
       "user": "10001:10001",
-      "network_mode": "service:jwks-api",
+      "network_mode": "service:hospital-jwks-api",
       "depends_on": {
-        "jwks-api": {
+        "hospital-jwks-api": {
           "condition": "service_started"
         }
       },
@@ -511,7 +511,7 @@
       "volumes": [
         {
           "type": "bind",
-          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/jwks-api",
+          "source": "${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}/hospital-jwks-api",
           "target": "/run/tls",
           "read_only": true,
           "bind": {
@@ -520,7 +520,7 @@
         },
         {
           "type": "bind",
-          "source": "./observability/secure-production/jwks-api-metrics-tls.conf",
+          "source": "./observability/secure-production/hospital-jwks-api-metrics-tls.conf",
           "target": "/etc/nginx/nginx.conf",
           "read_only": true,
           "bind": {

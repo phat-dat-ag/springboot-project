@@ -10,7 +10,7 @@ v=importlib.import_module('verify-phase6')
 
 def main():
     x=v.Validation.__new__(v.Validation)
-    rows=[r for r in x.inventory() if r['project']=='springboot_project' and r['status']=='running']
+    rows=[r for r in x.inventory() if r['project']=='hospital_dev' and r['status']=='running']
     code='''import json,socket
 rows=[]
 for file,family in [("/proc/net/tcp",4),("/proc/net/tcp6",6)]:

@@ -1,7 +1,7 @@
 {
   "uid": "springboot-application-logs",
   "title": "Application logs",
-  "description": "Live structured logs from the User, Learning, and JWKS APIs. Select services and levels, or expand a log line to inspect its fields.",
+  "description": "Live structured logs from the User, Hospital, and JWKS APIs. Select services and levels, or expand a log line to inspect its fields.",
   "tags": [
     "springboot",
     "logs",

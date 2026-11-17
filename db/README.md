@@ -2,22 +2,22 @@
 
 | Application | Database | Migration directory | Compose runner | Path override |
 | --- | --- | --- | --- | --- |
-| user-api | MySQL | `db/migration/user` | `flyway-mysql` | `USER_API_MIGRATION_PATH` |
-| learning-api | PostgreSQL | `db/migration/learning` | `flyway-postgres` | `LEARNING_API_MIGRATION_PATH` |
+| hospital-user-api | MySQL | `db/migration/user` | `flyway-mysql` | `USER_API_MIGRATION_PATH` |
+| hospital-api | PostgreSQL `hospital_db` | `springboot-hospital-api/src/main/resources/db/migration` | `flyway-postgres` and Spring Flyway | `HOSPITAL_API_MIGRATION_PATH` |
 
 Compose mounts each directory read-only at `/flyway/sql` in its Flyway runner.
-Each API starts after its runner finishes successfully. The APIs do not load
-these host directories themselves.
+Each API starts after its runner finishes successfully. Hospital also loads the
+same migrations from its packaged classpath for standalone operation.
 
 Add versioned SQL files using `V<version>__<description>.sql`. Each database has
 its own version history. Keep applied migration filenames and contents unchanged;
 add a new migration for later schema changes.
 
-The learning directory currently has no SQL migrations. `.gitkeep` preserves it
+The Hospital migration directory currently has no SQL migrations. `.gitkeep` preserves it
 in fresh checkouts and is ignored by Flyway. Add PostgreSQL migrations there when
 needed; MySQL migrations belong only in the user directory.
 
-Copy `.env.example` to `.env` for new setups. Existing setups must update the two
-path overrides to the directories above (relative to the Compose project, or
-absolute). Rebuild/recreate through `docker compose up -d --build`; moving the
-files does not require deleting database volumes or changing migration history.
+Copy `.env.example` to `.env` for new setups. The developer will manually recreate
+this project's development databases. No data transfer or fake baseline migration
+is supplied. Hibernate schema creation/update and Flyway clean are disabled for
+Hospital API. Future entities require reviewed PostgreSQL migrations first.

@@ -22,10 +22,10 @@ def bind(source,target):
 def main():
     tlsroot='${OBS_TLS_DIR:?Supply existing authorized per-service certificates; no generation is performed}'
     services={}
-    roles=['user-api','learning-api','jwks-api','fluent-bit','otel-collector','loki','tempo','prometheus','grafana','opensearch','opensearch-dashboards']
+    roles=['hospital-user-api','hospital-api','hospital-jwks-api','fluent-bit','otel-collector','loki','tempo','prometheus','grafana','opensearch','opensearch-dashboards']
     for name in roles:
         services[name]={'volumes':[bind(tlsroot+'/'+name,'/run/tls')]}
-    for app in ['user-api','learning-api','jwks-api']:
+    for app in ['hospital-user-api','hospital-api','hospital-jwks-api']:
         services[app]['environment']={
             'DEPLOYMENT_ENVIRONMENT':'production',
             'APP_METRICS_LISTENER_ADDRESS':'127.0.0.1',
@@ -35,7 +35,7 @@ def main():
             'SPRING_SSL_BUNDLE_PEM_TELEMETRY_KEYSTORE_CERTIFICATE':'file:/run/tls/client.crt',
             'SPRING_SSL_BUNDLE_PEM_TELEMETRY_KEYSTORE_PRIVATE_KEY':'file:/run/tls/client.key'}
     # Only local namespace plaintext remains; remote scrapers must use the mTLS proxy.
-    for name,upstream,port,path in [(a,9091,9092,'/actuator/prometheus') for a in ['user-api','learning-api','jwks-api']]+[
+    for name,upstream,port,path in [(a,9091,9092,'/actuator/prometheus') for a in ['hospital-user-api','hospital-api','hospital-jwks-api']]+[
             ('fluent-bit',2020,2021,'/api/v1/metrics/prometheus'),('otel-collector',8888,8889,'/metrics')]:
         proxy=name+'-metrics-tls'
         services[proxy]={'image':PROXY,'user':'10001:10001','network_mode':'service:'+name,
@@ -227,7 +227,7 @@ opensearch_security.cookie.secure: true
                 'authentication_backend':{'type':'noop'}}}}}})
     write('security-config.example/roles.yml',{'_meta':{'type':'roles','config_version':2},
         'telemetry_writer':{'cluster_permissions':['cluster_composite_ops'],
-            'index_permissions':[{'index_patterns':['springboot-user-20*-logs','springboot-learning-20*-logs','springboot-jwks-20*-logs'],
+            'index_permissions':[{'index_patterns':['springboot-user-20*-logs','springboot-hospital-20*-logs','springboot-jwks-20*-logs'],
                 'allowed_actions':['indices:data/write/bulk*','indices:data/write/index*','indices:data/write/create*','indices:admin/create','indices:admin/mapping/put']}]},
         'telemetry_health':{'cluster_permissions':['cluster:monitor/health'],'index_permissions':[]}})
     write('security-config.example/roles_mapping.yml',{'_meta':{'type':'rolesmapping','config_version':2},

@@ -10,7 +10,7 @@ No stress, disk-filling, outage or workload generator was run.
 | Component | Docker CPU sample | Memory used / limit |
 | --- | ---: | --- |
 | User API | 0.31% | 345.7MiB /1GiB |
-| Learning API | 0.13% | 313.8MiB /1GiB |
+| Hospital Management API | 0.13% | 313.8MiB /1GiB |
 | JWKS API | 0.12% | 206.9MiB /1GiB |
 | MySQL | 0.44% | 453.4MiB /1GiB |
 | PostgreSQL | 4.53% | 59.53MiB /1GiB |
@@ -25,12 +25,12 @@ No stress, disk-filling, outage or workload generator was run.
 Docker CPU percentages are point samples, not utilization of each configured CPU
 limit. Memory/caches and JVM committed/used heap are different measurements. At
 the recorded Prometheus sample, heap occupancy was approximately User21.7%,
-Learning21.3%, JWKS15.8%; Hikari active/max0 with pending0; Collector queue
+Hospital21.3%, JWKS15.8%; Hikari active/max0 with pending0; Collector queue
 utilization0. OpenSearch heap60%. No sampled saturation was observed, but there is
 no peak, soak or failure-headroom proof. Shared host pressure can affect both
 Compose projects even with unchanged container identities.
 
-174 actual dashboard query evaluations (all-service plus Learning/environment
+174 actual dashboard query evaluations (all-service plus Hospital/environment
 filters) took2.43–40.45ms, median6.19ms client-observed locally. This is not Grafana
 browser render latency or concurrent-user performance. Five-minute diagnostic
 ingestion samples were about107.7 Loki bytes/s and0.186 Tempo spans/s. These rates
