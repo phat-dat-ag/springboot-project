@@ -3,7 +3,7 @@
 ## A. Executive summary
 
 Implemented and deployed eight version-controlled dashboards, five Prometheus
-recording rules and 21 Grafana Unified Alerting rules to **springboot_project**.
+recording rules and 21 Grafana Unified Alerting rules to **hospital_dev**.
 Actual installed versions: **Grafana 12.2.0**, **Prometheus 3.13.5**. All nine
 dashboards (eight new plus the original), 21 alerts and five recording rules are
 loaded. All nine scrape targets are UP. All 89 panel expressions were queried
@@ -13,7 +13,7 @@ this is not a claim of production-ready paging.
 
 Only Grafana and Prometheus were recreated. Collector was restarted once to enable
 its validated internal metrics reader. All applications retained container identity
-and start time. All 16 `jp_dev` containers and all 93 pre-existing volumes were
+and start time. All 16 `hospital_dev` containers and all 93 pre-existing volumes were
 preserved. No commit, push, branch change, key regeneration or unrelated repository
 modification occurred. Phase 6 was not implemented.
 
@@ -31,7 +31,7 @@ Docker initially had no Linux-engine pipe. The user started Docker Desktop; the
 read-only safety snapshot was then captured before deployment. An initial Loki
 readiness check saw startup HTTP 503; it subsequently became ready. The immutable,
 ignored `phase5-baseline.log` records all 34 containers (18 project, 16 unrelated
-`jp_dev`), 93 volume names, persistent mounts, one existing dashboard and its body,
+`hospital_dev`), 93 volume names, persistent mounts, one existing dashboard and its body,
 three datasources, zero alert rules, existing contacts/policy, targets, versions
 and backend readiness. It refuses accidental overwrite.
 
@@ -56,7 +56,7 @@ and uses no credentials. New UID collisions were checked against the baseline.
 | Microservices Overview | `sb5-overview` | Availability; request/4xx/5xx rates; error percentage; p50/p95/p99; volume; errors; JVM memory, CPU, uptime | Prometheus, Loki |
 | HTTP Performance | `sb5-http` | Service/route/method/status throughput; 4xx/5xx/errors; percentiles; slow endpoints; histogram heatmap; managed HTTP client rate/latency | Prometheus |
 | JVM & Runtime | `sb5-jvm` | Heap used/max/ratio, nonheap, GC frequency/time/mean, threads, process/system CPU, uptime, executor activity/capacity/queue, files/buffers | Prometheus |
-| Database & Connection Pools | `sb5-database` | Hikari active/idle/pending/max, utilization, acquisition mean/max, timeouts; User/Learning only | Prometheus |
+| Database & Connection Pools | `sb5-database` | Hikari active/idle/pending/max, utilization, acquisition mean/max, timeouts; User/Hospital only | Prometheus |
 | Security & Authentication | `sb5-security` | Actual operation/result counter categories, authentication failures, authorization denials, event breakdowns, 401/403, safe rejection logs | Prometheus, Loki |
 | Centralized Logging | `sb5-logging` | Service/severity volume, WARN/ERROR, recent errors/warnings, HTTP failures, correlation/trace-filtered records | Loki |
 | Distributed Tracing | `sb5-tracing` | Service p95/p99/rate, Tempo Explore search/slow/error links, safe errors, investigation workflow | Prometheus, Loki, Tempo links |
@@ -101,7 +101,7 @@ No trace, span, correlation or user identifier was promoted to stream labels.
 Three actual Tempo TraceQL search forms passed: service/environment, slow requests
 and error traces. Actual authenticated trace:
 `ad583d826ce342e7b0210294e1c699fa`. Verified parent sequence:
-remote → Learning server `eb40b85c61c95021` → Learning HTTP client
+remote → Hospital server `eb40b85c61c95021` → Hospital HTTP client
 `911f7c2477ad0998` → User server `e4a5564fca43b20a`.
 Both log stores had exactly two core matching completions with correct IDs/status.
 The real Loki derived-field regex extracted this ID and Tempo's proxy resolved it;
@@ -229,7 +229,7 @@ and pipeline evidence. No secret-bearing baseline is tracked.
 ## K. Runtime deployment verification
 
 Initial deploy02:03UTC recreated Grafana/Prometheus with `up -d --no-deps --no-build
---pull never`, explicitly using `-p springboot_project` and both base/debug files.
+--pull never`, explicitly using `-p hospital_dev` and both base/debug files.
 Grafana retained its original persistent volume despite a pre-existing Compose
 ownership-label warning. Database readiness, datasource identities, original
 dashboard and contacts/policy verified preservation; no data removal occurred.
@@ -258,7 +258,7 @@ unrequested plugin or writable-root change was introduced to hide that limitatio
 
 PASS: structured JSON, metadata, correlation propagation, Micrometer/histograms,
 protected Prometheus listeners, existing JWT login/refresh rotation/logout,
-Learning→User internal JWT, JWKS public bodies and actual distributed span parenting.
+Hospital→User internal JWT, JWKS public bodies and actual distributed span parenting.
 PASS: fresh Loki/OpenSearch logs and Tempo traces, once-only completions, safe
 diagnostics, persistent Collector queue config/mount, Fluent Bit FS chunks/tail DB
 configuration, Loki720h/Tempo72h retention, OpenSearch new dated-index ingestion,
@@ -276,9 +276,9 @@ existing TSDB/query availability were verified without a new exact-sample claim.
 
 No API, key, issuer, network, kid, response or application-container change. Both
 public JWKS responses match previous fingerprints/bodies. Internal JWT and actual
-Learning→User communication passed. `japanese-learning` requires **no changes**;
+Hospital→User communication passed. `hospital-management` requires **no changes**;
 no separate implementation prompt is needed because there is no contract impact.
-All16 `jp_dev` containers retain identity/start time; that repository was untouched.
+All16 `hospital_dev` containers retain identity/start time; that repository was untouched.
 
 ## N. Acceptance matrix
 
@@ -306,7 +306,7 @@ All16 `jp_dev` containers retain identity/start time; that repository was untouc
 | 18 Automated validation | PASS | Native tools plus actual Grafana/Prometheus/Loki/Tempo APIs |
 | 19 Runtime deploy / health / persistence / unrelated containers | PASS | Exact only-affected comparison; original volumes all retained |
 | 20 Phase0–4 regression | PASS | Authenticated/JWKS/log/metric/trace/config checks; historical limits retained |
-| 21 Cross-project compatibility | PASS | No contracts changed; jp_dev untouched |
+| 21 Cross-project compatibility | PASS | No contracts changed; hospital_dev untouched |
 | 22 Documentation / environment operations | PASS | Inventory, queries, rules, routing, runbooks, evidence and examples |
 | 23 Git constraints | PASS | No commits/push/branch reset; original submodule state preserved |
 | 24 Final verification and limitations | PASS | This A–P report, inventories and operator docs |
@@ -326,17 +326,17 @@ tracked. No application source files changed.
 | Submodule | Preserved checked-out HEAD | Worktree |
 | --- | --- | --- |
 | User | `e7991b34d310b94696469dda30c108645e06d00e` | clean |
-| Learning | `f6a61f6a0d1284adc831fa6f04b83ce23c02faa2` | clean |
+| Hospital | `f6a61f6a0d1284adc831fa6f04b83ce23c02faa2` | clean |
 | JWKS | `7879d155eddb45fb079800709f49a3c3a1566120` | clean |
 
 Root reports all three submodule pointers modified exactly as at task start; they
 were not staged or altered. Root tracked work remains uncommitted.
 
-Recreated: `springboot_project-grafana-1`, `springboot_project-prometheus-1`.
-Restarted in place: `springboot_project-otel-collector-1`. Grafana was restarted
+Recreated: `hospital_dev-grafana-1`, `hospital_dev-prometheus-1`.
+Restarted in place: `hospital_dev-otel-collector-1`. Grafana was restarted
 again for updated alert provisioning/idempotence; Prometheus received SIGHUP for
 recording rules. All other31 baseline containers, including applications,
-databases, initializers and16 `jp_dev`, retained ID and start time. All original
+databases, initializers and16 `hospital_dev`, retained ID and start time. All original
 volume mount names remain. Temporary native validation containers were one-off
 `--rm` fixtures; no persistent cleanup/delete/prune command was used.
 

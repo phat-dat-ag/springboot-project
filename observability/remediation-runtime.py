@@ -22,7 +22,7 @@ def create():
     x.snapshot()
     before=x.baseline
     now=time.time()
-    query=urllib.parse.urlencode({'query':'http_server_requests_seconds_count{service="jwks-service"}','time':str(now)})
+    query=urllib.parse.urlencode({'query':'http_server_requests_seconds_count{service="hospital-jwks-api"}','time':str(now)})
     before['historical_prometheus']={'params':query,'rows':x.api('prometheus','/api/v1/query?'+query)['data']['result']}
     traces=x.api('grafana','/api/datasources/proxy/uid/tempo/api/search?limit=3')['traces']
     before['historical_traces']=[row['traceID'] for row in traces]
@@ -36,12 +36,12 @@ def verify():
     base=json.loads((v.ROOT/json.loads(STATE.read_text())['baseline']).read_text())
     x=v.Validation.__new__(v.Validation)
     current={c['name']:c for c in x.inventory()}
-    allowed={'user-api','learning-api','jwks-api','fluent-bit'}
+    allowed={'hospital-user-api','hospital-api','hospital-jwks-api','fluent-bit'}
     changed=[]
     for c in base['containers']:
         a=current[c['name']]
         if any(a[k]!=c[k] for k in ['id','started','restarts']):
-            assert c['project']=='springboot_project' and c['service'] in allowed
+            assert c['project']=='hospital_dev' and c['service'] in allowed
             changed.append(c['service'])
         for k in ['ports','networks']:
             assert a[k]==c[k]
@@ -56,7 +56,7 @@ def verify():
         assert v.digest(p.api('/api/dashboards/uid/'+uid)['dashboard'])==wanted
     assert v.digest(p.api('/api/datasources'))==base['datasources_digest']
     for path,wanted in base['jwks'].items():
-        port=next(item['published'] for item in p.model()['services']['jwks-api']['ports'] if item['target']==8080)
+        port=next(item['published'] for item in p.model()['services']['hospital-jwks-api']['ports'] if item['target']==8080)
         with urllib.request.urlopen('http://127.0.0.1:'+str(port)+path,timeout=10) as r:
             assert v.digest(json.load(r))==wanted
     original={r['index']:r for r in base['opensearch_indices']}
@@ -84,18 +84,18 @@ def deploy():
         assert suites and all(int(s.get('failures',0))==0 and int(s.get('errors',0))==0 for s in suites)
     fixture=json.loads((v.OBS/'remediation-rotation-evidence.log').read_text())
     assert fixture['result']=='PASS' and fixture['events_per_sink']==52
-    services={c['service']:c for c in base['containers'] if c['project']=='springboot_project'}
+    services={c['service']:c for c in base['containers'] if c['project']=='hospital_dev'}
     before={c['name']:c for c in x.inventory()}
-    for service in ['user-api','learning-api','jwks-api','fluent-bit']:
+    for service in ['hospital-user-api','hospital-api','hospital-jwks-api','fluent-bit']:
         assert before[services[service]['name']]['id']==services[service]['id']
     # Preserve the actual per-service override set. Current APIs were started base-only.
     x.cmd('docker','restart','--time','40',services['fluent-bit']['id'])
     p=importlib.import_module('phase5-runtime')
     model=p.model()['services']
-    for service in ['user-api','learning-api','jwks-api']:
+    for service in ['hospital-user-api','hospital-api','hospital-jwks-api']:
         files=services[service]['config_files'].split(',')
         assert all(Path(file).resolve().parent==v.ROOT for file in files)
-        compose=['docker','compose','-p','springboot_project','--env-file','.env']
+        compose=['docker','compose','-p','hospital_dev','--env-file','.env']
         for file in files:
             compose += ['-f',file]
         x.cmd(*compose,'config','--quiet')
@@ -113,7 +113,7 @@ def deploy():
             if time.monotonic()>deadline:
                 raise TimeoutError(service+' readiness; halted remaining rollout')
             time.sleep(2)
-        cid=next(c['id'] for c in x.inventory() if c['project']=='springboot_project' and c['service']==service)
+        cid=next(c['id'] for c in x.inventory() if c['project']=='hospital_dev' and c['service']==service)
         loaded=x.cmd('docker','exec',cid,'cat','/etc/application/logback-spring.xml')
         assert '/spool/' in loaded and '.log.gz</fileNamePattern>' not in loaded and '<file>' not in loaded
         files=x.cmd('docker','exec',cid,'find','/app/data/logs/spool','-type','f','-name','*.log')

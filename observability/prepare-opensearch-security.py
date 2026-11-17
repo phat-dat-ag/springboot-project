@@ -41,7 +41,7 @@ def main():
 telemetry_writer:
   cluster_permissions: [cluster_composite_ops]
   index_permissions:
-    - index_patterns: ["springboot-user-20*-logs", "springboot-learning-20*-logs", "springboot-jwks-20*-logs"]
+    - index_patterns: ["springboot-user-20*-logs", "springboot-hospital-20*-logs", "springboot-jwks-20*-logs"]
       allowed_actions: ["indices:data/write/bulk*", "indices:data/write/index*", "indices:data/write/create*", "indices:admin/create", "indices:admin/mapping/put"]
 telemetry_health:
   cluster_permissions: ["cluster:monitor/health"]

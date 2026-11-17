@@ -1,6 +1,6 @@
 [
   {
-    "service": "jwks-api",
+    "service": "hospital-jwks-api",
     "listening": [
       {
         "address": "127.0.0.11",
@@ -24,11 +24,11 @@
       ]
     },
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
-    "service": "learning-api",
+    "service": "hospital-api",
     "listening": [
       {
         "address": "127.0.0.11",
@@ -52,11 +52,11 @@
       ]
     },
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
-    "service": "user-api",
+    "service": "hospital-user-api",
     "listening": [
       {
         "address": "127.0.0.11",
@@ -80,7 +80,7 @@
       ]
     },
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
@@ -104,7 +104,7 @@
       ]
     },
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
@@ -128,7 +128,7 @@
       ]
     },
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
@@ -145,7 +145,7 @@
     ],
     "published": {},
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
@@ -173,7 +173,7 @@
       ]
     },
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
@@ -202,7 +202,7 @@
     ],
     "published": {},
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
@@ -230,7 +230,7 @@
       ]
     },
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   },
   {
@@ -255,7 +255,7 @@
     ],
     "published": {},
     "networks": [
-      "springboot_project_default"
+      "hospital-network"
     ]
   }
 ]

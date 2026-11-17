@@ -2,7 +2,7 @@
 
 Run after deployment. Optional --credentials is an ignored local JSON file.
 No user creation/role changes; the refresh session created by this probe is logged out.
-Docker commands always target springboot_project. Never print responses or tokens.
+Docker commands always target hospital_dev. Never print responses or tokens.
 """
 import argparse
 import base64
@@ -59,7 +59,7 @@ def main():
         check(isinstance(account.get('usernameOrEmail'), str) and isinstance(account.get('password'), str),
               'credentials schema (values withheld)')
     else:
-        print('NOT VERIFIED: successful login/logout and authenticated Learning -> User; credentials file unavailable', flush=True)
+        print('NOT VERIFIED: successful login/logout and authenticated Hospital -> User; credentials file unavailable', flush=True)
 
     def query(expression):
         result = request(prom_port, '/api/v1/query?' + urllib.parse.urlencode({'query': expression}))[2]
@@ -69,13 +69,13 @@ def main():
     token = refresh = None
     secrets = ['METRICS_QUERY_SECRET', 'METRICS_TOKEN_SECRET', marker]
     try:
-        for port, service in [(8781, 'user-api'), (8782, 'learning-api'), (8783, 'jwks-api')]:
+        for port, service in [(8781, 'hospital-user-api'), (8782, 'hospital-api'), (8783, 'hospital-jwks-api')]:
             check(request(port, '/actuator/health/readiness')[0] == 200, service + ' readiness')
             check(request(port, '/actuator/prometheus', headers={'X-Correlation-ID': marker})[0] == 403,
                   service + ' public scrape denied')
             for i in range(6):
                 path = '/api/v1/jwks/user' if port == 8783 else (
-                    '/internal/users/' + str(uuid.uuid4()) if port == 8781 else '/api/v1/learning/me')
+                    '/internal/users/' + str(uuid.uuid4()) if port == 8781 else '/api/v1/hospital/technical/authentication')
                 status, headers, _ = request(port, path + '?secret=METRICS_QUERY_SECRET',
                     headers={'X-Correlation-ID': marker + '-' + service, 'Cookie': 'secret=METRICS_TOKEN_SECRET'})
                 check(status == (200 if port == 8783 else 401), service + ' real request')
@@ -93,9 +93,9 @@ def main():
             secrets += [token, refresh]
             claims = json.loads(base64.urlsafe_b64decode(token.split('.')[1] + '==='))
             linked = marker + '-linked'
-            status, headers, body = request(8782, '/api/v1/learning/internal-test/users/' + claims['sub'],
+            status, headers, body = request(8782, '/api/v1/hospital/technical/users/' + claims['sub'],
                 headers={'Authorization': 'Bearer ' + token, 'X-Correlation-ID': linked})
-            check(status == 200 and headers.get('X-Correlation-ID') == linked, 'Learning -> User internal JWT/correlation')
+            check(status == 200 and headers.get('X-Correlation-ID') == linked, 'Hospital -> User internal JWT/correlation')
             status, _, _ = request(8781, '/actuator/prometheus', headers={'Authorization': 'Bearer ' + token})
             check(status == 403, 'authenticated account cannot scrape published application port')
     finally:
@@ -120,31 +120,31 @@ def main():
         values = query(name)
         check(bool(values), name + ' stored in Prometheus')
         if name not in ['up']:
-            check({v['metric'].get('service') for v in values} == {'user-learning', 'learning-api', 'jwks-service'},
+            check({v['metric'].get('service') for v in values} == {'hospital-user-api', 'hospital-api', 'hospital-jwks-api'},
                   name + ' available across all three services')
     for name in ['hikaricp_connections_active', 'hikaricp_connections_idle', 'hikaricp_connections_pending',
                  'hikaricp_connections_max', 'hikaricp_connections_acquire_seconds_count']:
         values = query(name)
-        check({v['metric'].get('service') for v in values} == {'user-learning', 'learning-api'}, name + ' database services only')
+        check({v['metric'].get('service') for v in values} == {'hospital-user-api', 'hospital-api'}, name + ' database services only')
     check(any(float(v['value'][1]) > 0 for v in query('app_security_events_total{operation="login",result="failure"}')),
           'authentication failure counter incremented')
     check(any(float(v['value'][1]) > 0 for v in query('app_security_events_total{operation="internal_authentication",result="failure"}')),
           'internal authentication rejection counter incremented')
     if account:
-        values = query('http_client_requests_seconds_count{service="learning-api",uri="/internal/users/{id}",status="200"}')
+        values = query('http_client_requests_seconds_count{service="hospital-api",uri="/internal/users/{id}",status="200"}')
         check(bool(values) and any(float(v['value'][1]) > 0 for v in values), 'real internal client timer')
     for percentile in ['0.5', '0.95', '0.99']:
         expression = 'histogram_quantile(' + percentile + ', sum by (le,service) (rate(http_server_requests_seconds_bucket[5m])))'
         values = query(expression)
         check({v['metric'].get('service') for v in values if math.isfinite(float(v['value'][1]))}
-              == {'user-learning', 'learning-api', 'jwks-service'}, 'finite percentile ' + percentile + ' for all services')
+              == {'hospital-user-api', 'hospital-api', 'hospital-jwks-api'}, 'finite percentile ' + percentile + ' for all services')
 
-    for service, identity, index in [('user-api','user-learning','user'), ('learning-api','learning-api','learning'), ('jwks-api','jwks-service','jwks')]:
-        scrape = subprocess.run(['docker','compose','-p','springboot_project','exec','-T','prometheus',
+    for service, identity, index in [('hospital-user-api','hospital-user-api','user'), ('hospital-api','hospital-api','hospital'), ('hospital-jwks-api','hospital-jwks-api','jwks')]:
+        scrape = subprocess.run(['docker','compose','-p','hospital_dev','exec','-T','prometheus',
             'wget','-q','-O','-',f'http://{service}:9091/actuator/prometheus'], capture_output=True, text=True, check=True).stdout
         check(not any(str(secret) in scrape for secret in secrets if secret), service + ' no tested sensitive metric values')
         check(not re.search(r'(correlationId|traceId|spanId|username|email|sessionId)=', scrape), service + ' no sensitive label keys')
-        forbidden = subprocess.run(['docker','compose','-p','springboot_project','exec','-T','prometheus',
+        forbidden = subprocess.run(['docker','compose','-p','hospital_dev','exec','-T','prometheus',
             'wget','-q','-O','-',f'http://{service}:9091/actuator/env'], capture_output=True, text=True)
         check(forbidden.returncode != 0 and '403' in forbidden.stderr, service + ' private listener denies other endpoints')
         selector = '{service="' + identity + '"} | json | correlationId="' + marker + '-' + service + '"'
@@ -153,7 +153,7 @@ def main():
         body = {'query':{'term':{'correlationId.keyword':marker+'-'+service}}}
         check(request(9277, '/springboot-'+index+'*-logs/_search', 'POST', body)[2]['hits']['total']['value'] >= 6,
               service + ' fresh OpenSearch ingestion')
-        raw = subprocess.run(['docker','compose','-p','springboot_project','logs','--no-color','--no-log-prefix',service],
+        raw = subprocess.run(['docker','compose','-p','hospital_dev','logs','--no-color','--no-log-prefix',service],
                              capture_output=True,text=True,check=True).stdout
         sensitive = [s for s in secrets if s and s != marker]
         check(not any(str(secret) in raw for secret in sensitive), service + ' tested secrets absent from logs')

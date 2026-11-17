@@ -6,7 +6,7 @@ Current evidence: `phase6-20261112T031510Z-c66c0468`. Counts: `{"PASS": 750, "NO
 
 | Status | Check | Detail |
 | --- | --- | --- |
-| PASS | baseline has exactly 16 jp_dev containers |  |
+| PASS | baseline has exactly 16 hospital_dev containers |  |
 | PASS | target containers belong to this checkout |  |
 | PASS | required target containers identified |  |
 | PASS | fresh immutable baseline captured | container IDs/start times, volumes, protected fingerprints, Grafana state and existing backend availability |
@@ -16,8 +16,8 @@ Current evidence: `phase6-20261112T031510Z-c66c0468`. Counts: `{"PASS": 750, "NO
 | PASS | published ports loopback-only: flyway-mysql |  |
 | PASS | published ports loopback-only: flyway-postgres |  |
 | PASS | published ports loopback-only: grafana |  |
-| PASS | published ports loopback-only: jwks-api |  |
-| PASS | published ports loopback-only: learning-api |  |
+| PASS | published ports loopback-only: hospital-jwks-api |  |
+| PASS | published ports loopback-only: hospital-api |  |
 | PASS | published ports loopback-only: loki |  |
 | PASS | published ports loopback-only: mysql |  |
 | PASS | published ports loopback-only: opensearch |  |
@@ -28,274 +28,274 @@ Current evidence: `phase6-20261112T031510Z-c66c0468`. Counts: `{"PASS": 750, "NO
 | PASS | published ports loopback-only: prometheus |  |
 | PASS | published ports loopback-only: tempo |  |
 | PASS | published ports loopback-only: tempo-storage-init |  |
-| PASS | published ports loopback-only: user-api |  |
+| PASS | published ports loopback-only: hospital-user-api |  |
 | PASS | internal telemetry endpoints unpublished: otel-collector |  |
 | PASS | internal telemetry endpoints unpublished: tempo |  |
 | PASS | internal telemetry endpoints unpublished: fluent-bit |  |
-| PASS | 10% sampling: user-api |  |
-| PASS | private metrics listener: user-api |  |
-| PASS | read-only key mounts: user-api |  |
-| PASS | 10% sampling: learning-api |  |
-| PASS | private metrics listener: learning-api |  |
-| PASS | read-only key mounts: learning-api |  |
-| PASS | 10% sampling: jwks-api |  |
-| PASS | private metrics listener: jwks-api |  |
-| PASS | read-only key mounts: jwks-api |  |
+| PASS | 10% sampling: hospital-user-api |  |
+| PASS | private metrics listener: hospital-user-api |  |
+| PASS | read-only key mounts: hospital-user-api |  |
+| PASS | 10% sampling: hospital-api |  |
+| PASS | private metrics listener: hospital-api |  |
+| PASS | read-only key mounts: hospital-api |  |
+| PASS | 10% sampling: hospital-jwks-api |  |
+| PASS | private metrics listener: hospital-jwks-api |  |
+| PASS | read-only key mounts: hospital-jwks-api |  |
 | PASS | Prometheus configuration and recording rules |  |
 | PASS | Prometheus idle/missing/histogram fixtures |  |
 | PASS | Collector native configuration |  |
 | PASS | Loki native configuration |  |
 | PASS | Fluent Bit native dry-run |  |
 | PASS | Tempo loaded config and 72h retention via supported status API |  |
-| PASS | service readiness: user-api |  |
-| PASS | public metrics endpoint denied: user-api |  |
-| PASS | sensitive actuator endpoint protected: user-api |  |
-| PASS | HTTP behavior: user-api probe 0 | expected 401, observed 401 |
-| PASS | correlation preserved/generated: user-api |  |
-| PASS | HTTP behavior: user-api probe 1 | expected 401, observed 401 |
-| PASS | correlation preserved/generated: user-api |  |
-| PASS | service readiness: learning-api |  |
-| PASS | public metrics endpoint denied: learning-api |  |
-| PASS | sensitive actuator endpoint protected: learning-api |  |
-| PASS | HTTP behavior: learning-api probe 2 | expected 401, observed 401 |
-| PASS | correlation preserved/generated: learning-api |  |
-| PASS | HTTP behavior: learning-api probe 3 | expected 401, observed 401 |
-| PASS | correlation preserved/generated: learning-api |  |
-| PASS | service readiness: jwks-api |  |
-| PASS | public metrics endpoint denied: jwks-api |  |
-| PASS | sensitive actuator endpoint protected: jwks-api |  |
-| PASS | HTTP behavior: jwks-api probe 4 | expected 200, observed 200 |
-| PASS | correlation preserved/generated: jwks-api |  |
-| PASS | HTTP behavior: jwks-api probe 5 | expected 200, observed 200 |
-| PASS | correlation preserved/generated: jwks-api |  |
-| PASS | HTTP behavior: user-api probe 6 | expected 200, observed 200 |
-| PASS | correlation preserved/generated: user-api |  |
+| PASS | service readiness: hospital-user-api |  |
+| PASS | public metrics endpoint denied: hospital-user-api |  |
+| PASS | sensitive actuator endpoint protected: hospital-user-api |  |
+| PASS | HTTP behavior: hospital-user-api probe 0 | expected 401, observed 401 |
+| PASS | correlation preserved/generated: hospital-user-api |  |
+| PASS | HTTP behavior: hospital-user-api probe 1 | expected 401, observed 401 |
+| PASS | correlation preserved/generated: hospital-user-api |  |
+| PASS | service readiness: hospital-api |  |
+| PASS | public metrics endpoint denied: hospital-api |  |
+| PASS | sensitive actuator endpoint protected: hospital-api |  |
+| PASS | HTTP behavior: hospital-api probe 2 | expected 401, observed 401 |
+| PASS | correlation preserved/generated: hospital-api |  |
+| PASS | HTTP behavior: hospital-api probe 3 | expected 401, observed 401 |
+| PASS | correlation preserved/generated: hospital-api |  |
+| PASS | service readiness: hospital-jwks-api |  |
+| PASS | public metrics endpoint denied: hospital-jwks-api |  |
+| PASS | sensitive actuator endpoint protected: hospital-jwks-api |  |
+| PASS | HTTP behavior: hospital-jwks-api probe 4 | expected 200, observed 200 |
+| PASS | correlation preserved/generated: hospital-jwks-api |  |
+| PASS | HTTP behavior: hospital-jwks-api probe 5 | expected 200, observed 200 |
+| PASS | correlation preserved/generated: hospital-jwks-api |  |
+| PASS | HTTP behavior: hospital-user-api probe 6 | expected 200, observed 200 |
+| PASS | correlation preserved/generated: hospital-user-api |  |
 | PASS | access-token kid matches published RSA JWKS |  |
 | PASS | access-token issuer matches configured contract |  |
-| PASS | HTTP behavior: learning-api probe 7 | expected 200, observed 200 |
-| PASS | correlation preserved/generated: learning-api |  |
-| PASS | HTTP behavior: user-api probe 8 | expected 403, observed 403 |
-| PASS | correlation preserved/generated: user-api |  |
+| PASS | HTTP behavior: hospital-api probe 7 | expected 200, observed 200 |
+| PASS | correlation preserved/generated: hospital-api |  |
+| PASS | HTTP behavior: hospital-user-api probe 8 | expected 403, observed 403 |
+| PASS | correlation preserved/generated: hospital-user-api |  |
 | NOT VERIFIED | positive administrative User access | existing account lacks admin role; internal positive access is tested |
-| PASS | HTTP behavior: user-api probe 9 | expected 401, observed 401 |
-| PASS | correlation preserved/generated: user-api |  |
-| PASS | HTTP behavior: user-api probe 10 | expected 403, observed 403 |
-| PASS | correlation preserved/generated: user-api |  |
-| PASS | HTTP behavior: learning-api probe 11 | expected 401, observed 401 |
-| PASS | correlation preserved/generated: learning-api |  |
-| PASS | HTTP behavior: learning-api probe 12 | expected 200, observed 200 |
-| PASS | correlation preserved/generated: learning-api |  |
-| PASS | Learning to User actual internal JWT communication |  |
+| PASS | HTTP behavior: hospital-user-api probe 9 | expected 401, observed 401 |
+| PASS | correlation preserved/generated: hospital-user-api |  |
+| PASS | HTTP behavior: hospital-user-api probe 10 | expected 403, observed 403 |
+| PASS | correlation preserved/generated: hospital-user-api |  |
+| PASS | HTTP behavior: hospital-api probe 11 | expected 401, observed 401 |
+| PASS | correlation preserved/generated: hospital-api |  |
+| PASS | HTTP behavior: hospital-api probe 12 | expected 200, observed 200 |
+| PASS | correlation preserved/generated: hospital-api |  |
+| PASS | Hospital to User actual internal JWT communication |  |
 | PASS | refresh rotates this verification session |  |
-| PASS | HTTP behavior: learning-api probe 14 | expected 200, observed 200 |
-| PASS | correlation preserved/generated: learning-api |  |
+| PASS | HTTP behavior: hospital-api probe 14 | expected 200, observed 200 |
+| PASS | correlation preserved/generated: hospital-api |  |
 | PASS | verification session logout cleanup |  |
 | PASS | request context isolation across independent live probes |  |
-| PASS | one observed Loki HTTP completion: user-api |  |
-| PASS | JSON schema fields: user-api |  |
-| PASS | UTC timestamp parses: user-api |  |
-| PASS | canonical log metadata: user-api |  |
-| PASS | numeric final HTTP fields: user-api |  |
-| PASS | independent correlation and W3C IDs: user-api |  |
-| PASS | bounded route in logs: user-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: user-api |  |
+| PASS | one observed Loki HTTP completion: hospital-user-api |  |
+| PASS | JSON schema fields: hospital-user-api |  |
+| PASS | UTC timestamp parses: hospital-user-api |  |
+| PASS | canonical log metadata: hospital-user-api |  |
+| PASS | numeric final HTTP fields: hospital-user-api |  |
+| PASS | independent correlation and W3C IDs: hospital-user-api |  |
+| PASS | bounded route in logs: hospital-user-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-user-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: user-api |  |
-| PASS | remote W3C parent continued: user-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: user-api |  |
+| PASS | stored server span timing/log identity: hospital-user-api |  |
+| PASS | remote W3C parent continued: hospital-user-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-user-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: user-api |  |
-| PASS | JSON schema fields: user-api |  |
-| PASS | UTC timestamp parses: user-api |  |
-| PASS | canonical log metadata: user-api |  |
-| PASS | numeric final HTTP fields: user-api |  |
-| PASS | independent correlation and W3C IDs: user-api |  |
-| PASS | bounded route in logs: user-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: user-api |  |
+| PASS | one observed Loki HTTP completion: hospital-user-api |  |
+| PASS | JSON schema fields: hospital-user-api |  |
+| PASS | UTC timestamp parses: hospital-user-api |  |
+| PASS | canonical log metadata: hospital-user-api |  |
+| PASS | numeric final HTTP fields: hospital-user-api |  |
+| PASS | independent correlation and W3C IDs: hospital-user-api |  |
+| PASS | bounded route in logs: hospital-user-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-user-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: user-api |  |
-| PASS | remote W3C parent continued: user-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: user-api |  |
+| PASS | stored server span timing/log identity: hospital-user-api |  |
+| PASS | remote W3C parent continued: hospital-user-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-user-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: learning-api |  |
-| PASS | JSON schema fields: learning-api |  |
-| PASS | UTC timestamp parses: learning-api |  |
-| PASS | canonical log metadata: learning-api |  |
-| PASS | numeric final HTTP fields: learning-api |  |
-| PASS | independent correlation and W3C IDs: learning-api |  |
-| PASS | bounded route in logs: learning-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: learning-api |  |
+| PASS | one observed Loki HTTP completion: hospital-api |  |
+| PASS | JSON schema fields: hospital-api |  |
+| PASS | UTC timestamp parses: hospital-api |  |
+| PASS | canonical log metadata: hospital-api |  |
+| PASS | numeric final HTTP fields: hospital-api |  |
+| PASS | independent correlation and W3C IDs: hospital-api |  |
+| PASS | bounded route in logs: hospital-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: learning-api |  |
-| PASS | remote W3C parent continued: learning-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: learning-api |  |
+| PASS | stored server span timing/log identity: hospital-api |  |
+| PASS | remote W3C parent continued: hospital-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: learning-api |  |
-| PASS | JSON schema fields: learning-api |  |
-| PASS | UTC timestamp parses: learning-api |  |
-| PASS | canonical log metadata: learning-api |  |
-| PASS | numeric final HTTP fields: learning-api |  |
-| PASS | independent correlation and W3C IDs: learning-api |  |
-| PASS | bounded route in logs: learning-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: learning-api |  |
+| PASS | one observed Loki HTTP completion: hospital-api |  |
+| PASS | JSON schema fields: hospital-api |  |
+| PASS | UTC timestamp parses: hospital-api |  |
+| PASS | canonical log metadata: hospital-api |  |
+| PASS | numeric final HTTP fields: hospital-api |  |
+| PASS | independent correlation and W3C IDs: hospital-api |  |
+| PASS | bounded route in logs: hospital-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: learning-api |  |
-| PASS | remote W3C parent continued: learning-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: learning-api |  |
+| PASS | stored server span timing/log identity: hospital-api |  |
+| PASS | remote W3C parent continued: hospital-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: jwks-api |  |
-| PASS | JSON schema fields: jwks-api |  |
-| PASS | UTC timestamp parses: jwks-api |  |
-| PASS | canonical log metadata: jwks-api |  |
-| PASS | numeric final HTTP fields: jwks-api |  |
-| PASS | independent correlation and W3C IDs: jwks-api |  |
-| PASS | bounded route in logs: jwks-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: jwks-api |  |
+| PASS | one observed Loki HTTP completion: hospital-jwks-api |  |
+| PASS | JSON schema fields: hospital-jwks-api |  |
+| PASS | UTC timestamp parses: hospital-jwks-api |  |
+| PASS | canonical log metadata: hospital-jwks-api |  |
+| PASS | numeric final HTTP fields: hospital-jwks-api |  |
+| PASS | independent correlation and W3C IDs: hospital-jwks-api |  |
+| PASS | bounded route in logs: hospital-jwks-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-jwks-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: jwks-api |  |
-| PASS | remote W3C parent continued: jwks-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: jwks-api |  |
+| PASS | stored server span timing/log identity: hospital-jwks-api |  |
+| PASS | remote W3C parent continued: hospital-jwks-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-jwks-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: jwks-api |  |
-| PASS | JSON schema fields: jwks-api |  |
-| PASS | UTC timestamp parses: jwks-api |  |
-| PASS | canonical log metadata: jwks-api |  |
-| PASS | numeric final HTTP fields: jwks-api |  |
-| PASS | independent correlation and W3C IDs: jwks-api |  |
-| PASS | bounded route in logs: jwks-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: jwks-api |  |
+| PASS | one observed Loki HTTP completion: hospital-jwks-api |  |
+| PASS | JSON schema fields: hospital-jwks-api |  |
+| PASS | UTC timestamp parses: hospital-jwks-api |  |
+| PASS | canonical log metadata: hospital-jwks-api |  |
+| PASS | numeric final HTTP fields: hospital-jwks-api |  |
+| PASS | independent correlation and W3C IDs: hospital-jwks-api |  |
+| PASS | bounded route in logs: hospital-jwks-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-jwks-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: jwks-api |  |
-| PASS | remote W3C parent continued: jwks-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: jwks-api |  |
+| PASS | stored server span timing/log identity: hospital-jwks-api |  |
+| PASS | remote W3C parent continued: hospital-jwks-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-jwks-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: user-api |  |
-| PASS | JSON schema fields: user-api |  |
-| PASS | UTC timestamp parses: user-api |  |
-| PASS | canonical log metadata: user-api |  |
-| PASS | numeric final HTTP fields: user-api |  |
-| PASS | independent correlation and W3C IDs: user-api |  |
-| PASS | bounded route in logs: user-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: user-api |  |
+| PASS | one observed Loki HTTP completion: hospital-user-api |  |
+| PASS | JSON schema fields: hospital-user-api |  |
+| PASS | UTC timestamp parses: hospital-user-api |  |
+| PASS | canonical log metadata: hospital-user-api |  |
+| PASS | numeric final HTTP fields: hospital-user-api |  |
+| PASS | independent correlation and W3C IDs: hospital-user-api |  |
+| PASS | bounded route in logs: hospital-user-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-user-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: user-api |  |
-| PASS | remote W3C parent continued: user-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: user-api |  |
+| PASS | stored server span timing/log identity: hospital-user-api |  |
+| PASS | remote W3C parent continued: hospital-user-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-user-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: learning-api |  |
-| PASS | JSON schema fields: learning-api |  |
-| PASS | UTC timestamp parses: learning-api |  |
-| PASS | canonical log metadata: learning-api |  |
-| PASS | numeric final HTTP fields: learning-api |  |
-| PASS | independent correlation and W3C IDs: learning-api |  |
-| PASS | bounded route in logs: learning-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: learning-api |  |
+| PASS | one observed Loki HTTP completion: hospital-api |  |
+| PASS | JSON schema fields: hospital-api |  |
+| PASS | UTC timestamp parses: hospital-api |  |
+| PASS | canonical log metadata: hospital-api |  |
+| PASS | numeric final HTTP fields: hospital-api |  |
+| PASS | independent correlation and W3C IDs: hospital-api |  |
+| PASS | bounded route in logs: hospital-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: learning-api |  |
-| PASS | remote W3C parent continued: learning-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: learning-api |  |
+| PASS | stored server span timing/log identity: hospital-api |  |
+| PASS | remote W3C parent continued: hospital-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: user-api |  |
-| PASS | JSON schema fields: user-api |  |
-| PASS | UTC timestamp parses: user-api |  |
-| PASS | canonical log metadata: user-api |  |
-| PASS | numeric final HTTP fields: user-api |  |
-| PASS | independent correlation and W3C IDs: user-api |  |
-| PASS | bounded route in logs: user-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: user-api |  |
+| PASS | one observed Loki HTTP completion: hospital-user-api |  |
+| PASS | JSON schema fields: hospital-user-api |  |
+| PASS | UTC timestamp parses: hospital-user-api |  |
+| PASS | canonical log metadata: hospital-user-api |  |
+| PASS | numeric final HTTP fields: hospital-user-api |  |
+| PASS | independent correlation and W3C IDs: hospital-user-api |  |
+| PASS | bounded route in logs: hospital-user-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-user-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: user-api |  |
-| PASS | remote W3C parent continued: user-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: user-api |  |
+| PASS | stored server span timing/log identity: hospital-user-api |  |
+| PASS | remote W3C parent continued: hospital-user-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-user-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: user-api |  |
-| PASS | JSON schema fields: user-api |  |
-| PASS | UTC timestamp parses: user-api |  |
-| PASS | canonical log metadata: user-api |  |
-| PASS | numeric final HTTP fields: user-api |  |
-| PASS | independent correlation and W3C IDs: user-api |  |
-| PASS | bounded route in logs: user-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: user-api |  |
+| PASS | one observed Loki HTTP completion: hospital-user-api |  |
+| PASS | JSON schema fields: hospital-user-api |  |
+| PASS | UTC timestamp parses: hospital-user-api |  |
+| PASS | canonical log metadata: hospital-user-api |  |
+| PASS | numeric final HTTP fields: hospital-user-api |  |
+| PASS | independent correlation and W3C IDs: hospital-user-api |  |
+| PASS | bounded route in logs: hospital-user-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-user-api |  |
 | PASS | trace environment resource |  |
 | PASS | trace environment resource |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: user-api |  |
-| PASS | remote W3C parent continued: user-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: user-api |  |
+| PASS | stored server span timing/log identity: hospital-user-api |  |
+| PASS | remote W3C parent continued: hospital-user-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-user-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: user-api |  |
-| PASS | JSON schema fields: user-api |  |
-| PASS | UTC timestamp parses: user-api |  |
-| PASS | canonical log metadata: user-api |  |
-| PASS | numeric final HTTP fields: user-api |  |
-| PASS | independent correlation and W3C IDs: user-api |  |
-| PASS | bounded route in logs: user-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: user-api |  |
+| PASS | one observed Loki HTTP completion: hospital-user-api |  |
+| PASS | JSON schema fields: hospital-user-api |  |
+| PASS | UTC timestamp parses: hospital-user-api |  |
+| PASS | canonical log metadata: hospital-user-api |  |
+| PASS | numeric final HTTP fields: hospital-user-api |  |
+| PASS | independent correlation and W3C IDs: hospital-user-api |  |
+| PASS | bounded route in logs: hospital-user-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-user-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: user-api |  |
-| PASS | remote W3C parent continued: user-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: user-api |  |
+| PASS | stored server span timing/log identity: hospital-user-api |  |
+| PASS | remote W3C parent continued: hospital-user-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-user-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: learning-api |  |
-| PASS | JSON schema fields: learning-api |  |
-| PASS | UTC timestamp parses: learning-api |  |
-| PASS | canonical log metadata: learning-api |  |
-| PASS | numeric final HTTP fields: learning-api |  |
-| PASS | independent correlation and W3C IDs: learning-api |  |
-| PASS | bounded route in logs: learning-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: learning-api |  |
+| PASS | one observed Loki HTTP completion: hospital-api |  |
+| PASS | JSON schema fields: hospital-api |  |
+| PASS | UTC timestamp parses: hospital-api |  |
+| PASS | canonical log metadata: hospital-api |  |
+| PASS | numeric final HTTP fields: hospital-api |  |
+| PASS | independent correlation and W3C IDs: hospital-api |  |
+| PASS | bounded route in logs: hospital-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: learning-api |  |
-| PASS | remote W3C parent continued: learning-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: learning-api |  |
+| PASS | stored server span timing/log identity: hospital-api |  |
+| PASS | remote W3C parent continued: hospital-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: learning-api |  |
-| PASS | JSON schema fields: learning-api |  |
-| PASS | UTC timestamp parses: learning-api |  |
-| PASS | canonical log metadata: learning-api |  |
-| PASS | numeric final HTTP fields: learning-api |  |
-| PASS | independent correlation and W3C IDs: learning-api |  |
-| PASS | bounded route in logs: learning-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: learning-api |  |
+| PASS | one observed Loki HTTP completion: hospital-api |  |
+| PASS | JSON schema fields: hospital-api |  |
+| PASS | UTC timestamp parses: hospital-api |  |
+| PASS | canonical log metadata: hospital-api |  |
+| PASS | numeric final HTTP fields: hospital-api |  |
+| PASS | independent correlation and W3C IDs: hospital-api |  |
+| PASS | bounded route in logs: hospital-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-api |  |
 | PASS | trace environment resource |  |
 | PASS | trace environment resource |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: learning-api |  |
-| PASS | Learning server to HTTP client to User parent chain |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: learning-api |  |
+| PASS | stored server span timing/log identity: hospital-api |  |
+| PASS | Hospital server to HTTP client to User parent chain |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: user-api |  |
-| PASS | JSON schema fields: user-api |  |
-| PASS | UTC timestamp parses: user-api |  |
-| PASS | canonical log metadata: user-api |  |
-| PASS | numeric final HTTP fields: user-api |  |
-| PASS | independent correlation and W3C IDs: user-api |  |
-| PASS | bounded route in logs: user-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: user-api |  |
+| PASS | one observed Loki HTTP completion: hospital-user-api |  |
+| PASS | JSON schema fields: hospital-user-api |  |
+| PASS | UTC timestamp parses: hospital-user-api |  |
+| PASS | canonical log metadata: hospital-user-api |  |
+| PASS | numeric final HTTP fields: hospital-user-api |  |
+| PASS | independent correlation and W3C IDs: hospital-user-api |  |
+| PASS | bounded route in logs: hospital-user-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-user-api |  |
 | PASS | trace environment resource |  |
 | PASS | trace environment resource |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: user-api |  |
-| PASS | Learning server to HTTP client to User parent chain |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: user-api |  |
+| PASS | stored server span timing/log identity: hospital-user-api |  |
+| PASS | Hospital server to HTTP client to User parent chain |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-user-api |  |
 | PASS | sensitive span attribute names absent |  |
-| PASS | one observed Loki HTTP completion: learning-api |  |
-| PASS | JSON schema fields: learning-api |  |
-| PASS | UTC timestamp parses: learning-api |  |
-| PASS | canonical log metadata: learning-api |  |
-| PASS | numeric final HTTP fields: learning-api |  |
-| PASS | independent correlation and W3C IDs: learning-api |  |
-| PASS | bounded route in logs: learning-api |  |
-| PASS | same event identity/fields in Loki and OpenSearch: learning-api |  |
+| PASS | one observed Loki HTTP completion: hospital-api |  |
+| PASS | JSON schema fields: hospital-api |  |
+| PASS | UTC timestamp parses: hospital-api |  |
+| PASS | canonical log metadata: hospital-api |  |
+| PASS | numeric final HTTP fields: hospital-api |  |
+| PASS | independent correlation and W3C IDs: hospital-api |  |
+| PASS | bounded route in logs: hospital-api |  |
+| PASS | same event identity/fields in Loki and OpenSearch: hospital-api |  |
 | PASS | trace environment resource |  |
-| PASS | stored server span timing/log identity: learning-api |  |
-| PASS | remote W3C parent continued: learning-api |  |
-| PASS | tested credentials/tokens/identity absent from stored telemetry: learning-api |  |
+| PASS | stored server span timing/log identity: hospital-api |  |
+| PASS | remote W3C parent continued: hospital-api |  |
+| PASS | tested credentials/tokens/identity absent from stored telemetry: hospital-api |  |
 | PASS | sensitive span attribute names absent |  |
 | PASS | all nine Prometheus targets UP without scrape errors |  |
-| PASS | no tested secrets or sensitive labels in live exposition: user-api |  |
-| PASS | no tested secrets or sensitive labels in live exposition: learning-api |  |
-| PASS | no tested secrets or sensitive labels in live exposition: jwks-api |  |
+| PASS | no tested secrets or sensitive labels in live exposition: hospital-user-api |  |
+| PASS | no tested secrets or sensitive labels in live exposition: hospital-api |  |
+| PASS | no tested secrets or sensitive labels in live exposition: hospital-jwks-api |  |
 | PASS | actual metric across three services: http_server_requests_seconds_count |  |
 | PASS | actual metric across three services: http_server_requests_seconds_bucket |  |
 | PASS | actual metric across three services: jvm_memory_used_bytes |  |
@@ -613,8 +613,8 @@ Current evidence: `phase6-20261112T031510Z-c66c0468`. Counts: `{"PASS": 750, "NO
 | PASS | muted grouped routing: ServiceDown |  |
 | PASS | alert thresholds/labels/evaluation behavior: MissingMetricsUser |  |
 | PASS | muted grouped routing: MissingMetricsUser |  |
-| PASS | alert thresholds/labels/evaluation behavior: MissingMetricsLearning |  |
-| PASS | muted grouped routing: MissingMetricsLearning |  |
+| PASS | alert thresholds/labels/evaluation behavior: MissingMetricsHospital |  |
+| PASS | muted grouped routing: MissingMetricsHospital |  |
 | PASS | alert thresholds/labels/evaluation behavior: MissingMetricsJWKS |  |
 | PASS | muted grouped routing: MissingMetricsJWKS |  |
 | PASS | alert thresholds/labels/evaluation behavior: High5xxErrorRate |  |
@@ -690,40 +690,40 @@ Current evidence: `phase6-20261112T031510Z-c66c0468`. Counts: `{"PASS": 750, "NO
 | FAIL | lossless compressed-rollover collection | immediate gzip archive + exact-current-file tails can lose unread history while Fluent Bit is stopped; mitigation/test plan documented |
 | NOT APPLICABLE | JWKS database pool | JWKS has no datasource |
 | NOT APPLICABLE | Tempo service graphs/span-derived metrics | not enabled; no second metrics pipeline required |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-jwks-api-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-user-api-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-learning-api-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-grafana-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-prometheus-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-fluent-bit-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-opensearch-dashboards-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-loki-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-tempo-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-opensearch-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-otel-collector-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-otel-queue-init-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-tempo-storage-init-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-frontend-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-fluent-bit-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-vocabulary-api-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-opensearch-dashboards-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-jwks-api-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-user-api-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-opensearch-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-logs-ui-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-logging-ui-init-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-logging-init-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-flyway-mysql-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-flyway-postgres-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-fluent-bit-state-init-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-postgres-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /springboot_project-mysql-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-gateway-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-flyway-user-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-flyway-vocabulary-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-sqlserver-init-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-mysql-1 |  |
-| PASS | container identity/start/mounts/ports unchanged: /jp_dev-sqlserver-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-hospital-jwks-api-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-hospital-user-api-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-hospital-api-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-grafana-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-prometheus-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-fluent-bit-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-opensearch-dashboards-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-loki-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-tempo-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-opensearch-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-otel-collector-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-otel-queue-init-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-tempo-storage-init-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-frontend-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-fluent-bit-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-vocabulary-api-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-opensearch-dashboards-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-hospital-jwks-api-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-hospital-user-api-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-opensearch-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-logs-ui-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-logging-ui-init-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-logging-init-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-flyway-mysql-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-flyway-postgres-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-fluent-bit-state-init-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-postgres-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-mysql-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-gateway-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-flyway-user-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-flyway-vocabulary-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-sqlserver-init-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-mysql-1 |  |
+| PASS | container identity/start/mounts/ports unchanged: /hospital_dev-sqlserver-1 |  |
 | PASS | all original volumes retained, no new persistent volumes |  |
 | PASS | environment/key/credential fingerprints unchanged |  |
 | PASS | effective Compose configuration unchanged |  |
@@ -766,8 +766,8 @@ Current evidence: `phase6-20261112T031510Z-c66c0468`. Counts: `{"PASS": 750, "NO
 | PASS | Git HEAD/branch unchanged: . |  |
 | PASS | Git HEAD/branch unchanged: springboot-user-api |  |
 | PASS | submodule worktree unchanged: springboot-user-api |  |
-| PASS | Git HEAD/branch unchanged: springboot-learning-api |  |
-| PASS | submodule worktree unchanged: springboot-learning-api |  |
+| PASS | Git HEAD/branch unchanged: springboot-hospital-api |  |
+| PASS | submodule worktree unchanged: springboot-hospital-api |  |
 | PASS | Git HEAD/branch unchanged: springboot-jwks-api |  |
 | PASS | submodule worktree unchanged: springboot-jwks-api |  |
 
@@ -777,8 +777,8 @@ These rows are transcribed from prior reports, including superseded/history rows
 
 | Report | Historical status | Criterion |
 | --- | --- | --- |
-| [phase0-baseline.md](phase0-baseline.md) | PASS | `docker compose -p springboot_project --env-file .env -f docker-compose.yml config --quiet` |
-| [phase0-baseline.md](phase0-baseline.md) | PASS | `docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet` |
+| [phase0-baseline.md](phase0-baseline.md) | PASS | `docker compose -p hospital_dev --env-file .env -f docker-compose.yml config --quiet` |
+| [phase0-baseline.md](phase0-baseline.md) | PASS | `docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet` |
 | [phase0-baseline.md](phase0-baseline.md) | PASS | `git diff --check` in all four repositories |
 | [phase0-baseline.md](phase0-baseline.md) | PASS | Inspect all modules, runtime/env/infra and dependency compatibility |
 | [phase0-baseline.md](phase0-baseline.md) | PASS | Preserve existing canonical service identities and routing |
@@ -790,7 +790,7 @@ These rows are transcribed from prior reports, including superseded/history rows
 | [phase0-baseline.md](phase0-baseline.md) | NOT VERIFIED | New metadata/collector config active in deployed images/processes |
 | [phase0-baseline.md](phase0-baseline.md) | PASS | Real secrets/env files/deployment keys untouched; no commit/branch changes |
 | [phase1-verification.md](phase1-verification.md) | PASS | User |
-| [phase1-verification.md](phase1-verification.md) | PASS | Learning |
+| [phase1-verification.md](phase1-verification.md) | PASS | Hospital |
 | [phase1-verification.md](phase1-verification.md) | PASS | JWKS |
 | [phase1-verification.md](phase1-verification.md) | PASS | Valid/malformed/oversized correlation ID response behavior |
 | [phase1-verification.md](phase1-verification.md) | PASS | Exactly one final completion with numeric status/duration for the checked requests |
@@ -811,7 +811,7 @@ These rows are transcribed from prior reports, including superseded/history rows
 | [phase1-verification.md](phase1-verification.md) | PASS | Documentation and phase boundaries |
 | [phase1-verification.md](phase1-verification.md) | PASS | No commit/push/reset/branch change or unrelated repository modifications |
 | [phase2-verification.md](phase2-verification.md) | PASS | User |
-| [phase2-verification.md](phase2-verification.md) | PASS | Learning |
+| [phase2-verification.md](phase2-verification.md) | PASS | Hospital |
 | [phase2-verification.md](phase2-verification.md) | PASS | JWKS |
 | [phase2-verification.md](phase2-verification.md) | PASS | Total |
 | [phase2-verification.md](phase2-verification.md) | PASS | Inspect/preserve Phase0/1 implementation |
@@ -820,14 +820,14 @@ These rows are transcribed from prior reports, including superseded/history rows
 | [phase2-verification.md](phase2-verification.md) | PASS | JVM/process/system and supported executors |
 | [phase2-verification.md](phase2-verification.md) | PASS | Hikari/JDBC where applicable |
 | [phase2-verification.md](phase2-verification.md) | PASS | Bounded security metrics without double counting |
-| [phase2-verification.md](phase2-verification.md) | PASS | Learning -> User client instrumentation |
-| [phase2-verification.md](phase2-verification.md) | NOT VERIFIED | Deployed authenticated Learning -> User client/JWT/correlation |
+| [phase2-verification.md](phase2-verification.md) | PASS | Hospital -> User client instrumentation |
+| [phase2-verification.md](phase2-verification.md) | NOT VERIFIED | Deployed authenticated Hospital -> User client/JWT/correlation |
 | [phase2-verification.md](phase2-verification.md) | NOT VERIFIED | Successful deployed login/logout/refresh |
 | [phase2-verification.md](phase2-verification.md) | PASS | Secure scrape exposure, health/API rules preserved |
 | [phase2-verification.md](phase2-verification.md) | PASS | Prometheus deployment/storage/retention/health |
 | [phase2-verification.md](phase2-verification.md) | PASS | Grafana datasource/query integration |
 | [phase2-verification.md](phase2-verification.md) | PASS | Existing logs/correlation/trace metadata protected |
-| [phase2-verification.md](phase2-verification.md) | PASS | JWKS consumer compatibility and jp_dev preservation |
+| [phase2-verification.md](phase2-verification.md) | PASS | JWKS consumer compatibility and hospital_dev preservation |
 | [phase2-verification.md](phase2-verification.md) | PASS | Tests without weakened/skipped regressions |
 | [phase2-verification.md](phase2-verification.md) | PASS | No unexpected OTLP export errors/Phase3–6 work |
 | [phase2-verification.md](phase2-verification.md) | PASS | Documentation and safe Git behavior |
@@ -837,8 +837,8 @@ These rows are transcribed from prior reports, including superseded/history rows
 | [phase3-verification.md](phase3-verification.md) | PASS | 3. Supported outgoing managed clients; metadata/privacy/no duplicates |
 | [phase3-verification.md](phase3-verification.md) | PASS | 4. W3C valid/missing/invalid parent and tracestate |
 | [phase3-verification.md](phase3-verification.md) | PASS | 4. Independent validated correlation and MDC completion behavior |
-| [phase3-verification.md](phase3-verification.md) | PASS | 5. Learning -> User server/client/server parenting and correlation in tests |
-| [phase3-verification.md](phase3-verification.md) | PASS | 5. Deployed authenticated Learning -> User same trace and JWT success |
+| [phase3-verification.md](phase3-verification.md) | PASS | 5. Hospital -> User server/client/server parenting and correlation in tests |
+| [phase3-verification.md](phase3-verification.md) | PASS | 5. Deployed authenticated Hospital -> User same trace and JWT success |
 | [phase3-verification.md](phase3-verification.md) | PASS | 5. Timeouts, JWT and error handling preserved |
 | [phase3-verification.md](phase3-verification.md) | PASS | 6. JSON traceId/spanId/correlationId, no duplicate fields/events |
 | [phase3-verification.md](phase3-verification.md) | PASS | 6. Async/error/security behavior and MDC cleanup |
@@ -855,7 +855,7 @@ These rows are transcribed from prior reports, including superseded/history rows
 | [phase3-verification.md](phase3-verification.md) | PASS | 14. Relevant Maven suites and exact counts |
 | [phase3-verification.md](phase3-verification.md) | PASS | 15.1Ã¢â‚¬â€œ12. Compose/build/deploy/health/scrapes/Collector/Tempo/Grafana |
 | [phase3-verification.md](phase3-verification.md) | PASS | 15.13Ã¢â‚¬â€œ14. Real trace delivery and all three server spans |
-| [phase3-verification.md](phase3-verification.md) | PASS | 15.15-17. Live Learning -> User parents/common trace/correlation |
+| [phase3-verification.md](phase3-verification.md) | PASS | 15.15-17. Live Hospital -> User parents/common trace/correlation |
 | [phase3-verification.md](phase3-verification.md) | PASS | 15.18Ã¢â‚¬â€œ19. JSON IDs plus Loki/OpenSearch ingestion |
 | [phase3-verification.md](phase3-verification.md) | PASS | 15.20. Positive deployed login/refresh/logout/internal JWT |
 | [phase3-verification.md](phase3-verification.md) | PASS | 15.21. Deployed JWKS response compatibility |
@@ -866,10 +866,10 @@ These rows are transcribed from prior reports, including superseded/history rows
 | [phase3-verification.md](phase3-verification.md) | PASS | 1a. Successful User API login |
 | [phase3-verification.md](phase3-verification.md) | PASS | 1b. Successful User API refresh |
 | [phase3-verification.md](phase3-verification.md) | PASS | 1c. Successful User API logout |
-| [phase3-verification.md](phase3-verification.md) | PASS | 2. Authenticated Learning -> User internal JWT communication |
-| [phase3-verification.md](phase3-verification.md) | PASS | 3. W3C traceparent propagation across Learning -> User |
+| [phase3-verification.md](phase3-verification.md) | PASS | 2. Authenticated Hospital -> User internal JWT communication |
+| [phase3-verification.md](phase3-verification.md) | PASS | 3. W3C traceparent propagation across Hospital -> User |
 | [phase3-verification.md](phase3-verification.md) | PASS | 4. Server/client/server parent-child relationships |
-| [phase3-verification.md](phase3-verification.md) | PASS | 5. Shared trace ID across Learning and User |
+| [phase3-verification.md](phase3-verification.md) | PASS | 5. Shared trace ID across Hospital and User |
 | [phase3-verification.md](phase3-verification.md) | PASS | 6. Independent, preserved X-Correlation-ID |
 | [phase3-verification.md](phase3-verification.md) | PASS | 7. Trace visibility in Tempo using Grafana datasource queries |
 | [phase3-verification.md](phase3-verification.md) | PASS | 8. Matching traceId/spanId/correlationId in Loki and OpenSearch |
@@ -896,7 +896,7 @@ These rows are transcribed from prior reports, including superseded/history rows
 | [phase4-verification.md](phase4-verification.md) | PASS | Datasources/fresh logs/fresh traces/API health |
 | [phase4-verification.md](phase4-verification.md) | PASS | Endpoint/security/key/env preservation |
 | [phase4-verification.md](phase4-verification.md) | PASS | Maven regression |
-| [phase4-verification.md](phase4-verification.md) | PASS | jp_dev/unrelated containers unchanged |
+| [phase4-verification.md](phase4-verification.md) | PASS | hospital_dev/unrelated containers unchanged |
 | [phase4-verification.md](phase4-verification.md) | NOT VERIFIED | Hard quotas/HA/backup-restore/production capacity |
 | [phase5-verification.md](phase5-verification.md) | PASS | 1 Baseline inspection / actual versions |
 | [phase5-verification.md](phase5-verification.md) | PASS | 2 Deployment safety / persistent data |
@@ -941,5 +941,5 @@ The original checklist is historical. [Follow-up evidence](phase6a-remediation.m
 | Legacy gzip untouched, tail DB not reset | PASS | Isolated legacy hash and migration; original live state mounts retained |
 | Real Loki/OpenSearch delivery and trace propagation | PASS |15 matched events and linked trace |
 | Global exactly-once/crash/overflow durability | NOT VERIFIED | No guarantee asserted; Phase6B remains gated |
-| Original volumes/keys/Grafana/JWKS/jp_dev preservation | PASS | Independent comparison against pre-change baseline |
+| Original volumes/keys/Grafana/JWKS/hospital_dev preservation | PASS | Independent comparison against pre-change baseline |
 | Production readiness overall | FAIL | Security failure plus outstanding recovery/capacity/notification evidence |

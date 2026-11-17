@@ -80,7 +80,7 @@ class IsolationTests(unittest.TestCase):
 
     def test_mutation_rejects_wrong_project(self):
         self.subject.compose = lambda *a: 'container-id'
-        row = {'Config': {'Labels': {'com.docker.compose.project': 'jp_dev', lab.LABEL: 'test'}}, 'NetworkSettings': {'Networks': {}}}
+        row = {'Config': {'Labels': {'com.docker.compose.project': 'hospital_dev', lab.LABEL: 'test'}}, 'NetworkSettings': {'Networks': {}}}
         with patch('lab.cmd', return_value=json.dumps([row])):
             with self.assertRaises(AssertionError):
                 self.subject.owned('probe')

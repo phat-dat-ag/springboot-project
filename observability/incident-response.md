@@ -18,7 +18,7 @@ production response-time commitment has been established by this assessment.
    attack from one401 or a security counter without context.
 4. Find a known safe correlation ID in Loki. Match service, timestamp, route,
    numeric status and duration; follow TraceID into Tempo when sampled. Confirm
-   Learning server→client→User server if cross-service. Compare OpenSearch source
+   Hospital server→client→User server if cross-service. Compare OpenSearch source
    events when delivery differs. IDs are diagnostics, not authenticated identity.
 5. For missing telemetry, check the appropriate row below. Restore the affected
    destination/connectivity before restarting collectors or increasing queues.

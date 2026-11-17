@@ -4,12 +4,12 @@
 
 ## Observed endpoints
 
-The runtime socket inventory is [remediation-endpoints.json](remediation-endpoints.json). All listed services currently share `springboot_project_default`. `::` denotes the observed wildcard socket; Docker's `127.0.0.11` ephemeral DNS socket is not an application endpoint. Published addresses below bind **127.0.0.1 only**. No unnecessary wildcard host publication was found, so existing development ports were preserved.
+The runtime socket inventory is [remediation-endpoints.json](remediation-endpoints.json). All listed services currently share `hospital-network`. `::` denotes the observed wildcard socket; Docker's `127.0.0.11` ephemeral DNS socket is not an application endpoint. Published addresses below bind **127.0.0.1 only**. No unnecessary wildcard host publication was found, so existing development ports were preserved.
 
 | Component | Container listeners | Host access | Current authentication / authorization | Current TLS / required clients |
 |---|---|---|---|---|
-| User API | `::`:8080,9091 | 8781→8080 | Application JWT rules; dedicated metrics connector/path restriction | Plain HTTP; clients, Learning API, Prometheus |
-| Learning API | `::`:8080,9091 | 8782→8080 | Application JWT rules; dedicated metrics connector/path restriction | Plain HTTP; clients, User API/JWKS dependencies, Prometheus |
+| User API | `::`:8080,9091 | 8781→8080 | Application JWT rules; dedicated metrics connector/path restriction | Plain HTTP; clients, Hospital Management API, Prometheus |
+| Hospital Management API | `::`:8080,9091 | 8782→8080 | Application JWT rules; dedicated metrics connector/path restriction | Plain HTTP; clients, User API/JWKS dependencies, Prometheus |
 | JWKS API | `::`:8080,9091 | 8783→8080 | Public JWKS/health contracts; restricted metrics path/connector | Plain HTTP; both roots' JWKS consumers, Prometheus |
 | Grafana | `::`:3000 | 3077→3000 | UI/API authenticated; existing `/metrics` is unauthenticated | Plain HTTP; host operators, Prometheus, outbound datasource queries |
 | Prometheus | `::`:9090 | 9090→9090 | No query authentication; admin/lifecycle APIs disabled | Plain HTTP; Grafana and local operators; outbound nine scrapes |
@@ -43,4 +43,4 @@ No certificates, passwords, JWT signing keys or accounts were generated or chang
 
 The preceding no-generation statement describes remediation; the subsequently authorized Phase6B lab generated **new disposable two-day test PKI and a test-only Grafana credential**, without reading/replacing any existing signing key or password. Native TLS1.3, trusted-client success, missing/untrusted-client rejection, wrong CA/hostname rejection, real secured log/trace ingestion and Grafana proxy queries passed in `springboot_phase6b`. OpenSearch admin/writer/reader certificate roles and native security-index initialization/restart/restore were tested. Positive password, Dashboards/SSO, production application/proxy activation and certificate root/hot-server rotation remain unverified.
 
-No secure overlay was enabled on `springboot_project`. Its plaintext trust boundary and disabled OpenSearch security remain the same confirmed production security failure. The lab uses a private test-only HTTP control/notification plane and native collector/Fluent Bit metric observations; this is explicitly not complete production-profile hardening. [Full evidence and scope](phase6b-verification.md) distinguish isolated success from live security activation.
+No secure overlay was enabled on `hospital_dev`. Its plaintext trust boundary and disabled OpenSearch security remain the same confirmed production security failure. The lab uses a private test-only HTTP control/notification plane and native collector/Fluent Bit metric observations; this is explicitly not complete production-profile hardening. [Full evidence and scope](phase6b-verification.md) distinguish isolated success from live security activation.

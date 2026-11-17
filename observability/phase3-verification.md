@@ -1,14 +1,14 @@
 # Phase 3 implementation and deployed verification
 
 Date: 2026-11-11. Evidence is from this checkout and the existing
-`springboot_project` deployment. [Tracing operations](tracing.md) describes the
+`hospital_dev` deployment. [Tracing operations](tracing.md) describes the
 configuration; this record distinguishes observed results from acceptance gaps.
 
 ## A. Executive summary
 
 **Implemented, tested and deployed; all critical Phase 3 acceptance criteria now PASS.**
 The authenticated follow-up in section O validated the existing ignored credentials
-file and verified deployed login, refresh, logout and Learning -> User internal-JWT
+file and verified deployed login, refresh, logout and Hospital -> User internal-JWT
 tracing. Actual Tempo spans and both logging backends confirmed the parent chain
 and independent correlation. No application defect or code change was required.
 Earlier missing-credentials attempts are recorded as history in section O; they
@@ -16,7 +16,7 @@ are superseded by the successful runtime evidence, not by automated substitutes.
 
 All **300 Maven tests passed**, zero failures/errors/skips in the final suites.
 Collector, Tempo and all three APIs are running. Real spans reached Tempo from all
-three services, and a real Learning -> JWKS three-span chain was verified. The
+three services, and a real Hospital -> JWKS three-span chain was verified. The
 pre-restart traces remained queryable after one ordinary controlled Tempo restart.
 Existing logging/metrics/JWKS compatibility and preservation checks passed.
 No commits, pushes, branch changes, resets or Phase 4Ã¢â‚¬â€œ6 implementation were made.
@@ -26,7 +26,7 @@ No commits, pushes, branch changes, resets or Phase 4Ã¢â‚¬â€œ6 impleme
 | Area | Changes |
 | --- | --- |
 | User | Retain existing Boot OTel starter; root sampling default 1.0 -> 0.1; explicit W3C/parent-based sampler, async context propagation, omit only nested security spans; privacy-wrapped exporter; three new tracing/privacy test invocations; update baseline default assertion and env example |
-| Learning | Add Boot-managed OTel starter; same tracing/privacy configuration and tests; use existing production ServiceClientConfig in a two-context real-HTTP tracing fixture; no production HTTP/JWT client refactor |
+| Hospital | Add Boot-managed OTel starter; same tracing/privacy configuration and tests; use existing production ServiceClientConfig in a two-context real-HTTP tracing fixture; no production HTTP/JWT client refactor |
 | JWKS | Add Boot-managed OTel starter; same tracing/privacy configuration and tests; restclient starter in test scope only; no controller, key, API, auth or network contract change |
 | Root | Pinned Collector/Tempo configuration and services, new Tempo volume initializer, trace export environment for APIs, Tempo datasource, Loki derived field and trace-to-logs settings, updated examples/docs/baseline verifier, reusable secret-safe runtime verifier |
 
@@ -43,13 +43,13 @@ or replacement for Logback/Fluent Bit/Loki/OpenSearch/Prometheus was introduced.
 
 | Service | Boot | Micrometer Tracing / OTel bridge | OTel SDK trace |
 | --- | --- | --- | --- |
-| User (`user-learning`) | 4.1.1 | 1.7.1 | 1.62.0 |
-| Learning (`learning-api`) | 4.1.2 | 1.7.2 | 1.62.0 |
-| JWKS (`jwks-service`) | 4.1.2 | 1.7.2 | 1.62.0 |
+| User (`hospital-user-api`) | 4.1.1 | 1.7.1 | 1.62.0 |
+| Hospital (`hospital-api`) | 4.1.2 | 1.7.2 | 1.62.0 |
+| JWKS (`hospital-jwks-api`) | 4.1.2 | 1.7.2 | 1.62.0 |
 
 Versions were read from actual POMs and resolved final Surefire classpaths. All
 modules still target Java 17; local Maven used installed Java 17.0.19. Existing
-User/Learning Docker JDK 21 and JWKS JDK 17 were preserved. No Java/Boot upgrade.
+User/Hospital Docker JDK 21 and JWKS JDK 17 were preserved. No Java/Boot upgrade.
 Resources preserve canonical names, Maven/app version and deployment environment.
 
 ## D. Propagation and correlation
@@ -57,8 +57,8 @@ Resources preserve canonical names, Maven/app version and deployment environment
 W3C `traceparent`/`tracestate` extraction/injection is SDK-owned. Real HTTP tests
 continue a valid parent, reject all-zero trace IDs, generate fresh valid trace/span
 IDs, carry tracestate, and assert exactly two SERVER and one CLIENT span with a
-correct chain and distinct span IDs. Learning additionally uses a second servlet
-context identified as `user-learning` and its actual production managed User client.
+correct chain and distinct span IDs. Hospital additionally uses a second servlet
+context identified as `hospital-user-api` and its actual production managed User client.
 The fixture intentionally isolates tracing; existing JWT suites independently
 test production token behavior; the deployed authenticated chain also passed in section O.
 
@@ -98,7 +98,7 @@ log-to-trace links do not guarantee a stored trace for every request.
 | --- | --- |
 | Collector | `otel/opentelemetry-collector-contrib:0.143.0`; native `validate` passed; HTTP receiver4318, memory limiter192 MiB/spike48, batch256/max512/1s, two workers/256-batch RAM queue, retries1Ã¢â‚¬â€œ10s/max60s; trace pipeline only |
 | Collector runtime | Non-root10001/read-only root, 256 MiB/0.5 CPU/64 PIDs/GOMEMLIMIT180 MiB, unless-stopped; health extension13133 returned Server available |
-| Tempo | `grafana/tempo:2.9.0`; loaded config and accepted gRPC4317; query/readiness3200; persisted WAL/blocks under new `springboot_project_tempo_data` |
+| Tempo | `grafana/tempo:2.9.0`; loaded config and accepted gRPC4317; query/readiness3200; persisted WAL/blocks under new `hospital_dev_tempo_data` |
 | Tempo runtime | Non-root10001/read-only root, 512 MiB/one CPU/128 PIDs, unless-stopped, 45s grace; network-disabled one-shot initializer owns new volume root |
 | Retention | Configured72h, max ingester block duration5m; deletion enforcement NOT VERIFIED; no disk quota/backup claim |
 | Persistence | Three observed traces still queryable after one ordinary controlled restart, and queried again afterward; crash durability NOT VERIFIED |
@@ -141,13 +141,13 @@ Final full-suite command in **each** module:
 | Module | Tests | Failures | Errors | Skips |
 | --- | ---: | ---: | ---: | ---: |
 | User | 102 | 0 | 0 | 0 |
-| Learning | 118 | 0 | 0 | 0 |
+| Hospital | 118 | 0 | 0 | 0 |
 | JWKS | 80 | 0 | 0 | 0 |
 | Total | **300** | **0** | **0** | **0** |
 
 Counts were also summed directly from Surefire XML. The last source-only cleanup
 wrapped three test expressions without changing their tokens; whitespace/import/
-line-length checks ran afterward. No additional test run is claimed for that whitespace-only edit. Learning's full suite was
+line-length checks ran afterward. No additional test run is claimed for that whitespace-only edit. Hospital's full suite was
 rerun successfully after strengthening the distinct-resource User fixture.
 Existing JWT/JWKS, internal JWT, timeout/error handling, structured logging,
 correlation/MDC, servlet async/errors and Prometheus metrics tests remain enabled.
@@ -180,23 +180,23 @@ Successful final runtime marker: **`phase3-838f2ed0310f4671`**.
 | Probe | Observed trace ID | Span | Parent |
 | --- | --- | --- | --- |
 | User rejected anonymous internal request | `dd0a0c0cfdcf47d1bb23dacf2afb23c2` | `65ea9344fbc39e7e` | `00db50b3d757483d` |
-| Learning rejected anonymous protected request | `871608cc92144ac589de6f3b2a3551df` | `2cce52dbe475ed8d` | `cdb4b0f6eb234ef0` |
+| Hospital rejected anonymous protected request | `871608cc92144ac589de6f3b2a3551df` | `2cce52dbe475ed8d` | `cdb4b0f6eb234ef0` |
 | JWKS public lookup | `ffedf5928ad9408b865f24917a69d008` | `6765a969ba34ec92` | `674fadaf432d4c5b` |
 
-**Real deployed Learning -> JWKS chain**, trace
+**Real deployed Hospital -> JWKS chain**, trace
 `27fc34478b5f43d9b3e9a8f6356bc316`, correlation
 `phase3-838f2ed0310f4671-jwks-linked`:
 
 | Service / kind | Span ID | Parent ID | Name |
 | --- | --- | --- | --- |
-| learning-api SERVER | `8cc866c8d76ff002` | `81d42a0f4d194cbc` (probe remote parent) | http get /api/v1/integration/jwks |
-| learning-api CLIENT | `0551911509572202` | `8cc866c8d76ff002` | http get |
-| jwks-service SERVER | `c7935cdb51484596` | `0551911509572202` | http get /api/v1/jwks/{owner} |
+| hospital-api SERVER | `8cc866c8d76ff002` | `81d42a0f4d194cbc` (probe remote parent) | http get /api/v1/hospital/technical/jwks |
+| hospital-api CLIENT | `0551911509572202` | `8cc866c8d76ff002` | http get |
+| hospital-jwks-api SERVER | `c7935cdb51484596` | `0551911509572202` | http get /api/v1/jwks/{owner} |
 
 Exactly three stored spans, same distributed trace ID, two distinct server IDs,
 correct client parenting, unchanged application correlation and exactly one final
 completion per server in Loki/OpenSearch. This demonstrates a live multi-service
-chain. It does not by itself satisfy the separate Learning -> User gate; that gate
+chain. It does not by itself satisfy the separate Hospital -> User gate; that gate
 is now independently verified by the authenticated evidence in section O.
 
 Persistence traces recorded before the controlled restart and successfully queried
@@ -211,13 +211,13 @@ No claim is made about crash durability or 72h deletion.
 Mutation commands used explicit project/base/debug context:
 
 ```powershell
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
 python observability/verify-tracing.py --snapshot
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml pull otel-collector tempo
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build user-api learning-api jwks-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build tempo-storage-init
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build tempo otel-collector
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 jwks-api user-api learning-api grafana
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml pull otel-collector tempo
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build hospital-user-api hospital-api hospital-jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build tempo-storage-init
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build tempo otel-collector
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 hospital-jwks-api hospital-user-api hospital-api grafana
 python observability/verify-tracing.py --restart-tempo
 python observability/verify-tracing.py
 python observability/verify-metrics.py --credentials observability/local-test-credentials.json
@@ -235,7 +235,7 @@ Observed deployment and regression results:
 
 - Recreated only existing APIs and Grafana; added Collector, Tempo, initializer
   and one new Tempo volume. Tempo also had one controlled restart.
-- **26 unrelated existing containers unchanged**, including **all 16 jp_dev**
+- **26 unrelated existing containers unchanged**, including **all 16 hospital_dev**
   containers: IDs/images/start times/restart counts/ports/mounts/network membership.
 - **10 protected environment/key file fingerprints unchanged**. Original volumes,
   databases, RSA material, published application/debug ports and networks preserved.
@@ -258,21 +258,21 @@ Observed deployment and regression results:
 
 ## K. JWKS cross-project compatibility
 
-`japanese-learning` requires **no changes** and was not modified. The tracing-only
+`hospital-management` requires **no changes** and was not modified. The tracing-only
 JWKS dependency/configuration does not change controllers, endpoints, public key
 format, key IDs, issuer/validation policy, auth rules, errors or existing listeners.
-Before/after public User/Learning JWKS response-body fingerprints, Content-Type
+Before/after public User/Hospital JWKS response-body fingerprints, Content-Type
 and Cache-Control matched exactly. RSA fingerprints and network membership were
-unchanged, existing JWT/JWKS tests passed, and all 16 jp_dev containers were preserved.
+unchanged, existing JWT/JWKS tests passed, and all 16 hospital_dev containers were preserved.
 Trace/correlation diagnostic headers retain their existing compatible behavior.
 Existing optional API envelope `meta.traceId` can now be populated from SDK MDC
-in Learning/JWKS responses; this field was already in their response model. Raw
+in Hospital/JWKS responses; this field was already in their response model. Raw
 public JWKS key documents remain byte-content compatible by canonical fingerprint.
 No separate consumer implementation prompt is required.
 
 ## L. Outstanding issues and phase boundaries
 
-1. The authenticated Learning -> User gate is now closed by section O. Keep the
+1. The authenticated Hospital -> User gate is now closed by section O. Keep the
    existing ignored credentials file private; it was neither printed nor modified.
 2. Browser UI clicking is not exercised; datasource queries and link configuration
    are verified. Traces below 100% sampling are intentionally incomplete.
@@ -293,11 +293,11 @@ not a passing result. No known final implementation/test FAIL remains.
 | 1. Inspect six documents, real versions/clients/security/Compose and Git | PASS | Source/runtime audit; initially clean four worktrees |
 | 2. Boot-supported single tracing architecture; preserve metrics/logs | PASS | Managed starter/bridge, one Collector trace pipeline |
 | 3. Instrument incoming HTTP in all services; IDs/names/durations/status | PASS | Real HTTP tests and stored spans across all services |
-| 3. Supported outgoing managed clients; metadata/privacy/no duplicates | PASS | Managed client tests, live three-span Learning/JWKS chain, exporter tests |
+| 3. Supported outgoing managed clients; metadata/privacy/no duplicates | PASS | Managed client tests, live three-span Hospital/JWKS chain, exporter tests |
 | 4. W3C valid/missing/invalid parent and tracestate | PASS | Actual HTTP tests and live remote-parent spans |
 | 4. Independent validated correlation and MDC completion behavior | PASS | Existing regressions plus live both-backend assertions |
-| 5. Learning -> User server/client/server parenting and correlation in tests | PASS | Actual ServiceClientConfig, two HTTP contexts with distinct identities |
-| 5. Deployed authenticated Learning -> User same trace and JWT success | PASS | Section O: real internal-JWT call, shared trace and parent chain |
+| 5. Hospital -> User server/client/server parenting and correlation in tests | PASS | Actual ServiceClientConfig, two HTTP contexts with distinct identities |
+| 5. Deployed authenticated Hospital -> User same trace and JWT success | PASS | Section O: real internal-JWT call, shared trace and parent chain |
 | 5. Timeouts, JWT and error handling preserved | PASS | Existing client/JWT regressions and unchanged production client code |
 | 6. JSON traceId/spanId/correlationId, no duplicate fields/events | PASS | Existing encoder/filter tests plus exact live completions |
 | 6. Async/error/security behavior and MDC cleanup | PASS | MVC Callable tracing and previous lifecycle/security suites |
@@ -314,7 +314,7 @@ not a passing result. No known final implementation/test FAIL remains.
 | 14. Relevant Maven suites and exact counts | PASS | 300 tests;0 failures/errors/skips |
 | 15.1Ã¢â‚¬â€œ12. Compose/build/deploy/health/scrapes/Collector/Tempo/Grafana | PASS | Explicit scoped commands and actual queries |
 | 15.13Ã¢â‚¬â€œ14. Real trace delivery and all three server spans | PASS | Stored trace IDs above |
-| 15.15-17. Live Learning -> User parents/common trace/correlation | PASS | Section O: actual Tempo spans and matching Loki/OpenSearch records |
+| 15.15-17. Live Hospital -> User parents/common trace/correlation | PASS | Section O: actual Tempo spans and matching Loki/OpenSearch records |
 | 15.18Ã¢â‚¬â€œ19. JSON IDs plus Loki/OpenSearch ingestion | PASS | Exact completion/event/trace assertions per server |
 | 15.20. Positive deployed login/refresh/logout/internal JWT | PASS | Section O: all successful; existing account only; session logged out |
 | 15.21. Deployed JWKS response compatibility | PASS | Both public owners unchanged |
@@ -331,13 +331,13 @@ All four repositories began clean and remain on `develop`. Current HEADs:
 | --- | --- |
 | Root | `05833089ec56d8a1136d7af28ece100bfd8192f7` |
 | User | `e33853516185ed020cb03d80373c3deba50e584d` |
-| Learning | `0f39ac27aea7c9478b239c5775c0c86d4374ab9a` |
+| Hospital | `0f39ac27aea7c9478b239c5775c0c86d4374ab9a` |
 | JWKS | `9864becadd3e0a1e884875591bef99bbcd4d775e` |
 
 All task changes are unstaged/uncommitted. Root has Compose, examples, docs,
 datasource/baseline-verifier edits, new Collector/Tempo/tracing files and three dirty
 submodules. User has application/example/default-assertion edits and new tracing
-production/tests. Learning/JWKS additionally modify their POMs. No tracked secret,
+production/tests. Hospital/JWKS additionally modify their POMs. No tracked secret,
 RSA key, account record or unrelated repository was edited. Ignored `.log` outputs
 and the secret-free ignored preservation snapshot are local verification artifacts.
 No commit, push, reset or branch operation was performed. Stop here for Phase3 review.
@@ -363,16 +363,16 @@ Both this document and tracing.md were read before testing.
 | Requested check | Status | Actual evidence |
 | --- | --- | --- |
 | 1a. Successful User API login | PASS | POST /auth/login returned200, Bearer token contract valid, response correlation preserved |
-| 1b. Successful User API refresh | PASS | POST /auth/refresh returned200, refresh token rotated, new access token retained the existing account identity and authenticated the subsequent Learning request |
+| 1b. Successful User API refresh | PASS | POST /auth/refresh returned200, refresh token rotated, new access token retained the existing account identity and authenticated the subsequent Hospital request |
 | 1c. Successful User API logout | PASS | POST /auth/logout returned200 using the rotated refresh token and refreshed access token; verification session cleanup ran in finally |
-| 2. Authenticated Learning -> User internal JWT communication | PASS | Learning lookup returned200 and the requested existing user; direct use of the external user JWT on User's /internal/users/{id} returned401, distinguishing the internal service-auth path |
-| 3. W3C traceparent propagation across Learning -> User | PASS | Learning continued the supplied sampled W3C parent; User's traceparent-derived callerTraceId/callerSpanId diagnostics matched the distributed trace and outgoing client span in both log backends |
-| 4. Server/client/server parent-child relationships | PASS | Learning server -> Learning client -> User server IDs/parents match the actual Tempo data below |
-| 5. Shared trace ID across Learning and User | PASS | All core spans use fda09edbe0bd47da8dee413d1fa31ec9 |
+| 2. Authenticated Hospital -> User internal JWT communication | PASS | Hospital lookup returned200 and the requested existing user; direct use of the external user JWT on User's /internal/users/{id} returned401, distinguishing the internal service-auth path |
+| 3. W3C traceparent propagation across Hospital -> User | PASS | Hospital continued the supplied sampled W3C parent; User's traceparent-derived callerTraceId/callerSpanId diagnostics matched the distributed trace and outgoing client span in both log backends |
+| 4. Server/client/server parent-child relationships | PASS | Hospital server -> Hospital client -> User server IDs/parents match the actual Tempo data below |
+| 5. Shared trace ID across Hospital and User | PASS | All core spans use fda09edbe0bd47da8dee413d1fa31ec9 |
 | 6. Independent, preserved X-Correlation-ID | PASS | Response and both server completions retain phase3-auth-a4e5371b32444c0e-linked; this value is distinct from the trace ID |
 | 7. Trace visibility in Tempo using Grafana datasource queries | PASS | Authenticated Grafana Tempo datasource-proxy trace-by-ID requests returned login, refresh, linked and logout traces |
 | 8. Matching traceId/spanId/correlationId in Loki and OpenSearch | PASS | Exact own-server span IDs and shared trace/correlation match Tempo; one completion per expected server in each backend, all status200 |
-| 9. No actual verification secrets/PII in observed logs/exported spans | PASS | In-memory scans of retrieved auth traces, matching Loki/OpenSearch records and complete User/Learning/JWKS container logs for the request window found no tested actual passwords, access/refresh tokens, their SHA-256 values, subject IDs, account identifiers, synthetic query/cookie/baggage sentinels or JWT-shaped values; attribute/event checks also passed |
+| 9. No actual verification secrets/PII in observed logs/exported spans | PASS | In-memory scans of retrieved auth traces, matching Loki/OpenSearch records and complete User/Hospital/JWKS container logs for the request window found no tested actual passwords, access/refresh tokens, their SHA-256 values, subject IDs, account identifiers, synthetic query/cookie/baggage sentinels or JWT-shaped values; attribute/event checks also passed |
 | 10. All APIs and observability services remain operational | PASS | Before/after API readiness, Prometheus and three targets UP, Loki readiness, OpenSearch availability, Fluent Bit running with actual fresh delivery, Collector/Tempo readiness and Grafana database health passed |
 
 ### Actual authenticated span evidence
@@ -382,22 +382,22 @@ Correlation ID: **`phase3-auth-a4e5371b32444c0e-linked`**.
 
 | Service / kind | Span ID | Parent span ID | Name |
 | --- | --- | --- | --- |
-| learning-api SERVER | `51dbeba2fe661a0c` | `7ae5773e13e14fc7` (supplied remote parent) | http get /api/v1/learning/internal-test/users/{id} |
-| learning-api CLIENT | `8ece1a824296f71c` | `51dbeba2fe661a0c` | http get |
-| user-learning SERVER | `4c308eeac28b26bf` | `8ece1a824296f71c` | http get /internal/users/{id} |
+| hospital-api SERVER | `51dbeba2fe661a0c` | `7ae5773e13e14fc7` (supplied remote parent) | http get /api/v1/hospital/technical/users/{id} |
+| hospital-api CLIENT | `8ece1a824296f71c` | `51dbeba2fe661a0c` | http get |
+| hospital-user-api SERVER | `4c308eeac28b26bf` | `8ece1a824296f71c` | http get /internal/users/{id} |
 
 The controlled incoming header was
 `00-fda09edbe0bd47da8dee413d1fa31ec9-7ae5773e13e14fc7-01`.
 User's completion diagnostics, parsed from its incoming traceparent, reported
 callerTraceId equal to that trace and callerSpanId `8ece1a824296f71c`, matching
-the actual Learning CLIENT span. The server spans retain their distinct own IDs.
+the actual Hospital CLIENT span. The server spans retain their distinct own IDs.
 These checks establish actual wire propagation and parenting, rather than merely
 finding separate spans with the same application correlation ID.
 
 The linked trace contains **seven spans total**: the three core HTTP spans above
 plus four legitimate JWKS retrieval client/server spans while JWT decoders loaded
 keys. Those extra HTTP requests are distinct operations, not duplicated core spans.
-Exactly one Learning SERVER, one User-directed Learning CLIENT and one User SERVER
+Exactly one Hospital SERVER, one User-directed Hospital CLIENT and one User SERVER
 were found in the linked trace.
 
 | Auth operation | Observed trace ID | User SERVER span ID | Total trace spans |
@@ -414,10 +414,10 @@ credentials only in memory. Each User SERVER continued its own supplied W3C pare
 
 Loki query_range and OpenSearch searches filtered on the exact operation correlation
 IDs (`...-login`, `...-refresh`, `...-linked`, `...-logout`). Five expected core server
-completions matched in **each** backend: login, refresh, Learning linked server,
+completions matched in **each** backend: login, refresh, Hospital linked server,
 User linked server, and logout. All ten paired records had status200 and exact
 traceId/spanId/correlationId matches with Tempo. The linked routes remained
-`/api/v1/learning/internal-test/users/{id}` and `/internal/users/{id}`; no raw user
+`/api/v1/hospital/technical/users/{id}` and `/internal/users/{id}`; no raw user
 ID was needed in the report, logs or exported span attributes.
 
 Privacy checks held actual values only in process memory, including old/new access
@@ -441,7 +441,7 @@ application behavior. Response bodies and raw log/trace payloads were not printe
 
 Before and after the authenticated flow:
 
-- User, Learning and JWKS readiness endpoints returned200.
+- User, Hospital and JWKS readiness endpoints returned200.
 - Prometheus /-/ready returned200, with all three configured scrape targets UP.
 - Loki /ready returned200. Fresh authenticated records were delivered to Loki
   and OpenSearch through the unchanged Fluent Bit pipeline.

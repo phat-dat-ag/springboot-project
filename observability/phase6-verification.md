@@ -43,11 +43,11 @@ Prior passes were not assumed to remain true.
 | OpenSearch / OpenSearch Dashboards |3.9.0 /3.9.0 |
 | Collector Contrib / Tempo |0.143.0 /2.9.0 |
 | MySQL / PostgreSQL |8.4 pinned digest /17.6 |
-| Spring Boot User / Learning / JWKS |4.1.1 /4.1.2 /4.1.2 from POMs |
+| Spring Boot User / Hospital / JWKS |4.1.1 /4.1.2 /4.1.2 from POMs |
 | Local Maven Java |Temurin17.0.19 |
 
 Captured all34 containers, including23 running at the observed baseline,
-18 target-project containers and16 unrelated `jp_dev` containers, plus93 volumes.
+18 target-project containers and16 unrelated `hospital_dev` containers, plus93 volumes.
 Snapshots include IDs/start times/restart counts, image IDs, read-only mounts,
 network/ports/resource/log limits, actual database/observability volume identities,
 twelve protected env/key/credential fingerprints, existing Grafana dashboard/rule/
@@ -79,20 +79,20 @@ not user-specific metric or Loki stream labels.
 ## D. Authentication and JWT/JWKS
 
 The existing ignored local credentials were used only in memory. PASS: login,
-authenticated Learning `/me`, access-token verification through a protected API,
+authenticated Hospital `/me`, access-token verification through a protected API,
 refresh rotation, new-token access and logout of this test's own session. No user
 account/password/role or unrelated session was changed; no direct SQL was issued.
 These authorized auth endpoints necessarily create/rotate/remove their own session
 records, unlike prohibited business-data/database mutations.
 
-PASS: Learning→User internal JWT request returned the existing subject, external
+PASS: Hospital→User internal JWT request returned the existing subject, external
 access token was rejected on User's internal route with401, invalid bearer was401,
 unauthenticated calls were401, and an authenticated public metrics request was403.
 The available account is non-admin: `/admin/users/{id}` correctly returned403.
 Positive administrative User access is NOT VERIFIED without suitable credentials;
 positive User access via the real authenticated internal client passed.
 
-PASS: public User/Learning JWKS responses remain identical to baseline hashes;
+PASS: public User/Hospital JWKS responses remain identical to baseline hashes;
 access-token `kid` matches a published RSA key, algorithmRS256 and configured issuer
 match. Maven tests also exercise wrong issuer/audience/subject/signature/kid/type
 and external/internal token boundaries; this does not claim every negative case
@@ -119,7 +119,7 @@ a universal proof against every future sensitive input.
 
 **9/9 targets UP, no scrape errors:** three applications and Prometheus, Loki,
 Collector, Tempo, Fluent Bit and Grafana. Actual HTTP count/buckets, JVM heap/GC/
-threads/CPU, security counters, User/Learning Hikari active/pending/max/acquisition/
+threads/CPU, security counters, User/Hospital Hikari active/pending/max/acquisition/
 timeouts, managed internal HTTP client metrics and Collector/Fluent Bit counters
 were queried. All3 services had finite p50/p95/p99 from the real histogram buckets.
 JWKS has no Hikari pool, correctly classified NOT APPLICABLE.
@@ -134,10 +134,10 @@ Unknown/zero maxima and idle error ratios are not turned into misleading values.
 ## G. Distributed tracing
 
 Final authenticated linked trace: `152e8ba9676e424eaf5663d30265f676`.
-The stored Learning SERVER, managed CLIENT and User SERVER span chain had the
+The stored Hospital SERVER, managed CLIENT and User SERVER span chain had the
 correct parent relationships, positive timings and correct resource identity/
 environment. Each server's real span ID matched its log record. Correlation was
-independent from trace ID and matched across Learning/User completions.
+independent from trace ID and matched across Hospital/User completions.
 
 PASS: Tempo trace-by-ID through Grafana's proxy, three actual TraceQL exploration
 forms, log-derived trace extraction, trace resolution and reverse trace-ID Loki
@@ -151,7 +151,7 @@ All8 expected stable `sb5-*` dashboards exist, are file-provisioned and belong t
 folder UID `observability`. Each dashboard's variables, time range and30s refresh
 match source. Field options, units, legends and no-data configuration match source;
 datasource UIDs resolve. Executed174 real queries: every Phase5 panel target with
-all-service selection and with Learning/environment filtering. Filtered output
+all-service selection and with Hospital/environment filtering. Filtered output
 service labels were checked when present. Empty/NaN results are permitted only as
 data states, not parser failures. No parser/datasource error occurred.
 
@@ -223,7 +223,7 @@ neither is a filesystem quota. Current readiness checks do not measure hard
 overflow, inode exhaustion, crash recovery or maximum outage coverage.
 
 Final bounded sample: OpenSearch1.004GiB/2GiB RSS, heap60%; API heaps roughly
-User21.7%, Learning21.3%, JWKS15.8%; Hikari utilization/pending0; Collector queue0.
+User21.7%, Hospital21.3%, JWKS15.8%; Hikari utilization/pending0; Collector queue0.
 OpenSearch node filesystem available955,883,905,024 bytes. This is not a host-wide
 capacity guarantee or implemented pressure alert. Actual174 query samples were
 2.43–40.45ms, median6.19ms locally. See [capacity-planning.md](capacity-planning.md)
@@ -269,7 +269,7 @@ test that merely exposes more endpoints to obtain successful probes.
 | `python observability/summarize-phase6.py` | exit0; sanitized current/historical checklist and measured JSON |
 | `python -m unittest discover -s observability -p test_phase6_tooling.py -v` |7 tests passed,0 failures/errors |
 | `.\mvnw.cmd -o test` in User |102 tests,0 failures/errors/skips; exit0 |
-| `.\mvnw.cmd -o test` in Learning |118 tests,0 failures/errors/skips; exit0 |
+| `.\mvnw.cmd -o test` in Hospital |118 tests,0 failures/errors/skips; exit0 |
 | `.\mvnw.cmd -o test` in JWKS |80 tests,0 failures/errors/skips; exit0 |
 | `python -m py_compile observability/verify-phase6.py observability/summarize-phase6.py` | exit0 |
 | `git diff --check` | exit0 |
@@ -277,7 +277,7 @@ test that merely exposes more endpoints to obtain successful probes.
 Maven initially could not acquire `.m2` lock files inside the sandbox. The same
 offline suites were rerun outside the sandbox with permission, using existing
 dependencies; all passed. Surefire XML totals were independently summed:
-User16 report files, Learning17, JWKS13. New Python tests check secret-safe error
+User16 report files, Hospital17, JWKS13. New Python tests check secret-safe error
 output, bounded subprocess timeout, deterministic hashing, secret-excluding and
 mount-order-normalized inventories, truthful FAIL/NOT VERIFIED reporting and
 configuration-derived access/rotation findings. Both current findings were also
@@ -346,7 +346,7 @@ performance and an isolated timed alert lifecycle.
 Each test states objective, prerequisites, exact manifest-scoped components,
 isolation, risks, precautions, steps, expected results, evidence, rollback and
 explicit approval. A dedicated host is preferred for resource/failure tests to
-avoid affecting shared `jp_dev`. No host-wide disk fill, live-volume restore,
+avoid affecting shared `hospital_dev`. No host-wide disk fill, live-volume restore,
 timestamp manipulation, uncontrolled load, live-rule threshold change or automatic
 external delivery is authorized. **None of Phase6B was executed.**
 
@@ -354,8 +354,8 @@ external delivery is authorized. **None of Phase6B was executed.**
 
 No JWKS endpoint, key format/kid, issuer, signing/validation behavior, internal auth,
 network contract or response changed. Public response hashes and real internal
-communication passed. `japanese-learning` requires no changes; no separate Codex
-implementation prompt is necessary. It was not edited and all16 `jp_dev` container
+communication passed. `hospital-management` requires no changes; no separate Codex
+implementation prompt is necessary. It was not edited and all16 `hospital_dev` container
 identities/start times/mounts remained intact.
 
 ## R. Git and container preservation
@@ -370,7 +370,7 @@ dashboard, alert, datasource, Collector, Fluent Bit or application config change
 | --- | --- | --- |
 | Root |develop /`ed8b88148ead44f01eb13766d6c6c1a1be0ac5b0` | Only Phase6 tooling/docs changes; no commit/push |
 | User |develop /`e7991b34d310b94696469dda30c108645e06d00e` | clean |
-| Learning |develop /`f6a61f6a0d1284adc831fa6f04b83ce23c02faa2` | clean |
+| Hospital |develop /`f6a61f6a0d1284adc831fa6f04b83ce23c02faa2` | clean |
 | JWKS |develop /`7879d155eddb45fb079800709f49a3c3a1566120` | clean |
 
 All34 original container IDs, start times, restart counts, ports, networks and

@@ -64,7 +64,7 @@ def git_state():
     return {module: {'head': cmd('git', '-C', str(ROOT / module), 'rev-parse', 'HEAD').strip(),
                      'branch': cmd('git', '-C', str(ROOT / module), 'branch', '--show-current').strip(),
                      'status': cmd('git', '-C', str(ROOT / module), 'status', '--short')}
-            for module in ['.', 'springboot-user-api', 'springboot-learning-api', 'springboot-jwks-api']}
+            for module in ['.', 'springboot-user-api', 'springboot-hospital-api', 'springboot-jwks-api']}
 
 
 def dev_state():
@@ -401,7 +401,7 @@ def generate(folder, run):
 telemetry_writer:
   cluster_permissions: [cluster_composite_ops]
   index_permissions:
-    - index_patterns: ["springboot-user-20*-logs", "springboot-learning-20*-logs", "springboot-jwks-20*-logs"]
+    - index_patterns: ["springboot-user-20*-logs", "springboot-hospital-20*-logs", "springboot-jwks-20*-logs"]
       allowed_actions: ["indices:data/write/bulk*", "indices:data/write/index*", "indices:data/write/create*", "indices:admin/create", "indices:admin/mapping/put"]
 telemetry_reader:
   cluster_permissions: ["cluster:monitor/health"]

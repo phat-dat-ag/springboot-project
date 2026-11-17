@@ -29,7 +29,7 @@ Actuator, never `env`, `beans`, `configprops`, `heapdump` or `threaddump`. Defau
 standalone exposure remains health; the extra listener defaults off. Both listener
 enablement and health,prometheus exposure are explicit in Compose.
 
-**Trust boundary:** the existing private `springboot_project_default` bridge and
+**Trust boundary:** the existing private `hospital-network` bridge and
 its attached containers are trusted scrapers. There is no scraper password or
 TLS inside this bridge. This is network isolation, not a hidden URL or a claim of
 per-container identity. Docker administrators and processes able to access private
@@ -64,7 +64,7 @@ optional `observability/local-test-credentials.json` path supplied for testing.
 ## Names, labels and instrumentation
 
 Common labels are only `service` and `environment`, using canonical Phase 0 names:
-`user-learning`, `learning-api`, `jwks-service`. Version belongs on `app_build_info`
+`hospital-user-api`, `hospital-api`, `hospital-jwks-api`. Version belongs on `app_build_info`
 as `version`, avoiding release-label multiplication of every meter. Prometheus adds
 `job="springboot"` and `instance="<compose-service>:9091"` during collection; it does
 not add duplicate service/environment target labels.
@@ -88,7 +88,7 @@ not add duplicate service/environment target labels.
 | `up`, `scrape_duration_seconds`, `scrape_samples_scraped` | Prometheus scrape engine | job, instance; these are target metrics, not application meters |
 
 Exact live label sets and availability are recorded in the verification report.
-User/Learning use their existing MySQL/PostgreSQL Hikari pools. JWKS has no JDBC
+User/Hospital use their existing MySQL/PostgreSQL Hikari pools. JWKS has no JDBC
 dependency/datasource and intentionally exports no Hikari/JDBC meters. No database
 or new pool is introduced to manufacture metrics; pool sizing/behavior is unchanged.
 
@@ -141,7 +141,7 @@ No independent Security-event listener counts the same request again.
 
 ## Internal HTTP client
 
-Learning's existing `ServiceClientConfig` clones a Boot-managed `RestClient.Builder`,
+Hospital's existing `ServiceClientConfig` clones a Boot-managed `RestClient.Builder`,
 which already carries the ObservationRegistry. `UserServiceClient` uses
 `/internal/users/{id}` as a URI template. No manual timer or second interceptor is
 added. Built-in HTTP observations record status and duration once, including
@@ -152,7 +152,7 @@ Other managed JWKS HTTP clients may also expose standard client meters after use
 ## Prometheus and Grafana
 
 `observability/prometheus/prometheus.yml` scrapes the three stable DNS targets
-`user-api:9091`, `learning-api:9091`, `jwks-api:9091`, every 15s with 5s timeout.
+`hospital-user-api:9091`, `hospital-api:9091`, `hospital-jwks-api:9091`, every 15s with 5s timeout.
 Per scrape: 20k sample limit, 20 labels/sample, bounded label-name/value sizes.
 This avoids unbounded ingestion on accidental instrumentation changes; rejected
 scrapes become DOWN and must be investigated. No self-scrape/extra backend is added.
@@ -161,7 +161,7 @@ Image `prom/prometheus:v3.13.5` is the explicitly versioned LTS release listed b
 the [official download page](https://prometheus.io/download/). Runtime is non-root,
 read-only root filesystem, capabilities dropped, 512 MiB memory, one CPU, 128 PID
 limit, unless-stopped restart. `/prometheus` is the sole named writable volume
-`springboot_project_prometheus_data`; config is read-only. Retention is 15 days or
+`hospital_dev_prometheus_data`; config is read-only. Retention is 15 days or
 2 GiB (flag `2GB`, reported by Prometheus as `2GiB`), whichever limit is reached first. Size retention is not a hard filesystem
 quota: WAL/head/temporary compaction need extra disk. Backups/capacity/outage
 hardening remain Phase 6. Readiness uses the image's wget and `/-/ready`.
@@ -179,8 +179,8 @@ API: `GET /api/v1/targets`; every target must be UP with no lastError.
 ```powershell
 python observability/verify-baseline.py --runtime
 python observability/verify-metrics.py --credentials observability/local-test-credentials.json
-docker compose -p springboot_project exec -T prometheus promtool check config /etc/prometheus/prometheus.yml
-docker compose -p springboot_project exec -T prometheus wget -q -O - http://jwks-api:9091/actuator/prometheus
+docker compose -p hospital_dev exec -T prometheus promtool check config /etc/prometheus/prometheus.yml
+docker compose -p hospital_dev exec -T prometheus wget -q -O - http://hospital-jwks-api:9091/actuator/prometheus
 ```
 
 The credentials file must already exist and be ignored; it contains an existing
@@ -203,7 +203,7 @@ histogram_quantile(0.95, sum by (le,service) (rate(http_server_requests_seconds_
 # Per-route p99
 histogram_quantile(0.99, sum by (le,service,uri) (rate(http_server_requests_seconds_bucket[5m])))
 # Internal client latency (when traffic exists)
-histogram_quantile(0.95, sum by (le) (rate(http_client_requests_seconds_bucket{service="learning-api",uri="/internal/users/{id}"}[5m])))
+histogram_quantile(0.95, sum by (le) (rate(http_client_requests_seconds_bucket{service="hospital-api",uri="/internal/users/{id}"}[5m])))
 # Security and pools
 sum by (service,operation,result) (increase(app_security_events_total[15m]))
 hikaricp_connections_active / hikaricp_connections_max

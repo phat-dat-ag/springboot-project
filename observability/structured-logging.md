@@ -12,7 +12,7 @@ is part of Phase 1.
 | --- | --- | --- |
 | `@timestamp` | String | UTC ISO timestamp with milliseconds, e.g. `2026-11-10T08:00:00.123Z` |
 | `level`, `logger_name`, `thread_name`, `message` | String | Standard encoder fields; never duplicated by MDC |
-| `service` | String | `user-learning`, `learning-api`, `jwks-service`; existing Loki labels preserved |
+| `service` | String | `hospital-user-api`, `hospital-api`, `hospital-jwks-api`; existing Loki labels preserved |
 | `serviceVersion`, `environment` | String | Existing Phase 0 release/deployment metadata |
 | `event` | String | `http.request.started`, `http.request.completed`, or named business/lifecycle event |
 | `correlationId` | String | Effective validated request ID; numeric-looking IDs remain strings |
@@ -51,13 +51,13 @@ Example sanitized completion (additional standard encoder fields omitted):
   "@timestamp": "2026-11-10T08:00:00.123Z",
   "level": "INFO",
   "message": "API request completed",
-  "service": "learning-api",
+  "service": "hospital-api",
   "serviceVersion": "0.0.1-SNAPSHOT",
   "environment": "development",
   "correlationId": "example-request-1",
   "event": "http.request.completed",
   "http.request.method": "GET",
-  "http.route": "/api/v1/learning/internal-test/users/{id}",
+  "http.route": "/api/v1/hospital/technical/users/{id}",
   "http.response.status_code": 200,
   "durationMs": 12,
   "outcome": "success",
@@ -70,7 +70,7 @@ Example sanitized completion (additional standard encoder fields omitted):
 
 `logging/filter/RequestLoggingFilter` runs after the framework observation scope
 but before Spring Security. Explicit registration includes REQUEST, ASYNC and ERROR
-dispatches. The previous User/Learning correlation and completion filters are removed
+dispatches. The previous User/Hospital correlation and completion filters are removed
 so there is one owner.
 
 - Accept exactly one `X-Correlation-ID` matching
@@ -80,7 +80,7 @@ so there is one owner.
   still be written. Never log the rejected header value.
 - Scope MDC per dispatch, discard stale request-owned values, and restore the
   outer non-request context, including framework trace metadata.
-- Propagate the same ID through Learning's User/JWKS clients and both User JWKS
+- Propagate the same ID through Hospital's User/JWKS clients and both User JWKS
   decoders. Existing managed builders and trace-header behavior are retained.
 - Capture Spring MVC Callable diagnostic context on the worker and restore it
   afterward. Async listeners restore context for the final completion event and
@@ -163,7 +163,7 @@ in expanded documents and legacy-field queries. No new Grafana dashboard is adde
 Successful readiness requests intentionally do not generate INFO log records now.
 For a public ingestion probe, request JWKS `/api/v1/jwks/user` with a chosen valid
 correlation ID, then search that ID. Use authenticated API calls to verify all three
-services and Learning -> User propagation. Full tracing/exporters remain deferred.
+services and Hospital -> User propagation. Full tracing/exporters remain deferred.
 
 Phase 2 keeps this contract and also treats successful Prometheus scrapes as DEBUG
 completion events, like health probes, to avoid periodic INFO ingestion noise.

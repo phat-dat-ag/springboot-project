@@ -19,7 +19,7 @@
   },
   "maven": {
     "user": {"tests": 105, "failures": 0, "errors": 0, "skipped": 0},
-    "learning": {"tests": 121, "failures": 0, "errors": 0, "skipped": 0},
+    "hospital": {"tests": 121, "failures": 0, "errors": 0, "skipped": 0},
     "jwks": {"tests": 83, "failures": 0, "errors": 0, "skipped": 0}
   },
   "python_unit_tests": {"tests": 15, "failures": 0, "errors": 0},
@@ -38,7 +38,7 @@
     "original_volumes_retained": 93,
     "target_containers_at_baseline": 18,
     "unrelated_containers_unchanged": 16,
-    "allowed_affected_services": ["user-api", "learning-api", "jwks-api", "fluent-bit"],
+    "allowed_affected_services": ["hospital-user-api", "hospital-api", "hospital-jwks-api", "fluent-bit"],
     "historical_prometheus_samples_preserved": true,
     "historical_loki_records_preserved": true,
     "historical_tempo_traces_preserved": true,

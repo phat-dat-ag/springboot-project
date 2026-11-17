@@ -11,7 +11,7 @@
       {
         "index_patterns": [
           "springboot-user-20*-logs",
-          "springboot-learning-20*-logs",
+          "springboot-hospital-20*-logs",
           "springboot-jwks-20*-logs"
         ],
         "allowed_actions": [

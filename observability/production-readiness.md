@@ -39,7 +39,7 @@ with an admin test account; browser rendering/clicks; real elapsed alert lifecyc
 external notification/recovery delivery; crash/overflow durability; physical
 retention deletion; backup integrity/restore; production load capacity; live async
 endpoint behavior; backend storage-pressure alerting. Existing non-admin 403,
-authenticated Learning and internal User access passed. Async/MDC behavior passed
+authenticated Hospital and internal User access passed. Async/MDC behavior passed
 in isolated Maven fixtures; no public async test endpoint was added.
 
 ## Evidence and scope
@@ -74,7 +74,7 @@ executed during Phase 6A. No runtime configuration was changed.
 
 ## Remediation follow-up — 2026-11-12
 
-The preceding statement describes the original Phase6A run. The separately authorized [remediation](phase6a-remediation.md) subsequently applied logging configuration: three sequential API recreations using existing images and one graceful Fluent Bit configuration restart. Databases/backends/Grafana and all16`jp_dev` containers were unchanged; original93 volumes and historical samples remained intact.
+The preceding statement describes the original Phase6A run. The separately authorized [remediation](phase6a-remediation.md) subsequently applied logging configuration: three sequential API recreations using existing images and one graceful Fluent Bit configuration restart. Databases/backends/Grafana and all16`hospital_dev` containers were unchanged; original93 volumes and historical samples remained intact.
 
 | Readiness area | Current conclusion |
 |---|---|
@@ -89,7 +89,7 @@ The preceding statement describes the original Phase6A run. The separately autho
 | Production telemetry security | FAIL / OPEN; native secure candidate NOT DEPLOYED |
 | Overall production readiness | FAIL / NOT DEMONSTRATED |
 
-Do not approve live security activation solely from a successful structural check. [Required PKI, migration/rollback and isolated negative tests](secure-production/README.md) remain prerequisites. No JWT/JWKS contract or `japanese-learning` change is required.
+Do not approve live security activation solely from a successful structural check. [Required PKI, migration/rollback and isolated negative tests](secure-production/README.md) remain prerequisites. No JWT/JWKS contract or `hospital-management` change is required.
 
 ## Phase6B isolated follow-up — 2026-11-12
 
@@ -97,4 +97,4 @@ See [executed verification](phase6b-verification.md), [acceptance matrix](phase6
 
 These results apply to disposable memory-backed stores, synthetic traffic and test-only PKI. Existing development services were not restarted or migrated. **Deployed production telemetry security remains FAIL/OPEN.** Real application SSL bundles/metrics proxies, positive password/Dashboards integration, host/storage durability, dedicated backend disk-full/pressure alerts, complete Loki/Tempo/Prometheus expiry, off-host recovery, representative capacity, browser behavior and external provider delivery remain NOT VERIFIED or BLOCKED.
 
-Local native TLS, internal alert lifecycle and restore evidence improved; full Phase6B acceptance and overall production readiness remain unestablished. No production RPO/RTO or capacity objective is promised. `japanese-learning` needs no changes. Review the scoped evidence before separately authorizing any live migration.
+Local native TLS, internal alert lifecycle and restore evidence improved; full Phase6B acceptance and overall production readiness remain unestablished. No production RPO/RTO or capacity objective is promised. `hospital-management` needs no changes. Review the scoped evidence before separately authorizing any live migration.

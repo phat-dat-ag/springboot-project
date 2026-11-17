@@ -11,8 +11,8 @@ import urllib.parse
 import urllib.request
 
 ROOT = Path(__file__).resolve().parents[1]
-APIS = {'user-api': ('user-learning', 5005), 'learning-api': ('learning-api', 5006),
-        'jwks-api': ('jwks-service', 5007)}
+APIS = {'hospital-user-api': ('hospital-user-api', 5005), 'hospital-api': ('hospital-api', 5006),
+        'hospital-jwks-api': ('hospital-jwks-api', 5007)}
 
 
 def docker(*args, input_text=None):
@@ -116,7 +116,7 @@ def main():
         else:
             assert service.get('volumes') == old.get('volumes'), 'A mount changed'
         expected = dict(old)
-        if name in {'user-api', 'learning-api', 'jwks-api', 'fluent-bit', 'loki',
+        if name in {'hospital-user-api', 'hospital-api', 'hospital-jwks-api', 'fluent-bit', 'loki',
                     'opensearch', 'opensearch-dashboards', 'grafana'}:
             expected['logging'] = service['logging']
             assert service['logging']['driver'] == 'json-file'

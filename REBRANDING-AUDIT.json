@@ -1,0 +1,6614 @@
+{
+  "jwks_head": "ce012c84f1a1acc8f9b3a0a3039906b37be3332c",
+  "jwks_status": "",
+  "jwks_gitlink": "160000 e9b90c31dfa311e0121285c8b7caa37c09cf4287 0\tspringboot-jwks-api",
+  "audit": [
+    {
+      "file": ".env.user-api.example",
+      "matches": [
+        {
+          "line": 25,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 66,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "DEBUGGING.md",
+      "matches": [
+        {
+          "line": 6,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 12,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 13,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 16,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "INTERNAL-HTTP-REVIEW.md",
+      "matches": [
+        {
+          "line": 67,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 68,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 69,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 70,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 71,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 73,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 74,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 75,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 76,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 146,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 147,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 148,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 164,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 165,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 166,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 167,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 168,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 169,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 170,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 172,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 173,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 174,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "JWT-AUTHENTICATION.md",
+      "matches": [
+        {
+          "line": 116,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/alerting.md",
+      "matches": [
+        {
+          "line": 120,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/backup-restore.md",
+      "matches": [
+        {
+          "line": 25,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 81,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 84,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 85,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/build-phase5.py",
+      "matches": [
+        {
+          "line": 54,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 87,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 152,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 248,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 249,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/fluent-bit/fluent-bit.conf",
+      "matches": [
+        {
+          "line": 75,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/database.json",
+      "matches": [
+        {
+          "line": 57,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 108,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 159,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 210,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 261,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 414,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 461,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/http.json",
+      "matches": [
+        {
+          "line": 769,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/infrastructure.json",
+      "matches": [
+        {
+          "line": 834,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/jvm.json",
+      "matches": [
+        {
+          "line": 971,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/logging.json",
+      "matches": [
+        {
+          "line": 473,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/overview.json",
+      "matches": [
+        {
+          "line": 729,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/security.json",
+      "matches": [
+        {
+          "line": 423,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/dashboards/tracing.json",
+      "matches": [
+        {
+          "line": 270,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/provisioning/alerting/phase5.json",
+      "matches": [
+        {
+          "line": 135,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/grafana/README.md",
+      "matches": [
+        {
+          "line": 31,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 40,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 41,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 42,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 49,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 62,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 92,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 96,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/inventory-telemetry-endpoints.py",
+      "matches": [
+        {
+          "line": 13,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/logging-pipeline.md",
+      "matches": [
+        {
+          "line": 134,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/metrics.md",
+      "matches": [
+        {
+          "line": 32,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 67,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 164,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 182,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 183,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/opensearch/README.md",
+      "matches": [
+        {
+          "line": 4,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 17,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 25,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 36,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 37,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 42,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 75,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 79,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/operations-runbook.md",
+      "matches": [
+        {
+          "line": 3,
+          "identifiers": [
+            "jp_dev",
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 30,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 42,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 50,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 51,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 74,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 75,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 76,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 77,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 91,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 168,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase0-baseline.md",
+      "matches": [
+        {
+          "line": 39,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 64,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 65,
+          "identifiers": [
+            "japanese-learning",
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 66,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 112,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 113,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 115,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 116,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 117,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 169,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 170,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 171,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase0-runtime-verification.md",
+      "matches": [
+        {
+          "line": 9,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 20,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 21,
+          "identifiers": [
+            "japanese-learning",
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 26,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 27,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 28,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 29,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 33,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 55,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 133,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 144,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 165,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 166,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 167,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 168,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 169,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 172,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 173,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 187,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 188,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 190,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 201,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 202,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 203,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 204,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase1-verification.md",
+      "matches": [
+        {
+          "line": 9,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 98,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 163,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 167,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 168,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 170,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 171,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 172,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 173,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 174,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 195,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 211,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 216,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 276,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 281,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 315,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase2-verification.md",
+      "matches": [
+        {
+          "line": 39,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 185,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 255,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 256,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 258,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 259,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 260,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 261,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 262,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 263,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 266,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 295,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 296,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 302,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 334,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 342,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 382,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase3-verification.md",
+      "matches": [
+        {
+          "line": 4,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 46,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 61,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 101,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 214,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 216,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 217,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 218,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 219,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 220,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 238,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 261,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 266,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 387,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase4-verification.md",
+      "matches": [
+        {
+          "line": 5,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 49,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 136,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 137,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 138,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 139,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 140,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 198,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 222,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 237,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase5-discover.py",
+      "matches": [
+        {
+          "line": 9,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 18,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase5-regression.py",
+      "matches": [
+        {
+          "line": 29,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 35,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 40,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase5-runtime.py",
+      "matches": [
+        {
+          "line": 12,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase5-verification.md",
+      "matches": [
+        {
+          "line": 6,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 16,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 34,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 232,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 279,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 281,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 309,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 335,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 336,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 339,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6-checklist.md",
+      "matches": [
+        {
+          "line": 9,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 693,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 694,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 695,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 696,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 697,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 698,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 699,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 700,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 701,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 702,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 703,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 704,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 705,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 706,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 707,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 708,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 709,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 710,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 711,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 712,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 713,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 714,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 715,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 716,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 717,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 718,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 719,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 720,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 721,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 722,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 723,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 724,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 725,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 726,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 780,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 781,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 830,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 899,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 944,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6-measurements.json",
+      "matches": [
+        {
+          "line": 36,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 39,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 40,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 41,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 82,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 89,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 124,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 138,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 145,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 152,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 173,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 309,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 320,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 331,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 342,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 353,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 364,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 375,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 386,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 397,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 408,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 419,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 430,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 441,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 467,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 504,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 545,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 575,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6-verification.md",
+      "matches": [
+        {
+          "line": 50,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 349,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 357,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 358,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6a-remediation.md",
+      "matches": [
+        {
+          "line": 15,
+          "identifiers": [
+            "jp_dev",
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 114,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6b/report.py",
+      "matches": [
+        {
+          "line": 74,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 126,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 138,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6b/test_safety.py",
+      "matches": [
+        {
+          "line": 83,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6b-validation-plan.md",
+      "matches": [
+        {
+          "line": 12,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 22,
+          "identifiers": [
+            "jp_dev",
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 378,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 388,
+          "identifiers": [
+            "japanese-learning",
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/phase6b-verification.md",
+      "matches": [
+        {
+          "line": 11,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 63,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 75,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/production-readiness.md",
+      "matches": [
+        {
+          "line": 77,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 92,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 100,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/prometheus/targets/applications.json",
+      "matches": [
+        {
+          "line": 7,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/README.md",
+      "matches": [
+        {
+          "line": 57,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 62,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 224,
+          "identifiers": [
+            "jp_dev",
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/remediation-endpoints.json",
+      "matches": [
+        {
+          "line": 27,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 55,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 83,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 107,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 131,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 148,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 176,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 205,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 233,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 258,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/remediation-runtime.py",
+      "matches": [
+        {
+          "line": 44,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 87,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 98,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 116,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/secure-production/alerting.json",
+      "matches": [
+        {
+          "line": 135,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/secure-production/fluent-bit.conf",
+      "matches": [
+        {
+          "line": 75,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/secure-production/targets/applications.json",
+      "matches": [
+        {
+          "line": 7,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/structured-logging.md",
+      "matches": [
+        {
+          "line": 15,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/summarize-phase6.py",
+      "matches": [
+        {
+          "line": 31,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 32,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/telemetry-security.md",
+      "matches": [
+        {
+          "line": 7,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 46,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/test-rotation-remediation.py",
+      "matches": [
+        {
+          "line": 67,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/test-tail-recovery.py",
+      "matches": [
+        {
+          "line": 24,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 25,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/tracing.md",
+      "matches": [
+        {
+          "line": 33,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 136,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 147,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 148,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 154,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 175,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 192,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/validate-secure-candidate.py",
+      "matches": [
+        {
+          "line": 28,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/verify-baseline.py",
+      "matches": [
+        {
+          "line": 14,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/verify-metrics.py",
+      "matches": [
+        {
+          "line": 5,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 123,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 128,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 140,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 142,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 143,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 147,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 156,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/verify-phase5.py",
+      "matches": [
+        {
+          "line": 118,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 122,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 205,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 207,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/verify-phase6.py",
+      "matches": [
+        {
+          "line": 28,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 58,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 159,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 162,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 379,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 408,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 482,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 513,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 525,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/verify-pipeline.py",
+      "matches": [
+        {
+          "line": 119,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 196,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 224,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 230,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 271,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 278,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 284,
+          "identifiers": [
+            "jp_dev"
+          ]
+        },
+        {
+          "line": 340,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 350,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 355,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 412,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/verify-structured-logging.py",
+      "matches": [
+        {
+          "line": 4,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 106,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 110,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "observability/verify-tracing.py",
+      "matches": [
+        {
+          "line": 20,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 197,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 203,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 224,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 269,
+          "identifiers": [
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 272,
+          "identifiers": [
+            "jp_dev"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "SECURITY-INTEGRATION-REPORT.md",
+      "matches": [
+        {
+          "line": 229,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 230,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 231,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 232,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 233,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 235,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 236,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 237,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 251,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 252,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 253,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 254,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 256,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 257,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 258,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 273,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "SHARED-JWKS-COMPATIBILITY-AUDIT.md",
+      "matches": [
+        {
+          "line": 5,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 16,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 32,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 33,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 34,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 35,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 36,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 43,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 45,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 48,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 74,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 94,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 112,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 144,
+          "identifiers": [
+            "jp_dev",
+            "springboot_project"
+          ]
+        },
+        {
+          "line": 162,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 251,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/.env.example",
+      "matches": [
+        {
+          "line": 29,
+          "identifiers": [
+            "JAPANESELEARNING"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/docs/INTEGRATION.md",
+      "matches": [
+        {
+          "line": 74,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/docs/java-code-style.md",
+      "matches": [
+        {
+          "line": 249,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 253,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 262,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/LOGGING.md",
+      "matches": [
+        {
+          "line": 91,
+          "identifiers": [
+            "JAPANESELEARNING"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/pom.xml",
+      "matches": [
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/README.md",
+      "matches": [
+        {
+          "line": 3,
+          "identifiers": [
+            "Japanese Learning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        },
+        {
+          "line": 121,
+          "identifiers": [
+            "springboot_project"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/common/exception/BusinessException.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/common/exception/ErrorCode.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/common/exception/GlobalExceptionHandler.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/common/response/APIError.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/common/response/APIMeta.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/common/response/APIResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/config/RsaKeyProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/config/SecurityConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/controller/JwksController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/dto/response/JwkResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/dto/response/JwksResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/JwksApplication.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/logging/ApplicationLifecycleLogger.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/logging/filter/RequestLoggingFilter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 32,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/logging/RequestLoggingConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/logging/SafeMessageJsonProvider.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/logging/SafeThrowableConverter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/logging/StructuredJsonEncoder.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/metrics/MetricsConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/metrics/MetricsEndpointConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/metrics/SecurityMetrics.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/security/RsaKeyProvider.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/service/JwksService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/tracing/SafeSpanExporter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/java/com/japaneselearning/jwks/tracing/TracingConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/resources/application.properties",
+      "matches": [
+        {
+          "line": 8,
+          "identifiers": [
+            "JAPANESELEARNING",
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/main/resources/logback-spring.xml",
+      "matches": [
+        {
+          "line": 21,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 37,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/common/exception/GlobalExceptionHandlerTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/common/response/APIResponseTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/controller/JwksEndpointsTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/logging/filter/RequestLoggingFilterTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/logging/LoggingConfigurationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/logging/RequestLoggingServletTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/logging/StructuredJsonEncoderTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/metrics/MetricsIntegrationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/metrics/MetricsListenerAddressTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/metrics/SecurityMetricsTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/observability/ObservabilityBaselineTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/security/RsaKeyProviderTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/tracing/SafeSpanExporterTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-jwks-api/src/test/java/com/japaneselearning/jwks/tracing/TracingIntegrationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/docs/java-code-style.md",
+      "matches": [
+        {
+          "line": 249,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 253,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 262,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/pom.xml",
+      "matches": [
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/README.md",
+      "matches": [
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/client/JwksServiceClient.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/client/UserServiceClient.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/common/controller/BaseController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/common/exception/BusinessException.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/common/exception/ErrorCode.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/common/exception/GlobalExceptionHandler.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 26,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/common/response/APIError.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/common/response/APIMeta.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/common/response/APIResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/config/OpenApiConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/config/ServiceClientConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/config/ServiceEndpointProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/controller/InternalUserController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/controller/JwksIntegrationController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/controller/LearningController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/dto/InternalUserDTO.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/dto/response/InternalUserResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/dto/response/LearningUserResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/dto/response/PublicKeyDTO.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/dto/response/PublicKeysResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/LearningApiApplication.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/logging/filter/RequestLoggingFilter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 31,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/logging/RequestLoggingConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/logging/SafeMessageJsonProvider.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/logging/SafeThrowableConverter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/logging/StructuredJsonEncoder.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/metrics/MetricsConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/metrics/MetricsEndpointConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/metrics/SecurityMetrics.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/config/UserSecurityConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwks/CallerMetadataInterceptor.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/internal/InternalJwtConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/internal/InternalJwtProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/internal/InternalJwtTokenService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/internal/InternalSigningKeyProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/internal/InternalSigningKeyProvider.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/internal/ServiceTokenInterceptor.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/user/JwtDecoderConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 17,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/user/JwtRoleConverter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/security/jwt/user/JwtSecurityProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/service/impl/InternalUserService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/service/impl/JwksIntegrationServiceImpl.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/service/JwksIntegrationService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/tracing/SafeSpanExporter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/java/com/japaneselearning/learning/tracing/TracingConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/main/resources/logback-spring.xml",
+      "matches": [
+        {
+          "line": 29,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 51,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/client/JwksServiceClientTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/client/UserServiceClientTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 118,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/controller/InternalUserControllerTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/controller/OpenApiDocumentationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/logging/filter/RequestLoggingFilterTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/logging/RequestLoggingServletTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/logging/StructuredJsonEncoderTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/metrics/HikariPoolMetricsTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/metrics/InternalClientMetricsTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 63,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/metrics/MetricsIntegrationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/metrics/MetricsListenerAddressTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/metrics/SecurityMetricsTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/observability/ObservabilityBaselineTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/security/jwks/CallerMetadataInterceptorTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/security/jwt/internal/InternalJwtTokenServiceTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/security/jwt/user/JwtAuthenticationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 32,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 222,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/tracing/SafeSpanExporterTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/java/com/japaneselearning/learning/tracing/TracingIntegrationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 92,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 157,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-learning-api/src/test/resources/application.properties",
+      "matches": [
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/.env.example",
+      "matches": [
+        {
+          "line": 2,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 41,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 42,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 88,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/docs/java-code-style.md",
+      "matches": [
+        {
+          "line": 249,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 253,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 262,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/JWT.md",
+      "matches": [
+        {
+          "line": 47,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/pom.xml",
+      "matches": [
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/README.md",
+      "matches": [
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/common/controller/BaseController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/common/exception/BusinessException.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/common/exception/ErrorCode.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/common/exception/GlobalExceptionHandler.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 24,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/common/response/APIError.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/common/response/APIMeta.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/common/response/APIResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/config/OpenApiConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/config/PasswordConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/controller/AuthController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 12,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/controller/internal/InternalUserController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/controller/UserManagementController.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/request/LoginRequest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/request/LogoutRequest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/request/RefreshTokenRequest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/request/RegisterAccountRequest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/request/UpdateUserActivationRequest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/response/LoginResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/response/PageResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/response/RefreshTokenResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/response/RegisterAccountResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/response/UserResponse.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/dto/UserDTO.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/entity/RefreshToken.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/entity/User.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/logging/filter/RequestLoggingFilter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 22,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 224,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/logging/RequestLoggingConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/logging/SafeMessageJsonProvider.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/logging/SafeThrowableConverter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/logging/StructuredJsonEncoder.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/metrics/MetricsConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/metrics/MetricsEndpointConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/metrics/SecurityMetrics.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/repository/RefreshTokenRepository.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/repository/UserRepository.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/config/InternalApiSecurityConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/config/UserSecurityConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwks/CallerMetadataInterceptor.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/internal/InternalJwtDecoderConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/internal/InternalJwtSecurityProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/user/JwtDecoderConfig.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/user/JwtProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/user/JwtRoleConverter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/user/JwtTokenService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/user/SigningKeyProperties.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/security/jwt/user/SigningKeyProvider.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/service/AuthService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/service/impl/AuthServiceImpl.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 14,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 15,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 16,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 17,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 18,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/service/impl/RefreshTokenServiceImpl.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/service/impl/UserManagementServiceImpl.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/service/RefreshTokenService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/service/UserManagementService.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/specification/UserSpecification.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/tracing/SafeSpanExporter.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/tracing/TracingConfiguration.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/java/com/japaneselearning/user/UserApplication.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/resources/application.properties",
+      "matches": [
+        {
+          "line": 2,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/main/resources/logback-spring.xml",
+      "matches": [
+        {
+          "line": 9,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 27,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 49,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/controller/internal/InternalUserControllerTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/factory/dto/entity/AccessTokenFactory.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/factory/dto/entity/RefreshTokenFactory.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/factory/dto/entity/UserFactory.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/factory/dto/request/LoginRequestFactory.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/factory/dto/request/RefreshTokenRequestFactory.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/factory/dto/request/RegisterAccountRequestFactory.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/logging/BusinessLoggingPrivacyTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 12,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 13,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 14,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 15,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 16,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 17,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 18,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/logging/filter/RequestLoggingFilterTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/logging/RequestLoggingServletTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/logging/StructuredJsonEncoderTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 38,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 54,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/metrics/HikariPoolMetricsTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/metrics/MetricsIntegrationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/metrics/MetricsListenerAddressTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/metrics/SecurityMetricsTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/observability/ObservabilityBaselineTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 37,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 52,
+          "identifiers": [
+            "user-learning"
+          ]
+        },
+        {
+          "line": 61,
+          "identifiers": [
+            "user-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/security/jwt/internal/InternalJwtAuthenticationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 32,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/security/jwt/user/JwtDecoderConfigTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/security/jwt/user/SigningKeyProviderTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/service/AuthServiceImplTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 12,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 13,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 14,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 15,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 16,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 17,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 18,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 19,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 20,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 21,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/service/RefreshTokenServiceImplTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 5,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 6,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 7,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 8,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 9,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 10,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 11,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 35,
+          "identifiers": [
+            "japanese-learning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/tracing/SafeSpanExporterTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    },
+    {
+      "file": "springboot-user-api/src/test/java/com/japaneselearning/user/tracing/TracingIntegrationTest.java",
+      "matches": [
+        {
+          "line": 1,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 3,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        },
+        {
+          "line": 4,
+          "identifiers": [
+            "japaneselearning"
+          ]
+        }
+      ]
+    }
+  ]
+}

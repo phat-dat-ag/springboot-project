@@ -6,9 +6,9 @@ This report supplements the [logging contract](structured-logging.md),
 
 ## A. Executive summary
 
-Phase 1 logging implementation is tested and deployed to `springboot_project`.
+Phase 1 logging implementation is tested and deployed to `hospital_dev`.
 All **282 Maven tests passed, zero failures/errors/skips**. Fresh application JSON,
-Learning -> User correlation, authenticated internal JWT calls, public JWKS,
+Hospital -> User correlation, authenticated internal JWT calls, public JWKS,
 login/logout, 401/404/500 completions, and both logging backends were verified.
 Runtime non-admin 403 rejection remains **NOT VERIFIED** because the supplied
 account has admin access; real embedded-container tests cover 403 completion.
@@ -72,7 +72,7 @@ shared-library/module architecture was introduced:
 - `application.properties`: disable plaintext startup banner.
 - New `logging/BusinessLoggingPrivacyTest.java`; existing decoder tests updated.
 
-### Learning
+### Hospital
 
 - Removed the same two superseded filters; safe completion exception ownership.
 - `client/UserServiceClient.java`: safe upstream status/type diagnostics without
@@ -95,7 +95,7 @@ shared-library/module architecture was introduced:
 ## C–F. Logging, correlation, errors and privacy
 
 The exact schema and policies are in [structured-logging.md](structured-logging.md).
-Canonical `service` values remain `user-learning`, `learning-api`, `jwks-service`;
+Canonical `service` values remain `hospital-user-api`, `hospital-api`, `hospital-jwks-api`;
 `serviceVersion=0.0.1-SNAPSHOT`, `environment=development` were observed live.
 
 Completion fields include string `correlationId`, `http.request.method`,
@@ -133,7 +133,7 @@ Commands were actually run from each module directory:
 | Module | Tests | Failures | Errors | Skips | Result |
 | --- | ---: | ---: | ---: | ---: | --- |
 | User | 96 | 0 | 0 | 0 | PASS |
-| Learning | 111 | 0 | 0 | 0 | PASS |
+| Hospital | 111 | 0 | 0 | 0 | PASS |
 | JWKS | 75 | 0 | 0 | 0 | PASS |
 
 The new filter contract has 29 invocations per module; encoder contracts have two
@@ -149,7 +149,7 @@ Focused reruns also executed:
 
 Failures found and fixed before the final full runs:
 
-- Existing committed Learning file-appender `customFields` JSON lacked a comma;
+- Existing committed Hospital file-appender `customFields` JSON lacked a comma;
   typed encoder metadata eliminates this fragile raw JSON configuration.
 - Embedded-test Logback file handles prevented Windows temporary-file cleanup;
   test context shutdown now closes the logging context.
@@ -160,18 +160,18 @@ cleanup removed trailing whitespace after the final suites; no behavior changed.
 
 ## H. Deployment commands and runtime evidence
 
-All Compose mutations explicitly targeted `springboot_project`, preserving the
+All Compose mutations explicitly targeted `hospital_dev`, preserving the
 existing `.env`, base/debug overrides and JDWP bindings. Commands actually run:
 
 ```powershell
-docker compose -p springboot_project --env-file .env -f docker-compose.yml config --quiet
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml config --quiet
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
 python observability/verify-baseline.py
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build user-api learning-api jwks-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 jwks-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 user-api learning-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 60 fluent-bit
-docker compose -p springboot_project exec -T fluent-bit /fluent-bit/bin/fluent-bit --dry-run -c /fluent-bit/etc/fluent-bit.conf
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build hospital-user-api hospital-api hospital-jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 hospital-jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 hospital-user-api hospital-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 60 fluent-bit
+docker compose -p hospital_dev exec -T fluent-bit /fluent-bit/bin/fluent-bit --dry-run -c /fluent-bit/etc/fluent-bit.conf
 python observability/verify-structured-logging.py
 powershell -NoProfile -ExecutionPolicy Bypass -File observability/opensearch/setup-dashboards.ps1 -DashboardsUrl http://localhost:5677
 python observability/verify-baseline.py --runtime
@@ -192,7 +192,7 @@ Additional executed read-only/probe command families:
   three modules; source/config reads using `rg`, `Get-Content`, `git show/diff`.
 - `docker ps -aq`, `docker inspect <captured IDs>`; Python normalized before/after
   snapshots and SHA-256 comparisons without printing secret/key contents.
-- `docker compose -p springboot_project logs --no-color --no-log-prefix
+- `docker compose -p hospital_dev logs --no-color --no-log-prefix
   [--since <probe start>] <service>` captured/parsed in memory, never printed raw.
 - Python HTTP GET/POST probes in the reusable verifier; credentials/token bodies
   supplied only in process memory. The successful run marker was
@@ -208,12 +208,12 @@ Additional executed read-only/probe command families:
 ### Changed containers and preservation
 
 Exactly four container identities changed:
-`springboot_project-{jwks-api,user-api,learning-api,fluent-bit}-1`.
+`hospital_dev-{hospital-jwks-api,hospital-user-api,hospital-api,fluent-bit}-1`.
 The APIs are **healthy**; Fluent Bit is **running** (no configured healthcheck).
 Its image is unchanged. The new read-only parser mount is the only added mount.
 
 Before/after comparison verified **25 unrelated containers unchanged**, including
-all **16 `jp_dev` containers**: identity, image, start time, restart count, ports,
+all **16 `hospital_dev` containers**: identity, image, start time, restart count, ports,
 mounts and network membership. All 10 protected real environment/key fingerprints
 matched. Existing named volumes, databases, checkpoints, network memberships,
 HTTP/debug ports, and original mounts were preserved. No `down`, forced recreation,
@@ -226,12 +226,12 @@ volume deletion, index deletion/reindex, key rotation or migration runner was us
 | All three readiness endpoints | 200 / PASS |
 | Valid/malformed/oversized correlation ID response behavior | PASS |
 | Missing and duplicate correlation headers on all three deployed services | PASS; generated/replaced UUID and preserved original HTTP status |
-| Login, Learning identity, logout of verification refresh session | 200 / PASS |
-| Learning -> User internal JWT authenticated user lookup | 200 / PASS |
-| Anonymous User internal / Learning protected routes | 401 / PASS |
+| Login, Hospital identity, logout of verification refresh session | 200 / PASS |
+| Hospital -> User internal JWT authenticated user lookup | 200 / PASS |
+| Anonymous User internal / Hospital protected routes | 401 / PASS |
 | Malformed JWT; user JWT incorrectly used as internal JWT | 401 / PASS |
 | Unknown JWKS route | 404 / PASS |
-| Missing User via Learning | User 404 -> existing Learning 500 / PASS |
+| Missing User via Hospital | User 404 -> existing Hospital 500 / PASS |
 | Invalid refresh sentinel | 404 / PASS; no token/hash in captured logs |
 | Exactly one final completion with numeric status/duration for the checked requests | PASS |
 | No tested credentials/token/body/header/query/path sentinels in captured logs | PASS |
@@ -250,8 +250,8 @@ diagnostic import used an incorrect module name; it made no application change.
 
 Fresh completion records from all three services appeared in **both Loki and
 OpenSearch**. Exact correlation `phase1-7df21d4e09b3463f-linked` appeared once for
-Learning and once for User in each backend, both 200, with templates
-`/api/v1/learning/internal-test/users/{id}` and `/internal/users/{id}`.
+Hospital and once for User in each backend, both 200, with templates
+`/api/v1/hospital/technical/users/{id}` and `/internal/users/{id}`.
 Loki event timestamps matched JSON application timestamps within 2 ms.
 
 All three indexes now map canonical status and `durationMs` as `long`; existing
@@ -259,7 +259,7 @@ legacy `status`/`elapsed_ms` remain `text`. Existing indexes/history were preser
 the final baseline sample counted about 71k documents per service. No unsafe
 in-place mapping rewrite or alias duplication was attempted.
 
-A post-start sample parsed 46 User, 39 Learning and 46 JWKS application JSON
+A post-start sample parsed 46 User, 39 Hospital and 46 JWKS application JSON
 records with correct identity/version/environment and zero OTLP exporter warnings
 or errors. Fluent Bit had zero error/flush-failure lines in its checked startup
 window. Native parser/config dry-run passed. This proves the observed window,
@@ -273,12 +273,12 @@ probe rather than interpreting silence as a collector failure.
 
 ## I. Cross-project JWKS compatibility
 
-`japanese-learning` requires **no changes**. Read-only review of its .NET JWKS
+`hospital-management` requires **no changes**. Read-only review of its .NET JWKS
 retriever and Quarkus configuration confirmed the same public endpoint contract.
-User/Learning JWKS bodies, RSA key material/key IDs, content types and
+User/Hospital JWKS bodies, RSA key material/key IDs, content types and
 `Cache-Control: max-age=300, public` matched the pre-deployment snapshot exactly.
 Consumer JWT validation, issuer/audience, paths/security/network contracts did not
-change; only safe diagnostic header handling/logging did. All its `jp_dev`
+change; only safe diagnostic header handling/logging did. All its `hospital_dev`
 containers remained unchanged. Its pre-existing `angular`/`quarkus` Git changes
 were not touched; its JWKS submodule was clean.
 
@@ -312,7 +312,7 @@ were not touched; its JWKS submodule was clean.
 | Collector JSON/timestamp parsing and both destinations | PASS | Native dry-run, timestamp assertions, fresh ingestion all three services |
 | Safe downstream historical field migration | PASS | New numeric mappings, legacy/history retained, default Discover refresh |
 | All three relevant Maven suites | PASS | 282 tests, zero failures/errors/skips |
-| Safe deployment and preservation | PASS | Four intended recreations; 25 unrelated/16 jp_dev unchanged; 10 fingerprints |
+| Safe deployment and preservation | PASS | Four intended recreations; 25 unrelated/16 hospital_dev unchanged; 10 fingerprints |
 | Existing auth/JWKS/internal JWT compatibility | PASS | Existing tests plus live login/logout/key equality/internal call |
 | Unexpected OTLP errors absent in checked window | PASS | Post-start log scan; no exporter activation |
 | Documentation and phase boundaries | PASS | This report and schema; no Phase 2–6 implementation |
@@ -325,7 +325,7 @@ must not be presented as verified. No Phase 2 work is authorized by this report.
 
 Root and all three independent module repositories remain on `develop`, with
 unchanged HEADs. Changes are unstaged; nothing was committed or pushed. Root has
-the observability/Compose edits and three dirty submodule pointers. User/Learning
+the observability/Compose edits and three dirty submodule pointers. User/Hospital
 have the two obsolete filters deleted and their new logging/test files untracked;
 JWKS has existing logging files modified plus new configuration/provider/tests.
 No pre-existing edits in these four repositories were reset or overwritten (all

@@ -54,7 +54,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "hikaricp_connections_active{service=~\"$service\",environment=~\"$environment\",service=~\"user-learning|learning-api\"}",
+          "expr": "hikaricp_connections_active{service=~\"$service\",environment=~\"$environment\",service=~\"hospital-user-api|hospital-api\"}",
           "legendFormat": "{{service}} {{pool}}",
           "editorMode": "code"
         }
@@ -105,7 +105,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "hikaricp_connections_idle{service=~\"$service\",environment=~\"$environment\",service=~\"user-learning|learning-api\"}",
+          "expr": "hikaricp_connections_idle{service=~\"$service\",environment=~\"$environment\",service=~\"hospital-user-api|hospital-api\"}",
           "legendFormat": "{{service}} {{pool}}",
           "editorMode": "code"
         }
@@ -156,7 +156,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "hikaricp_connections_pending{service=~\"$service\",environment=~\"$environment\",service=~\"user-learning|learning-api\"}",
+          "expr": "hikaricp_connections_pending{service=~\"$service\",environment=~\"$environment\",service=~\"hospital-user-api|hospital-api\"}",
           "legendFormat": "{{service}} {{pool}}",
           "editorMode": "code"
         }
@@ -207,7 +207,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "hikaricp_connections_max{service=~\"$service\",environment=~\"$environment\",service=~\"user-learning|learning-api\"}",
+          "expr": "hikaricp_connections_max{service=~\"$service\",environment=~\"$environment\",service=~\"hospital-user-api|hospital-api\"}",
           "legendFormat": "{{service}} {{pool}}",
           "editorMode": "code"
         }
@@ -258,7 +258,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "hikaricp_connections_active{service=~\"$service\",environment=~\"$environment\",service=~\"user-learning|learning-api\"} / (hikaricp_connections_max{service=~\"$service\",environment=~\"$environment\",service=~\"user-learning|learning-api\"} > 0)",
+          "expr": "hikaricp_connections_active{service=~\"$service\",environment=~\"$environment\",service=~\"hospital-user-api|hospital-api\"} / (hikaricp_connections_max{service=~\"$service\",environment=~\"$environment\",service=~\"hospital-user-api|hospital-api\"} > 0)",
           "legendFormat": "{{service}} {{pool}}",
           "editorMode": "code"
         }
@@ -411,7 +411,7 @@
             "type": "prometheus",
             "uid": "prometheus"
           },
-          "expr": "hikaricp_connections_acquire_seconds_max{service=~\"$service\",environment=~\"$environment\",service=~\"user-learning|learning-api\"}",
+          "expr": "hikaricp_connections_acquire_seconds_max{service=~\"$service\",environment=~\"$environment\",service=~\"hospital-user-api|hospital-api\"}",
           "legendFormat": "{{service}} {{pool}}",
           "editorMode": "code"
         }
@@ -458,7 +458,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "query": "user-learning,learning-api",
+        "query": "hospital-user-api,hospital-api",
         "options": []
       }
     ]

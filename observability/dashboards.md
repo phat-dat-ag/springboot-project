@@ -23,7 +23,7 @@ and [the machine-readable inventory](grafana/phase5-inventory.json).
 | Observability Infrastructure / `sb5-infrastructure` | Scrape health, Collector queue/export/refusal, Fluent Bit output delivery, Loki/Tempo ingestion/storage failures, Grafana alert counts, Prometheus memory | Prometheus |
 
 The existing `springboot-application-logs` dashboard remains intact. The database
-dashboard restricts its service variable and queries to User/Learning; JWKS has no
+dashboard restricts its service variable and queries to User/Hospital; JWKS has no
 database. Infrastructure adds six bounded component service choices to the three
 application services. All eight dashboards have environment/service selectors,
 one-hour defaults, browser timezone and a 30-second refresh. Logging also exposes
@@ -102,7 +102,7 @@ from JSON at query time. `| __error__=""` excludes malformed records safely.
 Dotted fields use an explicit JSON extraction, for example:
 
 ```logql
-{job="springboot",service="learning-api",environment="development"}
+{job="springboot",service="hospital-api",environment="development"}
   | json category=`["error.category"]`
   | __error__=""
   | category=~"authentication|authorization"

@@ -25,8 +25,8 @@ import xml.etree.ElementTree as ET
 sys.dont_write_bytecode = True
 ROOT = Path(__file__).resolve().parents[1]
 OBS = ROOT / 'observability'
-APPS = {'user-api':'user-learning','learning-api':'learning-api','jwks-api':'jwks-service'}
-MODULES = ['springboot-user-api','springboot-learning-api','springboot-jwks-api']
+APPS = {'hospital-user-api':'hospital-user-api','hospital-api':'hospital-api','hospital-jwks-api':'hospital-jwks-api'}
+MODULES = ['springboot-user-api','springboot-hospital-api','springboot-jwks-api']
 
 def digest(value):
     raw = value if isinstance(value, bytes) else json.dumps(value, sort_keys=True).encode()
@@ -55,7 +55,7 @@ class Validation:
         # Evidence can contain topology; insist it is ignored before collecting it.
         if subprocess.run(['git','check-ignore','--quiet',str(self.out/'results.json')],cwd=ROOT).returncode:
             raise RuntimeError('Evidence directory must be Git-ignored')
-        self.compose = ['docker','compose','-p','springboot_project','--env-file','.env']
+        self.compose = ['docker','compose','-p','hospital_dev','--env-file','.env']
         for file in args.compose_file or ['docker-compose.yml','docker-compose.debug.yml']:
             self.compose += ['-f',file]
         self.model = json.loads(self.cmd(*self.compose,'config','--format','json'))
@@ -150,16 +150,16 @@ class Validation:
         return data
 
     def fingerprints(self):
-        files=list(ROOT.glob('.env*'))+list((ROOT/'key').glob('*.pem'))+list((ROOT/'data/keys/learning').glob('*.pem'))
+        files=list(ROOT.glob('.env*'))+list((ROOT/'key').glob('*.pem'))+list((ROOT/'data/keys/hospital').glob('*.pem'))
         files += [ROOT/m/'.env' for m in MODULES]+[self.args.credentials]
         return {str(p.resolve().relative_to(ROOT)):digest(p.read_bytes()) for p in files if p.is_file() and not p.name.endswith('.example')}
 
     def snapshot(self):
         containers=self.inventory()
-        target=[c for c in containers if c['project']=='springboot_project']
+        target=[c for c in containers if c['project']=='hospital_dev']
         self.ids={c['service']:c['id'] for c in target}
         self.images={c['service']:c['image_id'] for c in target}
-        self.check(len([c for c in containers if c['project']=='jp_dev'])==16,'baseline has exactly 16 jp_dev containers')
+        self.check(len([c for c in containers if c['project']=='hospital_dev'])==16,'baseline has exactly 16 hospital_dev containers')
         self.check(all(str(ROOT).lower() in (c['config_files'] or '').lower() for c in target),'target containers belong to this checkout')
         self.check(all(self.ids.get(s) for s in list(APPS)+['grafana','prometheus','loki','tempo','otel-collector','fluent-bit','opensearch']), 'required target containers identified')
         dashboards=self.api('grafana','/api/search?type=dash-db&limit=5000')
@@ -174,7 +174,7 @@ class Validation:
             'targets':self.api('prometheus','/api/v1/targets')['data']['activeTargets'],
             'grafana_version':self.api('grafana','/api/health')['version'],
             'prometheus_version':self.api('prometheus','/api/v1/status/buildinfo')['data']['version'],
-            'jwks':{path:digest(self.api('jwks-api',path)) for path in ['/api/v1/jwks/user','/api/v1/jwks/learning']},
+            'jwks':{path:digest(self.api('hospital-jwks-api',path)) for path in ['/api/v1/jwks/user','/api/v1/jwks/learning']},
             'opensearch_indices':self.api('opensearch','/_cat/indices/springboot-*-logs?format=json&bytes=b'),
             'loki_stream_count':len(self.loki('{job="springboot"}',limit=1)),
             'tempo_trace_count':len(self.api('grafana','/api/datasources/proxy/uid/tempo/api/search?limit=1')['traces'])}
@@ -258,9 +258,9 @@ class Validation:
             self.check(self.api(name,'/actuator/health/readiness')['status']=='UP','service readiness: '+name)
             self.check(self.request(name,'/actuator/prometheus')[0]==403,'public metrics endpoint denied: '+name)
             self.check(self.request(name,'/actuator/env')[0] in [401,403,404], 'sensitive actuator endpoint protected: '+name)
-            path={'user-api':'/internal/users/'+str(uuid.uuid4()),'learning-api':'/api/v1/learning/me','jwks-api':'/api/v1/jwks/user'}[name]
-            self.probe(name,path,200 if name=='jwks-api' else 401,supplied=False)
-            self.probe(name,path,200 if name=='jwks-api' else 401)
+            path={'hospital-user-api':'/internal/users/'+str(uuid.uuid4()),'hospital-api':'/api/v1/hospital/technical/authentication','hospital-jwks-api':'/api/v1/jwks/user'}[name]
+            self.probe(name,path,200 if name=='hospital-jwks-api' else 401,supplied=False)
+            self.probe(name,path,200 if name=='hospital-jwks-api' else 401)
         self.authenticated()
         independent=[p for p in self.probes if not p.get('linked')]
         self.check(len({p['cid'] for p in independent})==len(independent)
@@ -280,48 +280,48 @@ class Validation:
         self.secrets += list(account.values())
         token=refresh=None
         try:
-            body=self.probe('user-api','/auth/login',200,body=account,method='POST')
+            body=self.probe('hospital-user-api','/auth/login',200,body=account,method='POST')
             token,refresh=body['data']['accessToken'],body['data']['refreshToken']
             self.secrets += [token,refresh]
             claims=json.loads(base64.urlsafe_b64decode(token.split('.')[1]+'==='))
             header=json.loads(base64.urlsafe_b64decode(token.split('.')[0]+'==='))
             self.secrets.append(claims['sub'])
-            keys=self.api('jwks-api','/api/v1/jwks/user')['keys']
+            keys=self.api('hospital-jwks-api','/api/v1/jwks/user')['keys']
             self.check(header['kid'] in {k['kid'] for k in keys} and header['alg']=='RS256','access-token kid matches published RSA JWKS')
-            self.check(claims['iss']==self.services['user-api']['environment']['JWT_ISSUER'],'access-token issuer matches configured contract')
+            self.check(claims['iss']==self.services['hospital-user-api']['environment']['JWT_ISSUER'],'access-token issuer matches configured contract')
             auth={'Authorization':'Bearer '+token}
-            self.probe('learning-api','/api/v1/learning/me',200,headers=auth)
+            self.probe('hospital-api','/api/v1/hospital/technical/authentication',200,headers=auth)
             userpath='/admin/users/'+claims['sub']
             roles=claims.get('roles') or claims.get('role') or []
             roles=roles if isinstance(roles,list) else [roles]
             if any(str(role) in ['2','ADMIN','ROLE_ADMIN'] for role in roles):
-                self.probe('user-api',userpath,200,headers=auth)
+                self.probe('hospital-user-api',userpath,200,headers=auth)
                 self.result('NOT VERIFIED','non-admin business authorization 403','existing account is admin; no account/role changes')
             else:
-                self.probe('user-api',userpath,403,headers=auth)
+                self.probe('hospital-user-api',userpath,403,headers=auth)
                 self.result('NOT VERIFIED','positive administrative User access','existing account lacks admin role; internal positive access is tested')
-            self.probe('user-api','/internal/users/'+claims['sub'],401,headers=auth)
-            self.probe('user-api','/actuator/prometheus',403,headers=auth)
-            self.probe('learning-api','/api/v1/learning/me',401,headers={'Authorization':'Bearer invalid.phase6.signature'})
-            linked=self.probe('learning-api','/api/v1/learning/internal-test/users/'+claims['sub'],200,headers=auth)
-            self.check(linked.get('user',{}).get('id')==claims['sub'],'Learning to User actual internal JWT communication')
+            self.probe('hospital-user-api','/internal/users/'+claims['sub'],401,headers=auth)
+            self.probe('hospital-user-api','/actuator/prometheus',403,headers=auth)
+            self.probe('hospital-api','/api/v1/hospital/technical/authentication',401,headers={'Authorization':'Bearer invalid.phase6.signature'})
+            linked=self.probe('hospital-api','/api/v1/hospital/technical/users/'+claims['sub'],200,headers=auth)
+            self.check(linked.get('user',{}).get('id')==claims['sub'],'Hospital to User actual internal JWT communication')
             for key in ['username','email']:
                 value=linked.get('user',{}).get(key)
                 if isinstance(value,str):
                     self.secrets.append(value)
             source=self.probes[-1]
-            self.probes.append({**source,'service':'user-api','status':200,'linked':True})
+            self.probes.append({**source,'service':'hospital-user-api','status':200,'linked':True})
             self.details['linked_trace']=source['trace']
             old=refresh
-            status,_,body=self.request('user-api','/auth/refresh','POST',{'refreshToken':refresh})
+            status,_,body=self.request('hospital-user-api','/auth/refresh','POST',{'refreshToken':refresh})
             if status==200:
                 token,refresh=body['data']['accessToken'],body['data']['refreshToken']
                 self.secrets += [token,refresh]
             self.check(status==200 and refresh!=old,'refresh rotates this verification session')
-            self.probe('learning-api','/api/v1/learning/me',200,headers={'Authorization':'Bearer '+token})
+            self.probe('hospital-api','/api/v1/hospital/technical/authentication',200,headers={'Authorization':'Bearer '+token})
         finally:
             if refresh:
-                status,_,_=self.request('user-api','/auth/logout','POST',{'refreshToken':refresh},{'Authorization':'Bearer '+token})
+                status,_,_=self.request('hospital-user-api','/auth/logout','POST',{'refreshToken':refresh},{'Authorization':'Bearer '+token})
                 self.check(status==200,'verification session logout cleanup')
 
     def wait(self,fn):
@@ -375,12 +375,12 @@ class Validation:
         self.check(len(servers)==1 and hexid(servers[0]['spanId'])==r['spanId']
             and int(servers[0]['endTimeUnixNano'])>int(servers[0]['startTimeUnixNano']),'stored server span timing/log identity: '+p['service'])
         if p['trace']==self.details.get('linked_trace'):
-            learning=next(s for service,s in spans if service=='learning-api' and s['kind'] in [2,'SPAN_KIND_SERVER'])
-            user=next(s for service,s in spans if service=='user-learning' and s['kind'] in [2,'SPAN_KIND_SERVER'])
-            client=next(s for service,s in spans if service=='learning-api' and s['kind'] in [3,'SPAN_KIND_CLIENT']
-                and any(a['key']=='client.name' and a['value'].get('stringValue')=='user-api' for a in s.get('attributes',[])))
-            self.check(hexid(learning['parentSpanId'])==p['parent'] and hexid(client['parentSpanId'])==hexid(learning['spanId'])
-                and hexid(user['parentSpanId'])==hexid(client['spanId']),'Learning server to HTTP client to User parent chain')
+            hospital=next(s for service,s in spans if service=='hospital-api' and s['kind'] in [2,'SPAN_KIND_SERVER'])
+            user=next(s for service,s in spans if service=='hospital-user-api' and s['kind'] in [2,'SPAN_KIND_SERVER'])
+            client=next(s for service,s in spans if service=='hospital-api' and s['kind'] in [3,'SPAN_KIND_CLIENT']
+                and any(a['key']=='client.name' and a['value'].get('stringValue')=='hospital-user-api' for a in s.get('attributes',[])))
+            self.check(hexid(hospital['parentSpanId'])==p['parent'] and hexid(client['parentSpanId'])==hexid(hospital['spanId'])
+                and hexid(user['parentSpanId'])==hexid(client['spanId']),'Hospital server to HTTP client to User parent chain')
         else:
             self.check(hexid(servers[0]['parentSpanId'])==p['parent'],'remote W3C parent continued: '+p['service'])
         raw=json.dumps(trace)+json.dumps(r)+json.dumps(hits)
@@ -405,12 +405,12 @@ class Validation:
             rows=self.query('histogram_quantile('+str(q)+',sum by (service,environment,le) (rate(http_server_requests_seconds_bucket[5m])))')
             self.check({x['metric']['service'] for x in rows if math.isfinite(float(x['value'][1]))}==set(APPS.values()),'finite HTTP histogram percentile '+str(q))
         for name in ['hikaricp_connections_active','hikaricp_connections_pending','hikaricp_connections_max','hikaricp_connections_acquire_seconds_count','hikaricp_connections_timeout_total']:
-            self.check({x['metric']['service'] for x in self.query(name)}=={'learning-api','user-learning'},'database-only metric: '+name)
+            self.check({x['metric']['service'] for x in self.query(name)}=={'hospital-api','hospital-user-api'},'database-only metric: '+name)
         for name in ['otelcol_exporter_queue_size','otelcol_exporter_queue_capacity','otelcol_exporter_send_failed_spans',
                      'fluentbit_output_errors_total','fluentbit_output_dropped_records_total']:
             self.check(bool(self.query(name)),'collected infrastructure metric: '+name)
         if self.details.get('linked_trace'):
-            self.check(bool(self.query('http_client_requests_seconds_count{service="learning-api",uri="/internal/users/{id}",status="200"}')),'actual internal HTTP client metric')
+            self.check(bool(self.query('http_client_requests_seconds_count{service="hospital-api",uri="/internal/users/{id}",status="200"}')),'actual internal HTTP client metric')
         groups=self.api('prometheus','/api/v1/rules')['data']['groups']
         self.check(sum(len(g['rules']) for g in groups)==5 and all(r['health']=='ok' for g in groups for r in g['rules']),'five recording rules loaded and healthy')
 
@@ -431,7 +431,7 @@ class Validation:
                     uid=t.get('datasource',p.get('datasource',{})).get('uid')
                     self.check(uid in data_sources,'datasource resolves: '+p['title'])
                     expr=t['expr']
-                    variants=[('all','.*','.*'),('filtered','learning-api',self.services['learning-api']['environment']['DEPLOYMENT_ENVIRONMENT'])]
+                    variants=[('all','.*','.*'),('filtered','hospital-api',self.services['hospital-api']['environment']['DEPLOYMENT_ENVIRONMENT'])]
                     for mode,service,env in variants:
                         q=expr
                         for key,value in {'${correlation:regex}':'.*','${trace:regex}':'.*','$__rate_interval':'5m',
@@ -440,7 +440,7 @@ class Validation:
                         start=time.perf_counter()
                         rows=self.query(q) if uid=='prometheus' else self.loki(q,limit=20)
                         if mode=='filtered':
-                            self.check(all(x.get('metric',x.get('stream',{})).get('service','learning-api')=='learning-api' for x in rows),'service filter output: '+p['title'])
+                            self.check(all(x.get('metric',x.get('stream',{})).get('service','hospital-api')=='hospital-api' for x in rows),'service filter output: '+p['title'])
                         panel_results.append({'dashboard':entry['uid'],'panel':p['title'],'mode':mode,'series':len(rows),'ms':round((time.perf_counter()-start)*1000,2)})
         self.details['panel_queries']=panel_results
         source=json.loads((OBS/'grafana/provisioning/alerting/phase5.json').read_text())
@@ -479,10 +479,10 @@ class Validation:
         self.check(ds['datasourceUid']=='tempo' and ds['url']=='${__value.raw}','existing log-to-trace derived field retained')
         if self.details.get('linked_trace'):
             tid=self.details['linked_trace']
-            rows=self.loki('{service=~"learning-api|user-learning"} | json | traceId="'+tid+'"')
+            rows=self.loki('{service=~"hospital-api|hospital-user-api"} | json | traceId="'+tid+'"')
             self.check(bool(rows),'trace-to-log query returns actual events')
             self.check(any(re.search(ds['matcherRegex'],line).group(1)==tid for s in rows for _,line in s['values'] if re.search(ds['matcherRegex'],line)),'derived log trace link extracts actual trace')
-        for query in ['{ resource.service.name = "learning-api" }','{ duration > 1s }','{ status = error }']:
+        for query in ['{ resource.service.name = "hospital-api" }','{ duration > 1s }','{ status = error }']:
             self.check('traces' in self.api('grafana','/api/datasources/proxy/uid/tempo/api/search?'+urllib.parse.urlencode({'q':query,'limit':10})),'Tempo TraceQL exploration query accepted')
         self.check(self.request('grafana','/api/search',auth=False)[0]==401,'Grafana authentication required')
 
@@ -504,13 +504,13 @@ class Validation:
         policy=self.api('opensearch','/_plugins/_ism/policies/springboot-dated-logs-retention')['policy']
         self.check(any(t.get('conditions',{}).get('min_index_age')=='30d' for state in policy['states'] for t in state.get('transitions',[])), 'OpenSearch 30-day lifecycle configured')
         managed=self.api('opensearch','/_plugins/_ism/explain/springboot-*-logs')
-        dated=[r['index'] for r in indices if re.fullmatch(r'springboot-(user|learning|jwks)-\d{4}\.\d{2}\.\d{2}-logs',r['index'])]
+        dated=[r['index'] for r in indices if re.fullmatch(r'springboot-(user|hospital|jwks)-\d{4}\.\d{2}\.\d{2}-logs',r['index'])]
         self.check(bool(dated) and all(managed[n].get('policy_id')=='springboot-dated-logs-retention' for n in dated),'dated OpenSearch indices actively assigned lifecycle')
         self.details['ism_states']={n:{k:managed[n].get(k) for k in ['policy_id','enabled','state','action','step','retry_info']} for n in dated}
         self.details['retention']={'dated_indices':len(dated),'legacy_unmanaged':[r['index'] for r in indices if r['index'] not in dated],
             'prometheus_flags':{k:v for k,v in self.api('prometheus','/api/v1/status/flags')['data'].items() if k in ['storage.tsdb.retention.time','storage.tsdb.retention.size','web.enable-admin-api']},
             'opensearch_repositories':list(self.api('opensearch','/_snapshot').keys())}
-        stats=self.cmd('docker','stats','--no-stream','--format','{{json .}}',*[c['id'] for c in self.baseline['containers'] if c['project']=='springboot_project' and c['status']=='running'])
+        stats=self.cmd('docker','stats','--no-stream','--format','{{json .}}',*[c['id'] for c in self.baseline['containers'] if c['project']=='hospital_dev' and c['status']=='running'])
         self.details['docker_stats']=[json.loads(line) for line in stats.splitlines() if line]
         storage=self.api('opensearch','/_nodes/stats/fs,jvm,process')['nodes']
         self.details['opensearch_capacity']=[{'available_bytes':n['fs']['total']['available_in_bytes'],'total_bytes':n['fs']['total']['total_in_bytes'],
@@ -522,7 +522,7 @@ class Validation:
         self.details['capacity_queries']={expr:self.query(expr) for expr in expressions}
         self.result('PASS','bounded resource/queue/ingestion snapshot captured','development observation only; no representative production load')
         self.check(all(c['logging']['Config'].get('max-size')=='10m' and c['logging']['Config'].get('max-file')=='3'
-            for c in self.inventory() if c['project']=='springboot_project' and c['service'] in list(APPS)+['grafana','prometheus','loki','tempo','fluent-bit','otel-collector','opensearch','opensearch-dashboards']), 'effective 10m/3 Docker log rotation on 11 services')
+            for c in self.inventory() if c['project']=='hospital_dev' and c['service'] in list(APPS)+['grafana','prometheus','loki','tempo','fluent-bit','otel-collector','opensearch','opensearch-dashboards']), 'effective 10m/3 Docker log rotation on 11 services')
         if observed_access_gap(self.services,(OBS/'loki/loki-config.yml').read_text(),(OBS/'tempo/tempo.yml').read_text()):
             self.result('FAIL','production telemetry access-control readiness','OpenSearch security disabled; Loki/Tempo/Collector/Prometheus trust internal plaintext network; loopback exposure is not production authentication')
         else:
@@ -543,7 +543,7 @@ class Validation:
         for uid,expected in self.baseline['dashboards'].items():
             self.check(digest(self.api('grafana','/api/dashboards/uid/'+uid)['dashboard'])==expected,'Grafana dashboard unchanged: '+uid)
         for path,expected in self.baseline['jwks'].items():
-            self.check(digest(self.api('jwks-api',path))==expected,'public JWKS body unchanged: '+path)
+            self.check(digest(self.api('hospital-jwks-api',path))==expected,'public JWKS body unchanged: '+path)
         now=self.git()
         for name,old in self.baseline['git'].items():
             self.check(now[name]['head']==old['head'] and now[name]['branch']==old['branch'],'Git HEAD/branch unchanged: '+name)

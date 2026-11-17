@@ -132,7 +132,7 @@
             "severity": "warning",
             "environment": "production",
             "phase": "5",
-            "service": "user-learning"
+            "service": "hospital-user-api"
           },
           "annotations": {
             "summary": "MissingMetricsUser",
@@ -167,7 +167,7 @@
                   "type": "prometheus",
                   "uid": "prometheus"
                 },
-                "expr": "absent_over_time(up{job=\"springboot\",instance=\"user-api:9091\"}[5m])",
+                "expr": "absent_over_time(up{job=\"springboot\",instance=\"hospital-user-api:9091\"}[5m])",
                 "instant": true,
                 "range": false,
                 "intervalMs": 15000,
@@ -217,8 +217,8 @@
           ]
         },
         {
-          "uid": "sb5-missing-metrics-learning",
-          "title": "MissingMetricsLearning",
+          "uid": "sb5-missing-metrics-hospital",
+          "title": "MissingMetricsHospital",
           "condition": "B",
           "for": "2m",
           "noDataState": "OK",
@@ -229,10 +229,10 @@
             "severity": "warning",
             "environment": "production",
             "phase": "5",
-            "service": "learning-api"
+            "service": "hospital-api"
           },
           "annotations": {
-            "summary": "MissingMetricsLearning",
+            "summary": "MissingMetricsHospital",
             "description": "Expected scrape target disappeared for 5m plus pending period.",
             "runbook": "Check Prometheus target discovery and targets/applications.json."
           },
@@ -264,7 +264,7 @@
                   "type": "prometheus",
                   "uid": "prometheus"
                 },
-                "expr": "absent_over_time(up{job=\"springboot\",instance=\"learning-api:9091\"}[5m])",
+                "expr": "absent_over_time(up{job=\"springboot\",instance=\"hospital-api:9091\"}[5m])",
                 "instant": true,
                 "range": false,
                 "intervalMs": 15000,
@@ -326,7 +326,7 @@
             "severity": "warning",
             "environment": "production",
             "phase": "5",
-            "service": "jwks-service"
+            "service": "hospital-jwks-api"
           },
           "annotations": {
             "summary": "MissingMetricsJWKS",
@@ -361,7 +361,7 @@
                   "type": "prometheus",
                   "uid": "prometheus"
                 },
-                "expr": "absent_over_time(up{job=\"springboot\",instance=\"jwks-api:9091\"}[5m])",
+                "expr": "absent_over_time(up{job=\"springboot\",instance=\"hospital-jwks-api:9091\"}[5m])",
                 "instant": true,
                 "range": false,
                 "intervalMs": 15000,

@@ -18,7 +18,7 @@ def main():
     baseline=json.loads((folder/'baseline.json').read_text())
     counts=dict(Counter(row['status'] for row in result['checks']))
     suites={}
-    for name in ['springboot-user-api','springboot-learning-api','springboot-jwks-api']:
+    for name in ['springboot-user-api','springboot-hospital-api','springboot-jwks-api']:
         files=list((ROOT/name/'target/surefire-reports').glob('TEST-*.xml'))
         suites[name]={k:sum(int(ET.parse(p).getroot().attrib.get(k,0)) for p in files)
                       for k in ['tests','failures','errors','skipped']}
@@ -28,8 +28,8 @@ def main():
     times=sorted(row['ms'] for row in panels)
     report={'run_id':result['run_id'],'utc':result['utc'],'counts':counts,'maven':suites,
         'container_count':len(baseline['containers']),'volume_count':len(baseline['volumes']),
-        'project_container_count':sum(c['project']=='springboot_project' for c in baseline['containers']),
-        'jp_dev_count':sum(c['project']=='jp_dev' for c in baseline['containers']),
+        'project_container_count':sum(c['project']=='hospital_dev' for c in baseline['containers']),
+        'hospital_dev_count':sum(c['project']=='hospital_dev' for c in baseline['containers']),
         'protected_file_count':len(baseline['protected']),
         'versions':details['baseline']['versions'],'git':details['baseline']['git'],
         'events':details.get('events',[]),'linked_trace':details.get('linked_trace'),

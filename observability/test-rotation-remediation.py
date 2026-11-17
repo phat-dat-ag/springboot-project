@@ -55,7 +55,7 @@ def main():
         rows=[]
         for i in range(start,end):
             rows.append({'@timestamp':datetime.now(timezone.utc).isoformat(timespec='milliseconds').replace('+00:00','Z'),
-                'service':'jwks-service','environment':'test','level':'INFO','event':'fixture.rotation',
+                'service':'hospital-jwks-api','environment':'test','level':'INFO','event':'fixture.rotation',
                 'correlationId':name+'-'+str(i),'traceId':'1234567890abcdef1234567890abcdef',
                 'spanId':'1234567890abcdef','message':'synthetic '+('x'*1100)})
         (folder/'input.jsonl').write_text('\n'.join(json.dumps(r) for r in rows)+'\n')
@@ -64,7 +64,7 @@ def main():
             return
         command('docker','run','--rm','--pull','never','--network','none','--read-only','--cap-drop','ALL',
             '--memory','192m','--cpus','0.5','--pids-limit','64','--user','10001:10001',
-            '-v',volume+':/lab','-v',str(folder)+':/fixture:ro','--entrypoint','java','springboot_project-jwks-api',
+            '-v',volume+':/lab','-v',str(folder)+':/fixture:ro','--entrypoint','java','hospital_dev-jwks-api',
             '-Xmx64m','-cp','/fixture:/fixture/lib/*','LogRotationWriter','/fixture/input.jsonl','/lab/logs')
     def config(archives):
         (folder/'tail.conf').write_text('''[SERVICE]
@@ -160,7 +160,7 @@ def main():
         wait_all(12)
         check(helper('stat -c "%i" /lab/tail.db').strip()==state_before,'migration reuses existing tail DB file without reset')
         check(True,'archive-aware discovery recovers existing uncompressed archives')
-        (folder/'legacy.gz').write_bytes(gzip.compress((json.dumps({'service':'jwks-service',
+        (folder/'legacy.gz').write_bytes(gzip.compress((json.dumps({'service':'hospital-jwks-api',
             'correlationId':name+'-legacy-compressed'})+'\n').encode()))
         helper('cat /fixture/legacy.gz > /lab/logs/archive/app.legacy.log.gz')
         legacy_hash=helper('sha256sum /lab/logs/archive/app.legacy.log.gz').split()[0]

@@ -21,8 +21,8 @@ def main():
     folder = ROOT / 'data' / ('phase4-tail-' + run)
     folder.mkdir(parents=True)
     logfile = folder / 'app.log'
-    name = 'springboot_project-phase4-tail-' + run
-    volume = 'springboot_project_phase4_tail_' + run
+    name = 'hospital_dev-phase4-tail-' + run
+    volume = 'hospital_dev_phase4_tail_' + run
     config = folder / 'tail.conf'
     config.write_text('''[SERVICE]
     Flush 1
@@ -59,7 +59,7 @@ def main():
     def event(label, message='synthetic event'):
         correlation = 'phase4-tail-' + run + '-' + label
         return {'@timestamp': datetime.datetime.now(datetime.timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z'),
-                'service': 'jwks-service', 'environment': 'test', 'message': message, 'event': 'fixture.test',
+                'service': 'hospital-jwks-api', 'environment': 'test', 'message': message, 'event': 'fixture.test',
                 'correlationId': correlation, 'traceId': '1234567890abcdef1234567890abcdef',
                 'spanId': '1234567890abcdef'}
 

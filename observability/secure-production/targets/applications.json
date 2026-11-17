@@ -1,28 +1,28 @@
 [
   {
     "targets": [
-      "user-api:9091"
+      "hospital-user-api:9091"
     ],
     "labels": {
-      "service": "user-learning",
+      "service": "hospital-user-api",
       "environment": "production"
     }
   },
   {
     "targets": [
-      "learning-api:9091"
+      "hospital-api:9091"
     ],
     "labels": {
-      "service": "learning-api",
+      "service": "hospital-api",
       "environment": "production"
     }
   },
   {
     "targets": [
-      "jwks-api:9091"
+      "hospital-jwks-api:9091"
     ],
     "labels": {
-      "service": "jwks-service",
+      "service": "hospital-jwks-api",
       "environment": "production"
     }
   }

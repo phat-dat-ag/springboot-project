@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.hospitalmanagement</groupId>
+    <artifactId>hospital-management</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Hospital Management System</name>
+    <description>Hospital and User API development reactor</description>
+    <modules>
+        <module>springboot-user-api</module>
+        <module>springboot-hospital-api</module>
+    </modules>
+    <!-- Shared JWKS is built by Compose. Excluded here to keep its tree read-only. -->
+</project>

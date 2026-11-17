@@ -470,7 +470,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "query": "user-learning,learning-api,jwks-service",
+        "query": "hospital-user-api,hospital-api,hospital-jwks-api",
         "options": []
       },
       {

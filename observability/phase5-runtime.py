@@ -9,7 +9,7 @@ import urllib.error
 import urllib.parse
 
 ROOT = Path(__file__).resolve().parents[1]
-COMPOSE = ['docker', 'compose', '-p', 'springboot_project', '--env-file', '.env',
+COMPOSE = ['docker', 'compose', '-p', 'hospital_dev', '--env-file', '.env',
            '-f', 'docker-compose.yml', '-f', 'docker-compose.debug.yml']
 
 def command(*args):

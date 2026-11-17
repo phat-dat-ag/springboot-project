@@ -6,10 +6,10 @@ It does not implement or authorize Phase 1.
 
 ## Result
 
-**PASS:** Phase 0 configuration is deployed in `springboot_project`. User, Learning
+**PASS:** Phase 0 configuration is deployed in `hospital_dev`. User, Hospital
 and JWKS are healthy; fresh logs contain the canonical identity, release version,
 and environment in application stdout, Loki and OpenSearch. Live login, JWKS and
-Learning-to-User service authentication passed. No unexpected OTLP export errors
+Hospital-to-User service authentication passed. No unexpected OTLP export errors
 or collector error/flush-failure lines were found in the checked startup windows.
 
 No source/configuration repair was required during this deployment. Only this
@@ -17,27 +17,27 @@ verification report and links to it were added to the Phase 0 documentation.
 
 ## Deployment scope and preservation
 
-Project detection found `springboot_project` using this repository's base and debug
-files. `jp_dev` uses `C:/Personal/japanese-learning/docker-compose.yml` and was never
+Project detection found `hospital_dev` using this repository's base and debug
+files. `hospital_dev` uses `C:/Personal/hospital-management/docker-compose.yml` and was never
 targeted by deployment commands. The existing debug override was retained.
 
 | Container | Action | Reason / final state |
 | --- | --- | --- |
-| `springboot_project-jwks-api-1` | Image rebuilt; container recreated first | New application/Logback metadata; healthy before caller recreation |
-| `springboot_project-user-api-1` | Image rebuilt; container recreated | New identity/exporter defaults; healthy |
-| `springboot_project-learning-api-1` | Image rebuilt; container recreated | New identity/exporter defaults; healthy |
-| `springboot_project-fluent-bit-1` | Recreated using existing image | Load shared environment and mounted collector configuration; running |
+| `hospital_dev-hospital-jwks-api-1` | Image rebuilt; container recreated first | New application/Logback metadata; healthy before caller recreation |
+| `hospital_dev-hospital-user-api-1` | Image rebuilt; container recreated | New identity/exporter defaults; healthy |
+| `hospital_dev-hospital-api-1` | Image rebuilt; container recreated | New identity/exporter defaults; healthy |
+| `hospital_dev-fluent-bit-1` | Recreated using existing image | Load shared environment and mounted collector configuration; running |
 
 Exactly these four containers changed identity. Before/after comparison verified:
 
-- **25 unrelated containers unchanged**, including all **16 `jp_dev` containers**
+- **25 unrelated containers unchanged**, including all **16 `hospital_dev` containers**
   (running and stopped): IDs, images, start times, restart counts, ports, mounts
   and network memberships matched.
 - Target containers retained published HTTP/debug ports, effective mount sources,
   destinations/access modes and network memberships. Fluent Bit's image was unchanged.
 - **10 protected environment/key-file fingerprints matched**. No RSA key was
   generated/replaced and no real environment file was edited.
-- User and Learning JWKS responses, RSA public key material, content type and
+- User and Hospital JWKS responses, RSA public key material, content type and
   `Cache-Control: max-age=300, public` were identical before and after deployment.
 - Existing databases, named volumes, tail checkpoints and unrelated backends were
   retained. No `down`, volume deletion, pruning, forced recreation, migration
@@ -52,11 +52,11 @@ volume mounts were unchanged. No storage correction was necessary.
 
 | API | JSON `service` | `serviceVersion` | `environment` |
 | --- | --- | --- | --- |
-| User | `user-learning` | `0.0.1-SNAPSHOT` | `development` |
-| Learning | `learning-api` | `0.0.1-SNAPSHOT` | `development` |
-| JWKS | `jwks-service` | `0.0.1-SNAPSHOT` | `development` |
+| User | `hospital-user-api` | `0.0.1-SNAPSHOT` | `development` |
+| Hospital | `hospital-api` | `0.0.1-SNAPSHOT` | `development` |
+| JWKS | `hospital-jwks-api` | `0.0.1-SNAPSHOT` | `development` |
 
-Post-recreation stdout checks parsed 475 User, 460 Learning and 462 JWKS JSON
+Post-recreation stdout checks parsed 475 User, 460 Hospital and 462 JWKS JSON
 records. All matching application records carried the expected metadata; duplicate
 `SERVICE_NAME`/`SERVICE_VERSION`/`DEPLOYMENT_ENVIRONMENT` context fields were absent.
 OTLP/exporter WARN/ERROR counts were zero. Collector error/flush-failure count
@@ -66,7 +66,7 @@ indefinite availability guarantee.
 Final backend queries were restricted to post-start records with the new version
 and environment fields:
 
-| Backend | User | Learning | JWKS |
+| Backend | User | Hospital | JWKS |
 | --- | --- | --- | --- |
 | Loki | 10 matching recent records sampled; newest 6.5s old | 10 sampled; 9.1s | 10 sampled; 9.3s |
 | OpenSearch | 482 matching post-start records; newest 7.5s old | 467 records; 9.2s | 469 records; 9.5s |
@@ -81,28 +81,28 @@ No matching saved Postman collection was found. Local Postman CLI **1.75.0** was
 used for nine positive requests with **20 named `pm.test` checks**; remote event
 reporting was disabled. Six additional negative HTTP checks used in-memory Python
 requests with exact status assertions. Additional local assertions compared JWT
-algorithm/key ID, token subject, Learning identity and returned User ID.
+algorithm/key ID, token subject, Hospital identity and returned User ID.
 
 | Check | Expected / actual result |
 | --- | --- |
-| User, Learning, JWKS readiness | Each HTTP 200, `status=UP` |
+| User, Hospital, JWKS readiness | Each HTTP 200, `status=UP` |
 | `/api/v1/jwks/user` | HTTP 200; RFC 7517 envelope and public RS256 key fields; cache contract unchanged |
-| `/api/v1/jwks/learning` | Same guarantees for Learning's public keys |
+| `/api/v1/jwks/learning` | Same guarantees for Hospital's public keys |
 | User `POST /auth/login` with supplied existing account | HTTP 200; Bearer access token, refresh token and positive expiration |
-| Learning `GET /api/v1/learning/me` with login token | HTTP 200; authenticated subject matched login JWT |
-| Learning `GET /api/v1/learning/internal-test/users/{id}` | HTTP 200; returned User ID matched authenticated subject; active account; no password-hash field |
+| Hospital `GET /api/v1/hospital/technical/authentication` with login token | HTTP 200; authenticated subject matched login JWT |
+| Hospital `GET /api/v1/hospital/technical/users/{id}` | HTTP 200; returned User ID matched authenticated subject; active account; no password-hash field |
 | User `GET /internal/users/{id}` without token | HTTP 401 |
 | Same internal route with the user access token | HTTP 401, confirming the service-token boundary |
-| Learning `/me` without token | HTTP 401 |
-| Learning `/me` with malformed token | HTTP 401 |
+| Hospital `/me` without token | HTTP 401 |
+| Hospital `/me` with malformed token | HTTP 401 |
 | Login for a generated nonexistent account | HTTP 401; no account created |
 | JWKS unknown owner | HTTP 404 |
 | User `POST /auth/logout` for verification refresh token | HTTP 200; verification refresh session revoked |
 
 **Final result: 15 live checks passed.** All nine positive Postman commands exited
-zero; all six negative status assertions passed. Success through Learning's internal
+zero; all six negative status assertions passed. Success through Hospital's internal
 client together with rejection of the user token at User's internal route verifies
-the real Learning service-JWT flow, not a mocked or bypassed endpoint.
+the real Hospital service-JWT flow, not a mocked or bypassed endpoint.
 
 One normal login refresh-session record was created and then revoked through the
 API. No user account, password, role or activation state was altered, and no
@@ -130,18 +130,18 @@ failed. Dockerfile packaging skips test execution as already configured; the
 previously passed 195 Phase 0 Maven tests were not rerun during this runtime-only
 verification because no application source/configuration was changed here.
 
-## Separate `japanese-learning` consumer review
+## Separate `hospital-management` consumer review
 
 Read-only review inspected its Compose configuration, .NET
 `AuthenticationExtensions.cs`/`JwksConfigurationRetriever.cs`, and Quarkus OIDC
 properties. Runtime environment inspection showed both consumers use
-`http://jwks-api:8080/api/v1/jwks/user` on their own project network. They do not
+`http://hospital-jwks-api:8080/api/v1/jwks/user` on their own project network. They do not
 point to this project's host port or containers.
 
 Phase 0 modifies JWKS observability configuration, not its controller, owner
 routes, RSA key schema/material or cache contract. The published contract also
 matched the pre-deployment snapshot. **No breaking consumer compatibility issue
-was identified; no change to `japanese-learning` was needed or made.**
+was identified; no change to `hospital-management` was needed or made.**
 
 Its JWKS submodule remained clean at
 `53d50ba151d04d7ee7d4f7ea01beba524262c3d9`. Its .NET working tree remained clean;
@@ -162,15 +162,15 @@ allowlisted summaries.
 ```powershell
 git status --short
 git -C <each Spring Boot module> status --short
-git -C C:/Personal/japanese-learning status --short
-git -C C:/Personal/japanese-learning/springboot-jwks-api status --short
-git -C C:/Personal/japanese-learning/springboot-jwks-api rev-parse HEAD
-git -C C:/Personal/japanese-learning/dotnet status --short
-git -C C:/Personal/japanese-learning/quarkus status --short
+git -C C:/Personal/hospital-management status --short
+git -C C:/Personal/hospital-management/springboot-jwks-api status --short
+git -C C:/Personal/hospital-management/springboot-jwks-api rev-parse HEAD
+git -C C:/Personal/hospital-management/dotnet status --short
+git -C C:/Personal/hospital-management/quarkus status --short
 git -C springboot-jwks-api diff -- src/main/java
 docker compose ls --format json
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
-docker compose -p springboot_project exec -T user-api sh -c 'command -v curl'
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml config --quiet
+docker compose -p hospital_dev exec -T hospital-user-api sh -c 'command -v curl'
 postman --version
 postman request --help
 python observability/verify-baseline.py --runtime
@@ -184,10 +184,10 @@ AGENTS/Compose/JWKS-consumer files, and available CLI/collection paths.
 Snapshot/preservation Python blocks (`python -`) executed:
 
 ```text
-docker ps -aq --filter label=com.docker.compose.project=springboot_project
-docker ps -aq --filter label=com.docker.compose.project=jp_dev
+docker ps -aq --filter label=com.docker.compose.project=hospital_dev
+docker ps -aq --filter label=com.docker.compose.project=hospital_dev
 docker inspect <selected existing container IDs>
-docker inspect springboot_project-<API>-1
+docker inspect hospital_dev-<API>-1
 docker logs --since <that container's StartedAt> <container ID>
 ```
 
@@ -198,10 +198,10 @@ and public JWKS only; it was removed after verification.
 ### Deployment commands
 
 ```powershell
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build user-api learning-api jwks-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 jwks-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 user-api learning-api
-docker compose -p springboot_project --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 60 fluent-bit
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml build hospital-user-api hospital-api hospital-jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 hospital-jwks-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 120 hospital-user-api hospital-api
+docker compose -p hospital_dev --env-file .env -f docker-compose.yml -f docker-compose.debug.yml up -d --no-deps --no-build --wait --wait-timeout 60 fluent-bit
 ```
 
 Builds completed before recreation. `--no-deps` prevented database, migration

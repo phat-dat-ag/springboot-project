@@ -7,7 +7,7 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[1]
 SECURE = ROOT / 'observability/secure-production'
-MODULES = ['springboot-user-api', 'springboot-learning-api', 'springboot-jwks-api']
+MODULES = ['springboot-user-api', 'springboot-hospital-api', 'springboot-jwks-api']
 
 
 class RemediationContract(unittest.TestCase):

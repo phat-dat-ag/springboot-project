@@ -20,7 +20,7 @@ v = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(v)
 BASE = json.loads((ROOT / 'observability/phase4-baseline.log').read_text())
 EVIDENCE = ROOT / 'observability/phase4-recovery-evidence.log'
-AFFECTED = {'user-api', 'learning-api', 'jwks-api', 'fluent-bit', 'loki', 'opensearch',
+AFFECTED = {'hospital-user-api', 'hospital-api', 'hospital-jwks-api', 'fluent-bit', 'loki', 'opensearch',
             'opensearch-dashboards', 'prometheus', 'otel-collector', 'tempo', 'grafana'}
 MODEL = None
 
@@ -76,7 +76,7 @@ def grafana(path):
 
 def loki_hits(marker):
     now = time.time_ns()
-    params = urllib.parse.urlencode({'query': '{service="jwks-service"} | json | correlationId="' + marker + '"',
+    params = urllib.parse.urlencode({'query': '{service="hospital-jwks-api"} | json | correlationId="' + marker + '"',
                                      'start': str(now - 24 * 3600 * 10**9), 'end': str(now), 'limit': 100})
     response = request('loki', '/loki/api/v1/query_range?' + params)
     if response[0] != 200:
@@ -94,7 +94,7 @@ def os_hits(marker):
 
 def probe(label):
     marker, trace = 'phase4-' + label + '-' + uuid.uuid4().hex[:12], uuid.uuid4().hex
-    port_number = int(next(p['published'] for p in model()['services']['jwks-api']['ports'] if int(p['target']) == 8080))
+    port_number = int(next(p['published'] for p in model()['services']['hospital-jwks-api']['ports'] if int(p['target']) == 8080))
     status, headers, _ = v.request(port_number, '/api/v1/jwks/user', headers={
         'X-Correlation-ID': marker, 'traceparent': '00-' + trace + '-' + uuid.uuid4().hex[:16] + '-01'})
     check(status == 200 and headers.get('X-Correlation-ID') == marker, 'real safe JWKS probe ' + marker)
@@ -116,7 +116,7 @@ def retry_count():
 
 def validate():
     compose('config', '--quiet')
-    v.docker('compose', '-p', 'springboot_project', '--env-file', '.env', '-f', 'docker-compose.yml', 'config', '--quiet')
+    v.docker('compose', '-p', 'hospital_dev', '--env-file', '.env', '-f', 'docker-compose.yml', 'config', '--quiet')
     m = model()
     for name, old in BASE['services'].items():
         current = m['services'][name]
@@ -133,7 +133,7 @@ def validate():
                 check(current.get(field) == old.get(field), name + ' unrelated setting preserved: ' + field)
     for name in ('otel-collector', 'tempo', 'fluent-bit', 'otel-queue-init'):
         check(not m['services'][name].get('ports'), name + ' no published ingestion/diagnostics')
-    for name in ('user-api', 'learning-api', 'jwks-api'):
+    for name in ('hospital-user-api', 'hospital-api', 'hospital-jwks-api'):
         env = m['services'][name]['environment']
         check(env['MANAGEMENT_TRACING_SAMPLING_PROBABILITY'] == '0.1', name + ' 10 percent sampling preserved')
     fb = (ROOT / 'observability/fluent-bit/fluent-bit.conf').read_text()
@@ -158,7 +158,7 @@ def validate():
 
 def history_snapshot():
     now = time.time()
-    params = urllib.parse.urlencode({'query': 'http_server_requests_seconds_count{service="jwks-service"}', 'time': str(now)})
+    params = urllib.parse.urlencode({'query': 'http_server_requests_seconds_count{service="hospital-jwks-api"}', 'time': str(now)})
     response = request('prometheus', '/api/v1/query?' + params)[2]
     check(bool(response['data']['result']), 'pre-restart Prometheus samples available')
     old = {'traceId': 'fda09edbe0bd47da8dee413d1fa31ec9'}
@@ -193,7 +193,7 @@ def log_failure(destination):
         evidence['storageAfterCollectorRestart'] = buffer_state()
     finally:
         # Start the exact existing container; Compose start may rerun completed initializers.
-        v.docker('start', 'springboot_project-' + destination + '-1')
+        v.docker('start', 'hospital_dev-' + destination + '-1')
     if item:
         wait_for(lambda: len(destination_hits(item['marker'])) == 1, destination + ' buffered marker recovered')
         wait_for(lambda: len(other_hits(item['marker'])) == 1, 'other output no duplicate')
@@ -221,13 +221,13 @@ def trace_failure():
         logs = compose('logs', '--since', '1m', '--no-color', 'otel-collector')
         check('retry' in logs.lower(), 'Collector retry observed while Tempo unavailable')
         evidence['queueFilesDuringOutage'] = v.docker('run', '--rm', '--network', 'none', '--read-only',
-            '--user', '10001:10001', '-v', 'springboot_project_otel_queue:/state:ro', '--entrypoint', '/bin/sh',
+            '--user', '10001:10001', '-v', 'hospital_dev_otel_queue:/state:ro', '--entrypoint', '/bin/sh',
             'postgres:17.6', '-c', 'find /state -type f -exec ls -ln {} +')
         check('otlp' in evidence['queueFilesDuringOutage'], 'persistent exporter queue database present')
         compose('restart', '--no-deps', '--timeout', '30', 'otel-collector')
         wait_for(lambda: 'Server available' in v.internal('http://otel-collector:13133/'), 'Collector ready with destination down')
     finally:
-        v.docker('start', 'springboot_project-tempo-1')
+        v.docker('start', 'hospital_dev-tempo-1')
     wait_for(lambda: 'ready' in v.internal('http://tempo:3200/ready'), 'Tempo readiness')
     for item in items:
         wait_for(lambda: trace(item), 'persisted trace recovered after Collector restart')
@@ -245,15 +245,15 @@ def regression():
     check(canonical(actual) == canonical(history['prometheus']), 'original Prometheus samples survive normal recreation/restart')
     check(bool(trace({'traceId': history['oldTraceId']})), 'old authenticated trace survives Tempo restart')
     for path, original in BASE['jwks'].items():
-        check(request('jwks-api', path)[2] == original, 'JWKS public response unchanged ' + path)
+        check(request('hospital-jwks-api', path)[2] == original, 'JWKS public response unchanged ' + path)
     legacy_rows = request('opensearch', '/_cat/indices?format=json')[2]
     for previous in BASE['opensearch']['/_cat/indices?format=json']:
-        if previous['index'] in ('springboot-user-logs', 'springboot-learning-logs', 'springboot-jwks-logs'):
+        if previous['index'] in ('springboot-user-logs', 'springboot-hospital-logs', 'springboot-jwks-logs'):
             current = next(r for r in legacy_rows if r['index'] == previous['index'])
             check(current['uuid'] == previous['uuid'] and int(current['docs.count']) >= int(previous['docs.count']),
                   'legacy index UUID/documents preserved ' + previous['index'])
     today = datetime.datetime.now(datetime.timezone.utc).strftime('%Y.%m.%d')
-    for service in ('user', 'learning', 'jwks'):
+    for service in ('user', 'hospital', 'jwks'):
         name = 'springboot-' + service + '-' + today + '-logs'
         state = request('opensearch', '/_plugins/_ism/explain/' + name)[2]
         check(state.get(name, {}).get('policy_id') == 'springboot-dated-logs-retention', 'new dated index automatically managed ' + service)
@@ -268,20 +268,20 @@ def regression():
         check(new is not None, 'original container still present ' + name)
         relevant = {k: old[k] for k in ('Id', 'Image', 'RestartCount', 'Mounts', 'started', 'ports', 'networks')}
         current = {k: new[k] for k in relevant}
-        service = name.removeprefix('/springboot_project-').removesuffix('-1')
+        service = name.removeprefix('/hospital_dev-').removesuffix('-1')
         if relevant != current:
             changed.append(name)
             # The first Tempo restore used Compose start, which reran its existing
             # network-disabled initializer. Only StartedAt changed; no data was removed.
             init_restart = service == 'tempo-storage-init' and all(
                 relevant[key] == current[key] for key in relevant if key != 'started')
-            check(old['project'] == 'springboot_project' and (service in AFFECTED or init_restart),
+            check(old['project'] == 'hospital_dev' and (service in AFFECTED or init_restart),
                   'only affected service or exact Tempo initializer restart changed ' + name)
     for path, fingerprint in BASE['protected'].items():
         check(hashlib.sha256((ROOT / path).read_bytes()).hexdigest() == fingerprint, 'protected file unchanged ' + path)
     evidence = {'result': 'PASS', 'changedContainers': changed,
                 'unrelatedUnchanged': len(BASE['containers']) - len(changed),
-                'jpDevUnchanged': sum(c['project'] == 'jp_dev' for c in BASE['containers'].values())}
+                'jpDevUnchanged': sum(c['project'] == 'hospital_dev' for c in BASE['containers'].values())}
     record('preservation', evidence)
 
 
@@ -289,26 +289,26 @@ def authenticated():
     path = ROOT / 'observability/local-test-credentials.json'
     if not path.is_file():
         record('authenticated', {'result': 'NOT VERIFIED', 'reason': 'existing credentials file unavailable'})
-        print('NOT VERIFIED: authenticated JWT and Learning -> User regression; credentials absent')
+        print('NOT VERIFIED: authenticated JWT and Hospital -> User regression; credentials absent')
         return
     check(subprocess.run(['git', 'check-ignore', '--quiet', str(path)], capture_output=True).returncode == 0,
           'existing credentials file ignored')
     account = json.loads(path.read_text(encoding='utf-8-sig'))
     account = {key: account[key] for key in ('usernameOrEmail', 'password')}
     api_ports = {name: int(next(p['published'] for p in model()['services'][name]['ports'] if int(p['target']) == 8080))
-                 for name in ('user-api', 'learning-api')}
+                 for name in ('hospital-user-api', 'hospital-api')}
     start = datetime.datetime.now(datetime.timezone.utc).isoformat()
     marker, trace_id = 'phase4-auth-' + uuid.uuid4().hex[:16], uuid.uuid4().hex
     secrets = list(account.values())
     token = refresh = None
     parent_id = uuid.uuid4().hex[:16]
     try:
-        status, _, body = v.request(api_ports['user-api'], '/auth/login', 'POST', account)
+        status, _, body = v.request(api_ports['hospital-user-api'], '/auth/login', 'POST', account)
         check(status == 200, 'existing account login')
         token, refresh = body['data']['accessToken'], body['data']['refreshToken']
         secrets += [token, refresh]
         old_refresh = refresh
-        status, _, body = v.request(api_ports['user-api'], '/auth/refresh', 'POST', {'refreshToken': refresh})
+        status, _, body = v.request(api_ports['hospital-user-api'], '/auth/refresh', 'POST', {'refreshToken': refresh})
         check(status == 200, 'existing verification session refresh')
         token, refresh = body['data']['accessToken'], body['data']['refreshToken']
         secrets += [token, refresh]
@@ -316,15 +316,15 @@ def authenticated():
         claims = json.loads(base64.urlsafe_b64decode(token.split('.')[1] + '==='))
         subject = claims['sub']
         secrets.append(subject)
-        status, headers, body = v.request(api_ports['learning-api'], '/api/v1/learning/internal-test/users/' + subject,
+        status, headers, body = v.request(api_ports['hospital-api'], '/api/v1/hospital/technical/users/' + subject,
             headers={'Authorization': 'Bearer ' + token, 'traceparent': '00-' + trace_id + '-' + parent_id + '-01',
                      'X-Correlation-ID': marker})
-        check(status == 200 and body.get('user', {}).get('id') == subject, 'live Learning -> User internal JWT communication')
+        check(status == 200 and body.get('user', {}).get('id') == subject, 'live Hospital -> User internal JWT communication')
         check(headers.get('X-Correlation-ID') == marker and marker != trace_id, 'independent correlation response preserved')
         secrets += [value for key, value in body['user'].items() if key in ('username', 'email') and isinstance(value, str)]
     finally:
         if refresh:
-            status, _, _ = v.request(api_ports['user-api'], '/auth/logout', 'POST', {'refreshToken': refresh},
+            status, _, _ = v.request(api_ports['hospital-user-api'], '/auth/logout', 'POST', {'refreshToken': refresh},
                                      {'Authorization': 'Bearer ' + token})
             check(status == 200, 'verification session logged out in cleanup')
     def get_spans():
@@ -336,23 +336,23 @@ def authenticated():
             service = next(a['value']['stringValue'] for a in batch['resource']['attributes'] if a['key'] == 'service.name')
             for scope in batch.get('scopeSpans', batch.get('instrumentationLibrarySpans', [])):
                 values += [(service, span) for span in scope['spans']]
-        server = [x for s, x in values if s == 'learning-api' and x['kind'] in (2, 'SPAN_KIND_SERVER')]
-        user = [x for s, x in values if s == 'user-learning' and x['kind'] in (2, 'SPAN_KIND_SERVER')]
-        client = [x for s, x in values if s == 'learning-api' and x['kind'] in (3, 'SPAN_KIND_CLIENT') and
-                  any(a['key'] == 'client.name' and a['value'].get('stringValue') == 'user-api' for a in x.get('attributes', []))]
+        server = [x for s, x in values if s == 'hospital-api' and x['kind'] in (2, 'SPAN_KIND_SERVER')]
+        user = [x for s, x in values if s == 'hospital-user-api' and x['kind'] in (2, 'SPAN_KIND_SERVER')]
+        client = [x for s, x in values if s == 'hospital-api' and x['kind'] in (3, 'SPAN_KIND_CLIENT') and
+                  any(a['key'] == 'client.name' and a['value'].get('stringValue') == 'hospital-user-api' for a in x.get('attributes', []))]
         return (body, server[0], client[0], user[0]) if len(server) == len(client) == len(user) == 1 else None
     body, server, client, user = wait_for(get_spans, 'complete authenticated trace through Grafana')
     def span_id(value):
         return value if re.fullmatch('[0-9a-f]{16,32}', value) else base64.b64decode(value).hex()
     check(span_id(server['parentSpanId']) == parent_id and span_id(client['parentSpanId']) == span_id(server['spanId'])
           and span_id(user['parentSpanId']) == span_id(client['spanId']), 'W3C server/client/server parent chain preserved')
-    check(all(span_id(x['traceId']) == trace_id for x in (server, client, user)), 'Learning and User share actual trace ID')
-    expected = {'learning-api': span_id(server['spanId']), 'user-learning': span_id(user['spanId'])}
+    check(all(span_id(x['traceId']) == trace_id for x in (server, client, user)), 'Hospital and User share actual trace ID')
+    expected = {'hospital-api': span_id(server['spanId']), 'hospital-user-api': span_id(user['spanId'])}
     logs = []
     for backend in ('loki', 'opensearch'):
         def matches():
             if backend == 'loki':
-                params = urllib.parse.urlencode({'query': '{service=~"learning-api|user-learning"} | json | correlationId="' + marker + '"',
+                params = urllib.parse.urlencode({'query': '{service=~"hospital-api|hospital-user-api"} | json | correlationId="' + marker + '"',
                                                  'start': str(int((time.time() - 600) * 1e9)), 'limit': 100})
                 records = [json.loads(line) for stream in request('loki', '/loki/api/v1/query_range?' + params)[2]['data']['result']
                            for _, line in stream['values']]
@@ -367,7 +367,7 @@ def authenticated():
               backend + ' actual trace/span/correlation/status and once-only completion preserved')
         logs += records
     telemetry = json.dumps(body) + json.dumps(logs)
-    for service in ('user-api', 'learning-api', 'jwks-api'):
+    for service in ('hospital-user-api', 'hospital-api', 'hospital-jwks-api'):
         telemetry += compose('logs', '--since', start, '--no-color', '--no-log-prefix', service)
     check(not any(value in telemetry for value in secrets if value), 'actual credentials/tokens/identity absent from inspected auth telemetry')
     check(not re.search(r'eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{16,}', telemetry),
@@ -379,7 +379,7 @@ def authenticated():
 
 
 def health():
-    for service in ('user-api', 'learning-api', 'jwks-api'):
+    for service in ('hospital-user-api', 'hospital-api', 'hospital-jwks-api'):
         number = int(next(p['published'] for p in model()['services'][service]['ports'] if int(p['target']) == 8080))
         check(v.request(number, '/actuator/health/readiness')[0] == 200, service + ' readiness')
     check(request('prometheus', '/-/ready')[0] == 200, 'Prometheus readiness')
@@ -409,7 +409,7 @@ def health():
     outputs = retry_count()
     check(all(x.get('dropped_records') == 0 and x.get('retries_failed') == 0 for x in outputs.values()),
           'no permanently failed retries or output-dropped records in current process')
-    inspected = json.loads(v.docker('inspect', *['springboot_project-' + name + '-1' for name in sorted(AFFECTED)]))
+    inspected = json.loads(v.docker('inspect', *['hospital_dev-' + name + '-1' for name in sorted(AFFECTED)]))
     for container in inspected:
         options = container['HostConfig']['LogConfig']
         check(options['Type'] == 'json-file' and options['Config'].get('max-size') == '10m' and
