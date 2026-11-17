@@ -141,6 +141,29 @@ services:
     volumes:
       - ${USER_API_MIGRATION_PATH:-./db/migration/user}:/flyway/sql:ro
 
+  clinical-database-init:
+    <<: *container-security
+    image: postgres:17.6
+    user: "999:999"
+    restart: "no"
+    mem_limit: 128m
+    pids_limit: 64
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      PGHOST: postgres
+      PGPORT: "5432"
+      PGDATABASE: postgres
+      PGUSER: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      CLINICAL_DATABASE: ${POSTGRES_DB:?Set POSTGRES_DB in .env}
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - exec psql -X -v ON_ERROR_STOP=1 -v database_name="$$CLINICAL_DATABASE" -f /init/ensure_clinical_database.sql
+    volumes:
+      - ./db/ensure_clinical_database.sql:/init/ensure_clinical_database.sql:ro
+
   flyway-postgres:
     <<: *container-security
 
@@ -161,8 +184,8 @@ services:
       - /tmp:rw,nosuid,nodev,size=128m,mode=1777
 
     depends_on:
-      postgres:
-        condition: service_healthy
+      clinical-database-init:
+        condition: service_completed_successfully
 
     environment:
       FLYWAY_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?Set POSTGRES_DB in .env}
@@ -171,12 +194,16 @@ services:
 
       FLYWAY_CONNECT_RETRIES: ${FLYWAY_CONNECT_RETRIES:-60}
       FLYWAY_LOCATIONS: filesystem:/flyway/sql
+      FLYWAY_CLEAN_DISABLED: "true"
+      FLYWAY_DEFAULT_SCHEMA: public
+      FLYWAY_VALIDATE_ON_MIGRATE: "true"
+      FLYWAY_BASELINE_ON_MIGRATE: "false"
       JAVA_ARGS: -Duser.home=/tmp
 
     command: ["migrate"]
 
     volumes:
-      - ${HOSPITAL_API_MIGRATION_PATH:-./springboot-hospital-api/src/main/resources/db/migration}:/flyway/sql:ro
+      - ${HOSPITAL_API_MIGRATION_PATH:-./db/migration/hospital}:/flyway/sql:ro
   
   hospital-user-api:
     image: hospital-management/hospital-user-api:dev
@@ -295,8 +322,8 @@ services:
       - /tmp:rw,nosuid,nodev,size=256m,mode=1777
 
     build:
-      context: ./springboot-hospital-api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: springboot-hospital-api/Dockerfile
 
     restart: unless-stopped
 
