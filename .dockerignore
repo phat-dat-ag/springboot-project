@@ -1,0 +1,23 @@
+# Root context is used only by the Hospital/Clinical image.
+# Send just its build inputs and shared SQL, never other services or secrets.
+**
+!springboot-hospital-api/
+!springboot-hospital-api/.mvn/
+!springboot-hospital-api/.mvn/**
+!springboot-hospital-api/mvnw
+!springboot-hospital-api/pom.xml
+!springboot-hospital-api/Dockerfile
+!springboot-hospital-api/src/
+!springboot-hospital-api/src/**
+!db/
+!db/migration/
+!db/migration/hospital/
+!db/migration/hospital/**
+**/.env*
+**/application-local.*
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
+**/*.jks
+**/*.keystore
