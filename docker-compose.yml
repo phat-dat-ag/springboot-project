@@ -352,6 +352,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:?Set POSTGRES_DB in .env}
       SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:?Set POSTGRES_USER in .env}
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+      CLINIC_TIME_ZONE: "${CLINIC_TIME_ZONE:-Asia/Ho_Chi_Minh}"
 
       # Authentication
       JWT_ISSUER: ${JWT_ISSUER:?Set JWT_ISSUER in .env}
