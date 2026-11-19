@@ -13,7 +13,7 @@ Add versioned SQL files using `V<version>__<description>.sql`. Each database has
 its own version history. Keep applied migration filenames and contents unchanged;
 add a new migration for later schema changes.
 
-The Hospital directory contains V1?V9 for the 28 Clinical tables. It is the
+The Hospital directory contains V1–V10 for 29 tables, including the P02 replay key table. It is the
 single SQL source; Maven packages these files as `classpath:db/migration`.
 See [the full database reference](../springboot-hospital-api/docs/DATABASE.md).
 
@@ -33,7 +33,7 @@ docker compose up -d --build hospital-api
 ```
 
 This brings up the API's existing dependencies; it does not reset volumes.
-The Flyway runner applies the nine migrations before API startup. Inspect with
+The Flyway runner applies the migrations before API startup. Inspect with
 `docker compose logs clinical-database-init flyway-postgres`. Do not point at
 an unrelated or nonempty legacy schema. Flyway baseline and clean are disabled;
 previously applied migrations must never be edited. No User or JWKS SQL is added.
