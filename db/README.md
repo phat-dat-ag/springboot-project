@@ -13,7 +13,7 @@ Add versioned SQL files using `V<version>__<description>.sql`. Each database has
 its own version history. Keep applied migration filenames and contents unchanged;
 add a new migration for later schema changes.
 
-The Hospital directory contains V1–V10 for 29 tables, including the P02 replay key table. It is the
+The Hospital directory contains V1–V11 for 29 tables, including the P02 replay key table. It is the
 single SQL source; Maven packages these files as `classpath:db/migration`.
 See [the full database reference](../springboot-hospital-api/docs/DATABASE.md).
 
